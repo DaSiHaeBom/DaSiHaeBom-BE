@@ -1,4 +1,4 @@
-package com.dasihaebom.dasihaebom;
+package com.project.dasihaebom;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
