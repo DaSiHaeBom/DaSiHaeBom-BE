@@ -1,6 +1,6 @@
 ### ⚙️ 기술 스택
 - Java 17
-- Spring Boot 3.5.3
+- Spring Boot 3.5.4
 
 ### 📋 Commit Message Convention
 |   Gitmoji   |    Tag     | Description |
@@ -15,3 +15,4 @@
 |     💚      |    `ci`    | CI 관련 설정 수정 |
 |     🚀      |  `chore`   | 기타 변경사항 |
 |      🔥️      |  `remove`   | 코드 및 파일 제거 |
+
