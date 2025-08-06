@@ -1,0 +1,44 @@
+package com.project.dasihaebom.global.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+@Configuration
+public class CorsConfig implements WebMvcConfigurer {
+
+    @Bean
+    public static CorsConfigurationSource apiConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        // 허용할 Origin List
+        ArrayList<String> allowedOrigins = new ArrayList<>();
+        allowedOrigins.add("http://localhost:8080");
+        allowedOrigins.add("http://localhost:5500");
+        allowedOrigins.add("http://도메인:8080");
+
+        configuration.setAllowedOrigins(allowedOrigins);
+
+        // 허용할 HTTP METHOD
+        ArrayList<String> allowedHttpMethods = new ArrayList<>();
+        allowedHttpMethods.add("GET");
+        allowedHttpMethods.add("POST");
+        allowedHttpMethods.add("PATCH");
+        allowedHttpMethods.add("DELETE");
+
+        configuration.setAllowedMethods(allowedHttpMethods);
+
+        configuration.setAllowedHeaders(Collections.singletonList("*"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
+    }
+}
