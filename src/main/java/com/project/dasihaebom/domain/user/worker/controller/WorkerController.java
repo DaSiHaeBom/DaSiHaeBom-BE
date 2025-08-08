@@ -19,7 +19,7 @@ public class WorkerController {
     private final WorkerRepository workerRepository;
 
     @Operation(summary = "개인 회원 가입")
-    @PostMapping("/worker")
+    @PostMapping("/workers")
     public CustomResponse<String> createWorker(
             @RequestBody WorkerReqDto.WorkerCreateReqDto workerCreateReqDto
     ) {
