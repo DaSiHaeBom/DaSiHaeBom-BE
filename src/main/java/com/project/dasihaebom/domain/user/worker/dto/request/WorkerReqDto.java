@@ -13,4 +13,12 @@ public class WorkerReqDto {
             String address
     ) {
     }
+
+    public record WorkerUpdateReqDto(
+            String phoneNumber,
+            String username,
+            Integer age,
+            String address
+    ) {
+    }
 }

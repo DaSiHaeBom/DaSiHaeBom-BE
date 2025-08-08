@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 public class WorkerController {
 
     private final WorkerCommandService workerCommandService;
-    private final WorkerRepository workerRepository;
 
     @Operation(summary = "개인 회원 가입")
     @PostMapping("/workers")
@@ -25,5 +24,14 @@ public class WorkerController {
     ) {
         workerCommandService.createWorker(workerCreateReqDto);
         return CustomResponse.onSuccess("개인 회원 가입 완료");
+    }
+
+    @Operation(summary = "개인 회원 정보 수정")
+    @PatchMapping("/workers")
+    public CustomResponse<String> updateWorker(
+            @RequestBody WorkerReqDto.WorkerUpdateReqDto workerUpdateReqDto
+    ) {
+        workerCommandService.updateWorker(workerUpdateReqDto);
+        return CustomResponse.onSuccess("개인 회원 정보 수정 완료");
     }
 }

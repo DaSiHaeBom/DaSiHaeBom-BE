@@ -49,4 +49,18 @@ public class Worker extends BaseEntity {
     // User가 삭제되면 Auth도 삭제
     @OneToOne(mappedBy = "worker", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private WorkerAuth workerAuth;
+
+    // 엔티티 수정 전용 메서드
+    public void changePhoneNumber(String phoneNumber){
+        this.phoneNumber = phoneNumber;
+    }
+    public void changeUsername(String username){
+        this.username = username;
+    }
+    public void changeAge(Integer age){
+        this.age = age;
+    }
+    public void changeAddress(String address){
+        this.address = address;
+    }
 }
