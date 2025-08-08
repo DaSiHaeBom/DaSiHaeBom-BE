@@ -6,6 +6,7 @@ import com.project.dasihaebom.domain.user.corp.service.command.CorpCommandServic
 import com.project.dasihaebom.global.apiPayload.CustomResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,7 @@ public class CorpController {
     @Operation(summary = "기업 회원 가입")
     @PostMapping("/corps")
     public CustomResponse<String> createCorp(
-            @RequestBody CorpReqDto.CorpCreateReqDto corpCreateReqDto
+            @RequestBody @Valid CorpReqDto.CorpCreateReqDto corpCreateReqDto
     ) {
         corpCommandService.createCorp(corpCreateReqDto);
         return CustomResponse.onSuccess("기업 회원 가입 완료");
@@ -29,7 +30,7 @@ public class CorpController {
     @Operation(summary = "기업 회원 정보 수정")
     @PatchMapping("/corps")
     public CustomResponse<String> updateCorp(
-            @RequestBody CorpReqDto.CorpUpdateReqDto corpUpdateReqDto
+            @RequestBody @Valid CorpReqDto.CorpUpdateReqDto corpUpdateReqDto
     ) {
         corpCommandService.updateCorp(corpUpdateReqDto);
         return CustomResponse.onSuccess("기업 회원 정보 수정 완료");
