@@ -25,8 +25,8 @@ public class Worker extends BaseEntity {
     @Column(name = "username", nullable = false)
     private String username;
 
-    @Column(name = "age", nullable = false)
-    private Integer age;
+    @Column(name = "birth_date", nullable = false)
+    private Integer birthDate;
 
     @Column(name = "gender", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -57,8 +57,8 @@ public class Worker extends BaseEntity {
     public void changeUsername(String username){
         this.username = username;
     }
-    public void changeAge(Integer age){
-        this.age = age;
+    public void changeBirthDate(Integer birthDate){
+        this.birthDate = birthDate;
     }
     public void changeAddress(String address){
         this.address = address;

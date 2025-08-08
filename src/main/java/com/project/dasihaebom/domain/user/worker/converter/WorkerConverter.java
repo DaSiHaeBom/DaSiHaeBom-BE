@@ -14,7 +14,7 @@ public class WorkerConverter {
         return Worker.builder()
                 .phoneNumber(workerCreateReqDto.phoneNumber())
                 .username(workerCreateReqDto.username())
-                .age(workerCreateReqDto.age())
+                .birthDate(workerCreateReqDto.birthDate())
                 .gender(workerCreateReqDto.gender())
                 .address(workerCreateReqDto.address())
                 .role(Role.WORKER)
