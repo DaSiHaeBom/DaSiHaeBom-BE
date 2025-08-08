@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 @Tag(name = "introduction", description = "질문 응답 관련 API")
-public class Controller {
+public class IntroductionController {
 }
