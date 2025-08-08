@@ -25,4 +25,13 @@ public class CorpController {
         corpCommandService.createCorp(corpCreateReqDto);
         return CustomResponse.onSuccess("기업 회원 가입 완료");
     }
+
+    @Operation(summary = "기업 회원 정보 수정")
+    @PatchMapping("/corps")
+    public CustomResponse<String> updateCorp(
+            @RequestBody CorpReqDto.CorpUpdateReqDto corpUpdateReqDto
+    ) {
+        corpCommandService.updateCorp(corpUpdateReqDto);
+        return CustomResponse.onSuccess("기업 회원 정보 수정 완료");
+    }
 }

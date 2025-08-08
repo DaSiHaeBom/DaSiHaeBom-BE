@@ -12,4 +12,13 @@ public class CorpReqDto {
             String corpAddress
     ) {
     }
+
+    public record CorpUpdateReqDto(
+            String ceoName,
+            String phoneNumber,
+            String corpNumber,
+            String corpName,
+            String corpAddress
+    ) {
+    }
 }

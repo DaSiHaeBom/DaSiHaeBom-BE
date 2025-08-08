@@ -43,4 +43,22 @@ public class Corp extends BaseEntity {
     // User가 삭제될 때, Auth도 같이 삭제
     @OneToOne(mappedBy = "corp", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private CorpAuth corpAuth;
+
+
+    // 엔티티 수정 전용 메서드
+    public void changeCeoName(String ceoName) {
+        this.ceoName = ceoName;
+    }
+    public void changePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+    public void changeCorpNumber(String corpNumber) {
+        this.corpNumber = corpNumber;
+    }
+    public void changeCorpName(String corpName) {
+        this.corpName = corpName;
+    }
+    public void changeCorpAddress(String corpAddress) {
+        this.corpAddress = corpAddress;
+    }
 }
