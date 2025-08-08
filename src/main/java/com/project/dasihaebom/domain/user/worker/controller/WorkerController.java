@@ -24,6 +24,6 @@ public class WorkerController {
             @RequestBody WorkerReqDto.WorkerCreateReqDto workerCreateReqDto
     ) {
         workerCommandService.createWorker(workerCreateReqDto);
-        return CustomResponse.onSuccess("회원 가입 완료");
+        return CustomResponse.onSuccess("개인 회원 가입 완료");
     }
 }
