@@ -3,15 +3,21 @@ package com.project.dasihaebom.domain.user.corp.service.command;
 import com.project.dasihaebom.domain.auth.service.command.AuthCommandService;
 import com.project.dasihaebom.domain.user.corp.converter.CorpConverter;
 import com.project.dasihaebom.domain.user.corp.dto.request.CorpReqDto;
+import com.project.dasihaebom.domain.user.corp.dto.response.CorpResDto;
 import com.project.dasihaebom.domain.user.corp.entity.Corp;
 import com.project.dasihaebom.domain.user.corp.exception.CorpErrorCode;
 import com.project.dasihaebom.domain.user.corp.exception.CorpException;
 import com.project.dasihaebom.domain.user.corp.repository.CorpRepository;
+import com.project.dasihaebom.global.client.corpNumber.CorpNumberClient;
+import com.project.dasihaebom.global.client.corpNumber.dto.NtsCorpInfoResDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
+import static com.project.dasihaebom.global.constant.valid.MessageConstants.CORP_NUMBER_IS_NOT_REGISTERED;
 import static com.project.dasihaebom.global.util.UpdateUtils.updateIfChanged;
 
 @Slf4j
@@ -26,6 +32,9 @@ public class CorpCommandServiceImpl implements CorpCommandService {
 
     // Service
     private final AuthCommandService authCommandService;
+
+    // API Client
+    private final CorpNumberClient corpNumberClient;
 
 
     @Override
@@ -46,6 +55,23 @@ public class CorpCommandServiceImpl implements CorpCommandService {
         updateIfChanged(corpUpdateReqDto.corpNumber(), corp.getCorpNumber(), corp::changeCorpNumber);
         updateIfChanged(corpUpdateReqDto.corpName(), corp.getCorpName(), corp::changeCorpName);
         updateIfChanged(corpUpdateReqDto.corpAddress(), corp.getCorpAddress(), corp::changeCorpAddress);
+    }
+
+    @Override
+    public CorpResDto.CorpNumberValidResDto validCorpNumber(CorpReqDto.CorpNumberValidReqDto corpNumberValidReqDto) {
+
+        NtsCorpInfoResDto.CorpInfo corpInfoDto = corpNumberClient.getCorpInfo(corpNumberValidReqDto.corpNumber());
+        String corpTaxType = corpInfoDto.data().stream()
+                // 사업자 등록 번호는 하나만 입력하므로 가장 처음 요소
+                .findFirst()
+                // tax_type 찾아서 반환
+                .map(NtsCorpInfoResDto.CorpInfo.InfoItem::tax_type)
+                .orElseThrow(() -> new CorpException(CorpErrorCode.CORP_NUMBER_API_ERROR));
+
+        // 인증 성공 여부
+        boolean isValid = !Objects.equals(corpTaxType, CORP_NUMBER_IS_NOT_REGISTERED);
+
+        return CorpConverter.toCorpNumberValidResDto(corpNumberValidReqDto, isValid);
     }
 
     // TODO : 일단 미구현

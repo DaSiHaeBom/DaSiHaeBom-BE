@@ -27,4 +27,7 @@ public class MessageConstants {
 
     public static final String USER_WRONG_LOGIN_ID = "공백없는 5-16자리의 영문+숫자만 허용";
     public static final String USER_WRONG_CORP_NUMBER = "공백없는 숫자 10자리만 허용";
+
+    // CORP NUMBER API MESSAGE
+    public static final String CORP_NUMBER_IS_NOT_REGISTERED = "국세청에 등록되지 않은 사업자등록번호입니다.";
 }

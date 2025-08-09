@@ -57,4 +57,9 @@ public class CorpReqDto {
             String corpAddress
     ) {
     }
+
+    public record CorpNumberValidReqDto(
+            String corpNumber
+    ) {
+    }
 }

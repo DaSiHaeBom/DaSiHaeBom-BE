@@ -1,6 +1,7 @@
 package com.project.dasihaebom.domain.user.corp.controller;
 
 import com.project.dasihaebom.domain.user.corp.dto.request.CorpReqDto;
+import com.project.dasihaebom.domain.user.corp.dto.response.CorpResDto;
 import com.project.dasihaebom.domain.user.corp.repository.CorpRepository;
 import com.project.dasihaebom.domain.user.corp.service.command.CorpCommandService;
 import com.project.dasihaebom.global.apiPayload.CustomResponse;
@@ -12,14 +13,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/corps")
 @Tag(name = "Corp", description = "기업 유저 관련 API")
 public class CorpController {
 
     private final CorpCommandService corpCommandService;
 
     @Operation(summary = "기업 회원 가입")
-    @PostMapping("/corps")
+    @PostMapping()
     public CustomResponse<String> createCorp(
             @RequestBody @Valid CorpReqDto.CorpCreateReqDto corpCreateReqDto
     ) {
@@ -28,11 +29,19 @@ public class CorpController {
     }
 
     @Operation(summary = "기업 회원 정보 수정")
-    @PatchMapping("/corps")
+    @PatchMapping()
     public CustomResponse<String> updateCorp(
             @RequestBody @Valid CorpReqDto.CorpUpdateReqDto corpUpdateReqDto
     ) {
         corpCommandService.updateCorp(corpUpdateReqDto);
         return CustomResponse.onSuccess("기업 회원 정보 수정 완료");
+    }
+
+    @Operation(summary = "사업자 번호 유효성 검사")
+    @PostMapping("/business-validation")
+    public CustomResponse<CorpResDto.CorpNumberValidResDto> validCorpNumber(
+            @RequestBody CorpReqDto.CorpNumberValidReqDto corpNumberValidReqDto
+    ) {
+        return CustomResponse.onSuccess(corpCommandService.validCorpNumber(corpNumberValidReqDto));
     }
 }
