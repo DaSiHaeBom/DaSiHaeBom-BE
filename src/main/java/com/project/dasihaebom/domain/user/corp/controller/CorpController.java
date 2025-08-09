@@ -40,7 +40,7 @@ public class CorpController {
     @Operation(summary = "사업자 번호 유효성 검사")
     @PostMapping("/business-validation")
     public CustomResponse<CorpResDto.CorpNumberValidResDto> validCorpNumber(
-            @RequestBody CorpReqDto.CorpNumberValidReqDto corpNumberValidReqDto
+            @RequestBody @Valid CorpReqDto.CorpNumberValidReqDto corpNumberValidReqDto
     ) {
         return CustomResponse.onSuccess(corpCommandService.validCorpNumber(corpNumberValidReqDto));
     }

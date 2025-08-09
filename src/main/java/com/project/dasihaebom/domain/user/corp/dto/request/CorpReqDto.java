@@ -59,6 +59,8 @@ public class CorpReqDto {
     }
 
     public record CorpNumberValidReqDto(
+            @NotBlank(message = USER_BLANK_CORP_NUMBER)
+            @Pattern(regexp = USER_CORP_NUMBER_PATTERN, message = USER_WRONG_CORP_NUMBER)
             String corpNumber
     ) {
     }
