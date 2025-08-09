@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum WorkerErrorCode implements BaseErrorCode {
     // ErrorCode
-    WORKER_NOT_FOUND(HttpStatus.NOT_FOUND, "WORKER404", "회원을 찾을 수 없습니다."),
+
     ;
 
     private final HttpStatus httpStatus;

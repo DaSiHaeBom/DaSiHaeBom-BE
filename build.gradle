@@ -44,9 +44,6 @@ dependencies {
 
 	// MySQL
 	runtimeOnly 'com.mysql:mysql-connector-j'
-
-	// WebFlux
-	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {
