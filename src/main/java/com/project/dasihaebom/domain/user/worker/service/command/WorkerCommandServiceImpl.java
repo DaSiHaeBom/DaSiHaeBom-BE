@@ -7,7 +7,6 @@ import com.project.dasihaebom.domain.user.worker.entity.Worker;
 import com.project.dasihaebom.domain.user.worker.exception.WorkerErrorCode;
 import com.project.dasihaebom.domain.user.worker.exception.WorkerException;
 import com.project.dasihaebom.domain.user.worker.repository.WorkerRepository;
-import com.project.dasihaebom.global.util.UpdateUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +47,7 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
         // findById로 가져온 객체는 영속성 컨텍스트 안이라서 더티채킹 어쩌고저쩌고쏼라쏼라
         updateIfChanged(workerUpdateReqDto.phoneNumber(), worker.getPhoneNumber(), worker::changePhoneNumber);
         updateIfChanged(workerUpdateReqDto.username(), worker.getUsername(), worker::changeUsername);
-        updateIfChanged(workerUpdateReqDto.age(), worker.getAge(), worker::changeAge);
+        updateIfChanged(workerUpdateReqDto.birthDate(), worker.getBirthDate(), worker::changeBirthDate);
         updateIfChanged(workerUpdateReqDto.address(), worker.getAddress(), worker::changeAddress);
     }
 

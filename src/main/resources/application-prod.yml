@@ -14,3 +14,7 @@ spring:
     properties:
       hibernate:
         format_sql: true # 출력되는 SQL 쿼리를 보기 좋게 포맷팅
+
+  corp:
+    base-url: https://api.odcloud.kr/api/nts-businessman/v1/
+    api-key: ${NTS_API_SERVICE_KEY}

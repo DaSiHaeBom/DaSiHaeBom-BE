@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum CorpErrorCode implements BaseErrorCode {
     // ErrorCode
-    CORP_NOT_FOUND(HttpStatus.NOT_FOUND, "CORP404", "회원을 찾을 수 없습니다.")
+    CORP_NOT_FOUND(HttpStatus.NOT_FOUND, "CORP404", "회원을 찾을 수 없습니다."),
+    CORP_NUMBER_API_ERROR(HttpStatus.BAD_GATEWAY, "CORP502","사업자 번호 검증 API 오류"),
     ;
 
     private final HttpStatus httpStatus;
