@@ -7,4 +7,5 @@ public interface IntroductionCommandService {
 
     Answer createAnswer(Long workerId, Long questionId, AnswerReqDto.CreateAnswerReqDto request);
 
+    Answer updateAnswer(Long workerId, Long questionId, AnswerReqDto.UpdateAnswerReqDto request);
 }

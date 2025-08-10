@@ -1,5 +1,6 @@
 package com.project.dasihaebom.domain.introduction.service.command;
 
+import com.project.dasihaebom.domain.introduction.converter.IntroductionConverter;
 import com.project.dasihaebom.domain.introduction.dto.request.AnswerReqDto;
 import com.project.dasihaebom.domain.introduction.entity.Answer;
 import com.project.dasihaebom.domain.introduction.entity.Question;
@@ -12,7 +13,6 @@ import com.project.dasihaebom.domain.user.worker.exception.WorkerErrorCode;
 import com.project.dasihaebom.domain.user.worker.exception.WorkerException;
 import com.project.dasihaebom.domain.user.worker.repository.WorkerRepository;
 import jakarta.transaction.Transactional;
-import jdk.jshell.spi.ExecutionControl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,15 +39,26 @@ public class IntroductionCommandServiceImpl implements IntroductionCommandServic
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new IntroductionException(IntroductionErrorCode.QUESTION_NOT_FOUND));
 
-        // 3. 새로운 Answer 엔티티를 생성합니다.
-        var newAnswer = Answer.builder()
-                .content(request.content())
-                .worker(worker)
-                .question(question)
-                .build();
+        // 3. 새로운 Answer 엔티티를 생성
+        Answer newAnswer = IntroductionConverter.toAnswer(request, worker, question);
 
         // 4. 생성한 엔티티를 저장하고 반환합니다.
         return answerRepository.save(newAnswer);
     }
+
+    @Override
+    public Answer updateAnswer(Long workerId, Long questionId, AnswerReqDto.UpdateAnswerReqDto request) {
+        // 1. 수정할 Answer 엔티티를 DB에서 조회 없으면 예외를 발생
+        Answer answer = answerRepository.findByWorkerIdAndQuestionId(workerId, questionId)
+                .orElseThrow(() -> new IntroductionException(IntroductionErrorCode.ANSWER_NOT_FOUND));
+
+        // 2. 엔티티의 내용을 업데이트
+        answer.updateContent(request.content());
+
+        // 3. @Transactional에 의해 dirty checking이 일어나므로, save 호출 없이 자동으로 DB에 반영
+        return answer;
+    }
+
+
 
 }

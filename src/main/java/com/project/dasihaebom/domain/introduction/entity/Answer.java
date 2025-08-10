@@ -20,7 +20,7 @@ public class Answer extends BaseEntity {
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    // 연관관계 필드
+    //=== 연관관계 필드 ===
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Worker worker;
@@ -28,4 +28,10 @@ public class Answer extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
     private Question question;
+
+
+    //=== 엔티티 상태 변경 매서드 ===
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }
