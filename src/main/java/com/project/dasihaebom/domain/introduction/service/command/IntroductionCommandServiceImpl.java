@@ -84,7 +84,10 @@ public class IntroductionCommandServiceImpl implements IntroductionCommandServic
         String summaryPrompt = promptBuilder.buildSummaryPrompt(generatedFullText);
         String generatedSummary = gptService.generate(summaryPrompt);
 
-        // 4. 결과 저장
+        // 4. 이전 자기소개서 삭제
+        introductionRepository.deleteAllByWorkerId(workerId);
+
+        // 5. 결과 저장
         Worker worker = workerRepository.findById(workerId)
                 .orElseThrow(() -> new WorkerException(WorkerErrorCode.WORKER_NOT_FOUND));
 
