@@ -13,6 +13,7 @@ import com.project.dasihaebom.global.client.corpNumber.dto.NtsCorpInfoResDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -28,7 +29,7 @@ public class CorpCommandServiceImpl implements CorpCommandService {
 
     // Repo
     private final CorpRepository corpRepository;
-//    private final BCryptPasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     // Service
     private final AuthCommandService authCommandService;
@@ -74,9 +75,7 @@ public class CorpCommandServiceImpl implements CorpCommandService {
         return CorpConverter.toCorpNumberValidResDto(corpNumberValidReqDto, isValid);
     }
 
-    // TODO : 일단 미구현
     private String encodePassword(String rawPassword) {
-//        return passwordEncoder.encode(rawPassword);
-        return rawPassword;
+        return passwordEncoder.encode(rawPassword);
     }
 }

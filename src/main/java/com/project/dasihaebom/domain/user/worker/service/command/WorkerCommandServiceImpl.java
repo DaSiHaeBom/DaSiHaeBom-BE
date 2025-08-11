@@ -10,6 +10,7 @@ import com.project.dasihaebom.domain.user.worker.repository.WorkerRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static com.project.dasihaebom.global.util.UpdateUtils.updateIfChanged;
@@ -23,7 +24,7 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
 
     // Repo
     private final WorkerRepository workerRepository;
-//    private final BCryptPasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     // Service
     private final AuthCommandService authCommandService;
@@ -51,9 +52,7 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
         updateIfChanged(workerUpdateReqDto.address(), worker.getAddress(), worker::changeAddress);
     }
 
-    // TODO : 일단 미구현
     private String encodePassword(String rawPassword) {
-//        return passwordEncoder.encode(rawPassword);
-        return rawPassword;
+        return passwordEncoder.encode(rawPassword);
     }
 }
