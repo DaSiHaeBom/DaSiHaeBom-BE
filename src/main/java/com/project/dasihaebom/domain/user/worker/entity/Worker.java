@@ -43,8 +43,6 @@ public class Worker extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private LoginType loginType;
 
-    @Column(name = "ai_summary", nullable = true)
-    private String aiSummary;
 
     // User가 삭제되면 Auth도 삭제
     @OneToOne(mappedBy = "worker", cascade = CascadeType.REMOVE, orphanRemoval = true)

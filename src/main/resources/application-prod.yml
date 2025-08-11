@@ -18,3 +18,9 @@ spring:
   corp:
     base-url: https://api.odcloud.kr/api/nts-businessman/v1/
     api-key: ${NTS_API_SERVICE_KEY}
+
+gpt:
+  model: gpt-4.1-nano
+  api:
+    key: ${GPT_API_KEY}
+    url: https://api.openai.com/v1/chat/completions
