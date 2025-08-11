@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/corps")
+@RequestMapping("/api/v1/users/corps")
 @Tag(name = "Corp", description = "기업 유저 관련 API")
 public class CorpController {
 
@@ -29,7 +29,7 @@ public class CorpController {
     }
 
     @Operation(summary = "기업 회원 정보 수정")
-    @PatchMapping()
+    @PatchMapping("/me")
     public CustomResponse<String> updateCorp(
             @RequestBody @Valid CorpReqDto.CorpUpdateReqDto corpUpdateReqDto
     ) {
