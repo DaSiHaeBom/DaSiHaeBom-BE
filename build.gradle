@@ -55,6 +55,9 @@ dependencies {
 
 	// SECURITY
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// REDIS
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.named('test') {
