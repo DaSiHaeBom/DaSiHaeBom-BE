@@ -3,6 +3,7 @@ package com.project.dasihaebom.domain.introduction.converter;
 import com.project.dasihaebom.domain.introduction.dto.request.AnswerReqDto;
 import com.project.dasihaebom.domain.introduction.dto.response.AnswerResDto;
 import com.project.dasihaebom.domain.introduction.entity.Answer;
+import com.project.dasihaebom.domain.introduction.entity.Introduction;
 import com.project.dasihaebom.domain.introduction.entity.Question;
 import com.project.dasihaebom.domain.user.worker.entity.Worker;
 import lombok.AccessLevel;
@@ -38,4 +39,13 @@ public class IntroductionConverter {
                 .map(IntroductionConverter::toAnswerDetailDTO)
                 .collect(Collectors.toList());
     } // 조회 리스트 컨트롤러 컨버터
+
+    public static AnswerResDto.GeneratedIntroductionDTO toGeneratedIntroductionDTO(Introduction introduction) {
+        return AnswerResDto.GeneratedIntroductionDTO.builder() // ⬅️ AnswerResDto 사용
+                .introductionId(introduction.getId())
+                .fullText(introduction.getFullText())
+                .summary(introduction.getSummary())
+                .createdAt(introduction.getCreatedAt())
+                .build();
+    }
 }

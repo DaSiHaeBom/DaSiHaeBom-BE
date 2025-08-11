@@ -19,9 +19,12 @@ public class AnswerResDto {
             LocalDateTime updatedAt
     ) {}
 
-    @Schema(description = "ai자기소개서 응답 dto")
+    @Schema(description = "생성된 자기소개서 응답 DTO")
     @Builder
-    public record IntroductionResponseDTO(
-            String content
+    public record GeneratedIntroductionDTO(
+            Long introductionId,
+            String fullText,
+            String summary,
+            LocalDateTime createdAt
     ) {}
 }
