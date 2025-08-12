@@ -40,8 +40,6 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
         } catch (DataIntegrityViolationException e) {
             throw new WorkerException(WorkerErrorCode.WORKER_DUPLICATED);
         }
-
-        log.info("Worker created successfully");
     }
 
     @Override
