@@ -91,7 +91,7 @@ public class ValidationServiceImpl implements ValidationService {
         return "[다시해봄]\n" +
                 "본인확인 인증번호\n" +
                 "\n" +
-                "[" + code + "]를 화면에 입력해주세요.\n" +
+                "[" + code + "]를 화면에 입력해 주세요.\n" +
                 "인증번호는 3분간 유효합니다.";
     }
 }
