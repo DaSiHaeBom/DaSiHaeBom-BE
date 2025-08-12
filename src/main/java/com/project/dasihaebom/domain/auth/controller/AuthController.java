@@ -47,7 +47,7 @@ public class AuthController {
     }
 
     @Operation(summary = "임시 비밀번호 발급")
-    @PostMapping("me/temp-password")
+    @PostMapping("/temp-password")
     public CustomResponse<String> resetPassword(
             @RequestBody @Valid AuthReqDto.AuthTempPasswordReqDto authTempPasswordReqDto
     ) {
