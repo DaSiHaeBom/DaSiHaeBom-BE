@@ -34,4 +34,8 @@ public class MessageConstants {
 
     // CORP NUMBER API MESSAGE
     public static final String CORP_NUMBER_IS_NOT_REGISTERED = "국세청에 등록되지 않은 사업자등록번호입니다.";
+
+    // PHONE NUMBER CONFIRMATION RESULT MESSAGE
+    public static final String CODE_CONFIRMATION_IS_SUCCESS = "인증 번호 검증 성공!";
+    public static final String CODE_CONFIRMATION_IS_FAILURE = "인증 번호 검증 실패";
 }

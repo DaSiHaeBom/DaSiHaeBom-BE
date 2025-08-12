@@ -14,6 +14,10 @@ import java.security.SecureRandom;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import static com.project.dasihaebom.global.constant.redis.RedisConstants.*;
+import static com.project.dasihaebom.global.constant.valid.MessageConstants.CODE_CONFIRMATION_IS_FAILURE;
+import static com.project.dasihaebom.global.constant.valid.MessageConstants.CODE_CONFIRMATION_IS_SUCCESS;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -29,7 +33,7 @@ public class ValidationServiceImpl implements ValidationService {
         // 휴대폰 번호를 가져옴
         final String phoneNumber = phoneNumberCodeReqDto.phoneNumber();
         // 해당 휴대폰 번호로 인증 번호를 보낸 적이 있다면 1분 대기
-        if (redisUtils.hasKey(phoneNumber + ":cooldown")) {
+        if (redisUtils.hasKey(phoneNumber + KEY_COOLDOWN_SUFFIX)) {
             throw new ValidationException(ValidationErrorCode.CODE_COOL_DOWN);
         }
         // 6자리 난수 코드를 받음
@@ -46,9 +50,9 @@ public class ValidationServiceImpl implements ValidationService {
 
         // 성공 시
         // 레디스에 인증 정보 저장
-        redisUtils.save(phoneNumber + ":code", code, 300000L, TimeUnit.MILLISECONDS);
+        redisUtils.save(phoneNumber + KEY_CODE_SUFFIX, code, CODE_EXP_TIME, TimeUnit.MILLISECONDS);
         // 쿨다운 키 저장 (연속 인증 방지)
-        redisUtils.save(phoneNumber + ":cooldown", "cooldown...", 60000L, TimeUnit.MILLISECONDS);
+        redisUtils.save(phoneNumber + KEY_COOLDOWN_SUFFIX, VALUE_COOLDOWN, COOLDOWN_EXP_TIME, TimeUnit.MILLISECONDS);
 
     }
 
@@ -60,14 +64,14 @@ public class ValidationServiceImpl implements ValidationService {
         final String code = phoneNumberValidationReqDto.code();
 
         // 레디스에 저장된 인증 코드
-        final String storedCode = redisUtils.get(phoneNumber + ":code");
+        final String storedCode = redisUtils.get(phoneNumber + KEY_CODE_SUFFIX);
         // 비교
         if (!Objects.equals(code, storedCode)) {
-            return "인증 번호 검증 실패";
+            return CODE_CONFIRMATION_IS_FAILURE;
         }
         // 성공시 회원 가입을 위해 삭제
-        redisUtils.delete(phoneNumber + ":code");
-        return "인증 번호 검증 성공!";
+        redisUtils.delete(phoneNumber + KEY_CODE_SUFFIX);
+        return CODE_CONFIRMATION_IS_SUCCESS;
     }
 
     // 6자리 난수 생성기
@@ -77,7 +81,6 @@ public class ValidationServiceImpl implements ValidationService {
     }
 
     private String createMessageWithCode(String code) {
-
         return "[다시해봄]\n" +
                 "본인확인 인증번호\n" +
                 "\n" +
