@@ -37,7 +37,7 @@ public class AuthController {
     }
 
     @Operation(summary = "비밀번호 변경")
-    @PostMapping("/auth/me/password")
+    @PostMapping("/me/password")
     public CustomResponse<String> changePassword(
             @RequestBody @Valid AuthReqDto.AuthPasswordChangeReqDto authPasswordChangeReqDto,
             @AuthenticationPrincipal CurrentUser currentUser
