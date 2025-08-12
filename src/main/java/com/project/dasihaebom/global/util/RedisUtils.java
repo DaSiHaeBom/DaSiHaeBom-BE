@@ -18,7 +18,7 @@ public class RedisUtils<T> {
     }
 
     public boolean hasKey(String key) {
-        return Objects.equals(Boolean.TRUE, redisTemplate.opsForValue().get(key));
+        return Objects.equals(Boolean.TRUE, redisTemplate.hasKey(key));
     }
 
     public T get(String key) {
