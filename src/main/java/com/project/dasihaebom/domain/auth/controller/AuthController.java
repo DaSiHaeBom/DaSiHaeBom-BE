@@ -1,10 +1,14 @@
 package com.project.dasihaebom.domain.auth.controller;
 
 import com.project.dasihaebom.domain.auth.dto.request.AuthReqDto;
+import com.project.dasihaebom.domain.auth.service.command.AuthCommandService;
 import com.project.dasihaebom.global.apiPayload.CustomResponse;
+import com.project.dasihaebom.global.security.userdetails.CurrentUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/auth")
 @Tag(name = "Auth", description = "Auth 관련 API")
 public class AuthController {
+
+    private final AuthCommandService authCommandService;
 
     @Operation(summary = "로그인", description = "아이디와 비밀번호를 입력하면 access / refresh 쿠키 생성")
     @PostMapping("/login")
@@ -28,5 +34,15 @@ public class AuthController {
     @PostMapping("logout")
     public CustomResponse<?> logout() {
         return null;
+    }
+
+    @Operation(summary = "비밀번호 변경")
+    @PostMapping("/auth/me/password")
+    public CustomResponse<String> changePassword(
+            @RequestBody @Valid AuthReqDto.AuthPasswordChangeReqDto authPasswordChangeReqDto,
+            @AuthenticationPrincipal CurrentUser currentUser
+    ) {
+        authCommandService.changePassword(authPasswordChangeReqDto, currentUser.getLoginId());
+        return CustomResponse.onSuccess("비밀번호 변경이 완료되었습니다.");
     }
 }
