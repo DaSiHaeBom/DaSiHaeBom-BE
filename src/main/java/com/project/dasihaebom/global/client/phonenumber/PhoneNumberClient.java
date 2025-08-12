@@ -22,7 +22,7 @@ public class PhoneNumberClient {
     @Value("${spring.message.callback}") String callback;
     @Value("${spring.message.api-key}") String apiKey;
 
-    public void sendSms(String msg, String dstaddr) {
+    public void sendCode(String msg, String dstaddr) {
         // application/x-www-form-urlencoded 라는 전송 형식에 맞는 키-값 폼 컨테이너 생성
         MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
         // 발급 받은 API 키를 폼에 추가

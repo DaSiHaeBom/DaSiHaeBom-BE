@@ -43,7 +43,7 @@ public class ValidationServiceImpl implements ValidationService {
 
         // 문자 전송 실패시 예외 처리
 //        try {
-//            phoneNumberClient.sendSms(msg, phoneNumber);
+//            phoneNumberClient.sendCode(msg, phoneNumber);
 //        } catch (Exception e) {
 //            throw new ValidationException(ValidationErrorCode.CODE_SEND_ERROR);
 //        }
