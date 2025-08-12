@@ -18,6 +18,9 @@ public class Auth extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "loginId", nullable = false, unique = true)
+    private String loginId;
+
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -31,4 +34,8 @@ public class Auth extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "worker_id", unique = true)
     private Worker worker;
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
 }
