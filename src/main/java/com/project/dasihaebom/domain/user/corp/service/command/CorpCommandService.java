@@ -7,7 +7,7 @@ public interface CorpCommandService {
 
     void createCorp(CorpReqDto.CorpCreateReqDto corpCreateReqDto);
 
-    void updateCorp(CorpReqDto.CorpUpdateReqDto corpUpdateReqDto);
+    void updateCorp(CorpReqDto.CorpUpdateReqDto corpUpdateReqDto, long corpId);
 
     CorpResDto.CorpNumberValidResDto validCorpNumber(CorpReqDto.CorpNumberValidReqDto corpNumberValidReqDto);
 }

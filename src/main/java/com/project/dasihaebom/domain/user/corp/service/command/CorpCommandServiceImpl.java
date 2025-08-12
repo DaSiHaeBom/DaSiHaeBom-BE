@@ -51,8 +51,8 @@ public class CorpCommandServiceImpl implements CorpCommandService {
     }
 
     @Override
-    public void updateCorp(CorpReqDto.CorpUpdateReqDto corpUpdateReqDto) {
-        Corp corp = corpRepository.findById(1L)
+    public void updateCorp(CorpReqDto.CorpUpdateReqDto corpUpdateReqDto, long corpId) {
+        Corp corp = corpRepository.findById(corpId)
                 .orElseThrow(() -> new CorpException(CorpErrorCode.CORP_NOT_FOUND));
 
         updateIfChanged(corpUpdateReqDto.ceoName(), corp.getCorpName(), corp::changeCeoName);

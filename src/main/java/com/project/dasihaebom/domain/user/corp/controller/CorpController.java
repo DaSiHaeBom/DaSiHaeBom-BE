@@ -5,10 +5,12 @@ import com.project.dasihaebom.domain.user.corp.dto.response.CorpResDto;
 import com.project.dasihaebom.domain.user.corp.repository.CorpRepository;
 import com.project.dasihaebom.domain.user.corp.service.command.CorpCommandService;
 import com.project.dasihaebom.global.apiPayload.CustomResponse;
+import com.project.dasihaebom.global.security.userdetails.CurrentUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,9 +33,10 @@ public class CorpController {
     @Operation(summary = "기업 회원 정보 수정")
     @PatchMapping("/me")
     public CustomResponse<String> updateCorp(
-            @RequestBody @Valid CorpReqDto.CorpUpdateReqDto corpUpdateReqDto
-    ) {
-        corpCommandService.updateCorp(corpUpdateReqDto);
+            @RequestBody @Valid CorpReqDto.CorpUpdateReqDto corpUpdateReqDto,
+            @AuthenticationPrincipal CurrentUser currentUser
+            ) {
+        corpCommandService.updateCorp(corpUpdateReqDto, currentUser.getId());
         return CustomResponse.onSuccess("기업 회원 정보 수정 완료");
     }
 
