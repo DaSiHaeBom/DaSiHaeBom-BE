@@ -1,6 +1,6 @@
 package com.project.dasihaebom.domain.user.worker.entity;
 
-import com.project.dasihaebom.domain.auth.entity.WorkerAuth;
+import com.project.dasihaebom.domain.auth.entity.Auth;
 import com.project.dasihaebom.domain.user.LoginType;
 import com.project.dasihaebom.domain.user.Role;
 import com.project.dasihaebom.global.entity.BaseEntity;
@@ -19,7 +19,7 @@ public class Worker extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "phone_number", nullable = false)
+    @Column(name = "phone_number", nullable = false, unique = true)
     private String phoneNumber;
 
     @Column(name = "username", nullable = false)
@@ -46,7 +46,7 @@ public class Worker extends BaseEntity {
 
     // User가 삭제되면 Auth도 삭제
     @OneToOne(mappedBy = "worker", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private WorkerAuth workerAuth;
+    private Auth auth;
 
     // 엔티티 수정 전용 메서드
     public void changePhoneNumber(String phoneNumber){

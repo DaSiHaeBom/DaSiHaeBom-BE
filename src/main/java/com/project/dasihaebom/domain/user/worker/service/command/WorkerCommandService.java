@@ -6,5 +6,5 @@ public interface WorkerCommandService {
 
     void createWorker(WorkerReqDto.WorkerCreateReqDto workerCreateReqDto);
 
-    void updateWorker(WorkerReqDto.WorkerUpdateReqDto workerUpdateReqDto);
+    void updateWorker(WorkerReqDto.WorkerUpdateReqDto workerUpdateReqDto, long workerId);
 }

@@ -10,6 +10,7 @@ import com.project.dasihaebom.domain.user.worker.repository.WorkerRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,16 +34,17 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
     @Override
     public void createWorker(WorkerReqDto.WorkerCreateReqDto workerCreateReqDto) {
         Worker worker = WorkerConverter.toWorker(workerCreateReqDto);
-        workerRepository.save(worker);
-
-        authCommandService.savePassword(worker, encodePassword(workerCreateReqDto.password()));
-
-        log.info("Worker created successfully");
+        try {
+            workerRepository.save(worker);
+            authCommandService.savePassword(worker, encodePassword(workerCreateReqDto.password()));
+        } catch (DataIntegrityViolationException e) {
+            throw new WorkerException(WorkerErrorCode.WORKER_DUPLICATED);
+        }
     }
 
     @Override
-    public void updateWorker(WorkerReqDto.WorkerUpdateReqDto workerUpdateReqDto) {
-        Worker worker = workerRepository.findById(1L)
+    public void updateWorker(WorkerReqDto.WorkerUpdateReqDto workerUpdateReqDto, long workerId) {
+        Worker worker = workerRepository.findById(workerId)
                 .orElseThrow(() -> new WorkerException(WorkerErrorCode.WORKER_NOT_FOUND));
 
         // findById로 가져온 객체는 영속성 컨텍스트 안이라서 더티채킹 어쩌고저쩌고쏼라쏼라

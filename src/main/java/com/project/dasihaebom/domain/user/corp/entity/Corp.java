@@ -1,11 +1,10 @@
 package com.project.dasihaebom.domain.user.corp.entity;
 
-import com.project.dasihaebom.domain.auth.entity.CorpAuth;
+import com.project.dasihaebom.domain.auth.entity.Auth;
 import com.project.dasihaebom.domain.user.Role;
 import com.project.dasihaebom.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.apache.logging.log4j.util.Lazy;
 
 @Entity
 @Getter
@@ -19,16 +18,16 @@ public class Corp extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "login_id", nullable = false)
+    @Column(name = "login_id", nullable = false, unique = true)
     private String loginId;
 
     @Column(name = "ceo_name", nullable = false)
     private String ceoName;
 
-    @Column(name = "phone_number", nullable = false)
+    @Column(name = "phone_number", nullable = false, unique = true)
     private String phoneNumber;
 
-    @Column(name = "corp_number", nullable = false)
+    @Column(name = "corp_number", nullable = false, unique = true)
     private String corpNumber;
 
     @Column(name = "corp_name", nullable = false)
@@ -38,11 +37,12 @@ public class Corp extends BaseEntity {
     private String corpAddress;
 
     @Column(name = "role", nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     // User가 삭제될 때, Auth도 같이 삭제
     @OneToOne(mappedBy = "corp", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private CorpAuth corpAuth;
+    private Auth auth;
 
 
     // 엔티티 수정 전용 메서드

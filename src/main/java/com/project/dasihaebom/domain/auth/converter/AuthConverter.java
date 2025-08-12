@@ -1,7 +1,6 @@
 package com.project.dasihaebom.domain.auth.converter;
 
-import com.project.dasihaebom.domain.auth.entity.CorpAuth;
-import com.project.dasihaebom.domain.auth.entity.WorkerAuth;
+import com.project.dasihaebom.domain.auth.entity.Auth;
 import com.project.dasihaebom.domain.user.corp.entity.Corp;
 import com.project.dasihaebom.domain.user.worker.entity.Worker;
 import lombok.AccessLevel;
@@ -11,8 +10,8 @@ import lombok.NoArgsConstructor;
 public class AuthConverter {
 
     // Worker ========================================================
-    public static WorkerAuth toWorkerAuth(String encodedPassword, Worker worker) {
-        return WorkerAuth.builder()
+    public static Auth toWorkerAuth(String encodedPassword, Worker worker) {
+        return Auth.builder()
                 .password(encodedPassword)
                 .isTemp(false)
                 .worker(worker)
@@ -20,8 +19,8 @@ public class AuthConverter {
     }
 
     // Corp ==========================================================
-    public static CorpAuth toCorpAuth(String encodedPassword, Corp corp) {
-        return CorpAuth.builder()
+    public static Auth toCorpAuth(String encodedPassword, Corp corp) {
+        return Auth.builder()
                 .password(encodedPassword)
                 .isTemp(false)
                 .corp(corp)
