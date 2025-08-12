@@ -25,7 +25,7 @@ public class MessageConstants {
     public static final String USER_WRONG_USERNAME = "공백없는 2자리 이상의 한글만 허용";
     public static final String USER_WRONG_BIRTHDATE = "공백없는 숫자 6자리만 허용";
 
-    public static final String USER_WRONG_LOGIN_ID = "공백없는 5-16자리의 영문+숫자만 허용";
+    public static final String USER_WRONG_LOGIN_ID = "공백없는 5-16자리의 영문+숫자만 허용, 숫자로만 이루어진 아이디 사용 불가";
     public static final String USER_WRONG_CORP_NUMBER = "공백없는 숫자 10자리만 허용";
 
     // CORP NUMBER API MESSAGE
