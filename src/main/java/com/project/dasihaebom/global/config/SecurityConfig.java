@@ -95,4 +95,31 @@ public class SecurityConfig {
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder(){return new BCryptPasswordEncoder();}
+
+//    @Bean
+//    public JwtAuthorizationFilter jwtAuthorizationFilter(JwtUtil jwtUtil, RedisUtils<String> redisUtils, List<RequestMatcher> publicMatchers) {
+//        // /** /* {var} 같은 패턴 문자열을 파싱해 쓸 수 있게 해주는 파서 생성
+//        PathPatternParser parser = new PathPatternParser();
+////        // 요청에서 컨텍스트 경로를 제외한 실제 경로를 뽑아내기 위한 헬퍼
+//        UrlPathHelper urlPathHelper = new UrlPathHelper();
+//
+//        // SecurityConfig에 선언한 퍼블릭 URL 패턴 배열을 스트림으로 변환
+//        this.publicMatchers = Arrays.stream(SecurityConfig.allowUrl)
+//                // 각 패턴 문자열마다 Matcher 하나씩 만든다
+//                .map(pattern -> {
+//                    // 문자열 패턴을 PathPattern 객체로 변환
+//                    PathPattern pathPattern = parser.parse(pattern);
+//                    // RequestMatcher 구현체 생성
+//                    return (RequestMatcher) request -> {
+//                        // 현재 요청의 애플리케이션 기준 경로 (localhost:8080/myapp/api/v1... -> api/v1...)
+//                        String path = urlPathHelper.getPathWithinApplication(request);
+////                        String path = request.getRequestURI();
+//                        // 요청 경로를 PathContainer로 감싸고, 패턴과 매칭여부를 반환 -> true : public URL
+//                        return pathPattern.matches(PathContainer.parsePath(path));
+//                    };
+//                })
+//                // 불변 리스트로 모아 publicMatchers에 저장
+//                .toList();
+//        return new JwtAuthorizationFilter(jwtUtil, redisUtils, publicMatchers);
+//    }
 }
