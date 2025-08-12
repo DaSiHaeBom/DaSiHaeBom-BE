@@ -10,6 +10,7 @@ import com.project.dasihaebom.domain.user.worker.repository.WorkerRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +34,12 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
     @Override
     public void createWorker(WorkerReqDto.WorkerCreateReqDto workerCreateReqDto) {
         Worker worker = WorkerConverter.toWorker(workerCreateReqDto);
-        workerRepository.save(worker);
-
-        authCommandService.savePassword(worker, encodePassword(workerCreateReqDto.password()));
+        try {
+            workerRepository.save(worker);
+            authCommandService.savePassword(worker, encodePassword(workerCreateReqDto.password()));
+        } catch (DataIntegrityViolationException e) {
+            throw new WorkerException(WorkerErrorCode.WORKER_DUPLICATED);
+        }
 
         log.info("Worker created successfully");
     }
