@@ -122,7 +122,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
 
         if (failed instanceof BadCredentialsException) {
             errorCode = String.valueOf(HttpStatus.UNAUTHORIZED.value());
-            errorMessage = "잘못된 정보입니다.";
+            errorMessage = "계정을 찾을 수 없습니다. 아이디 또는 비밀번호를 확인해주세요";
         } else if (failed instanceof LockedException) {
             errorCode = String.valueOf(HttpStatus.LOCKED.value());
             errorMessage = "계정이 잠금 상태입니다.";

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Auth", description = "Auth 관련 API")
 public class AuthController {
 
-    @Operation(summary = "로그인", description = "현재 쿠키 구현은 되어 있지만 스웨거에서 사용하기 위해 헤더 토큰 방식만 적용 <br> 쿠키는 Postman으로 해야 함")
+    @Operation(summary = "로그인", description = "아이디와 비밀번호를 입력하면 access / refresh 쿠키 생성")
     @PostMapping("/login")
     public CustomResponse<?> Login(
             @RequestBody AuthReqDto.AuthLoginDto authLoginDto

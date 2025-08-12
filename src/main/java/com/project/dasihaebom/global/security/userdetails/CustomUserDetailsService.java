@@ -12,6 +12,7 @@ import com.project.dasihaebom.domain.user.worker.entity.Worker;
 import com.project.dasihaebom.domain.user.worker.repository.WorkerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -39,7 +40,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (workerOpt.isPresent()) {
             Worker worker = workerOpt.get();
             WorkerAuth workerAuth = workerAuthRepository.findByWorker(worker)
-                    .orElseThrow(() -> new AuthException(AuthErrorCode.AUTH_NOT_FOUND));
+                    .orElseThrow(() -> new UsernameNotFoundException("개인 사용자 없음"));
             return new CustomUserDetails(worker.getId(), worker.getPhoneNumber(), workerAuth.getPassword(), worker.getRole());
         }
 
@@ -48,11 +49,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (corpOpt.isPresent()) {
             Corp corp = corpOpt.get();
             CorpAuth corpAuth = corpAuthRepository.findByCorp(corp)
-                    .orElseThrow(() -> new AuthException(AuthErrorCode.AUTH_NOT_FOUND));
+                    .orElseThrow(() -> new UsernameNotFoundException("기업 사용자 없음"));
             return new CustomUserDetails(corp.getId(), corp.getLoginId(), corpAuth.getPassword(), corp.getRole());
         }
 
         // 아무것도 찾지 못했을 때
-        throw new AuthException(AuthErrorCode.AUTH_NOT_FOUND);
+        throw new UsernameNotFoundException("사용자 없음");
     }
 }
