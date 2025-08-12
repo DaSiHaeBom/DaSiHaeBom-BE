@@ -23,4 +23,10 @@ public class AuthController {
     ) {
         return null;
     }
+
+    @Operation(summary = "로그아웃", description = "access / refresh 쿠키를 삭제합니다.")
+    @PostMapping("logout")
+    public CustomResponse<?> logout() {
+        return null;
+    }
 }

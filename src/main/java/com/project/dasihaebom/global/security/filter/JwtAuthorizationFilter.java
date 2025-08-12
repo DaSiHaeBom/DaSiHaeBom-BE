@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 import static com.project.dasihaebom.global.util.CookieUtils.createJwtCookies;
+import static com.project.dasihaebom.global.util.CookieUtils.getTokenFromCookies;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -193,23 +194,4 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         log.info("[ JwtAuthorizationFilter ] 인증 객체 저장 완료");
     }
 
-    private String getTokenFromCookies(HttpServletRequest request, String cookieName) {
-        log.info("쿠키에서 토큰을 추출하기 위해 쿠키를 검색합니다.");
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if (cookie.getName().equals(cookieName)) {
-                    log.info("accessToken 쿠키가 존재합니다.");
-                    return cookie.getValue();
-                }
-            }
-
-            log.warn("사용 가능한 쿠키가 존재하지 않습니다.");
-            log.warn("현재 쿠키 목록");
-            for (Cookie cookie : request.getCookies()) {
-                log.warn(" - {}", cookie.getName());
-            }
-            log.warn("accessToken 쿠키가 존재하지 않습니다.");
-        }
-        return null;
-    }
 }

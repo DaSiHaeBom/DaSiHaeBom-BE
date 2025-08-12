@@ -5,6 +5,8 @@ import com.project.dasihaebom.global.security.exception.JwtAuthenticationEntryPo
 import com.project.dasihaebom.global.security.filter.CustomLoginFilter;
 import com.project.dasihaebom.global.security.exception.JwtAccessDeniedHandler;
 import com.project.dasihaebom.global.security.filter.JwtAuthorizationFilter;
+import com.project.dasihaebom.global.security.handler.CustomLogoutHandler;
+import com.project.dasihaebom.global.security.handler.CustomLogoutSuccessHandler;
 import com.project.dasihaebom.global.security.utils.JwtUtil;
 import com.project.dasihaebom.global.util.RedisUtils;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,8 @@ public class SecurityConfig {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final RedisUtils<String> redisUtils;
+    private final CustomLogoutHandler jwtLogoutHandler;
+    private final CustomLogoutSuccessHandler jwtLogoutSuccessHandler;
 
 
     //인증이 필요하지 않은 url
@@ -76,6 +80,13 @@ public class SecurityConfig {
                 // TODO : CSRF 토큰 + SameSite + Origin 검증
                 // CSRF 설정 (JWT를 헤더에 넣으면 필요 없는데 쿠키는 해야함)
                 .csrf(AbstractHttpConfigurer::disable)
+
+                // logout
+                .logout(logout -> logout
+                        .logoutUrl("/api/v1/auth/logout")
+                        .addLogoutHandler(jwtLogoutHandler)
+                        .logoutSuccessHandler(jwtLogoutSuccessHandler)
+                )
 
                 // 예외 처리 핸들러 설정
                 .exceptionHandling(exceptionHandling -> exceptionHandling
