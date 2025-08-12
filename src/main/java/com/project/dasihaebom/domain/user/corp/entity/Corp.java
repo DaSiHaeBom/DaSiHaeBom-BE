@@ -18,16 +18,16 @@ public class Corp extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "login_id", nullable = false)
+    @Column(name = "login_id", nullable = false, unique = true)
     private String loginId;
 
     @Column(name = "ceo_name", nullable = false)
     private String ceoName;
 
-    @Column(name = "phone_number", nullable = false)
+    @Column(name = "phone_number", nullable = false, unique = true)
     private String phoneNumber;
 
-    @Column(name = "corp_number", nullable = false)
+    @Column(name = "corp_number", nullable = false, unique = true)
     private String corpNumber;
 
     @Column(name = "corp_name", nullable = false)

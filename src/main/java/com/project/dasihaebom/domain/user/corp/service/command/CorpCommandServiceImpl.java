@@ -13,6 +13,7 @@ import com.project.dasihaebom.global.client.corpNumber.dto.NtsCorpInfoResDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -41,9 +42,12 @@ public class CorpCommandServiceImpl implements CorpCommandService {
     @Override
     public void createCorp(CorpReqDto.CorpCreateReqDto corpCreateReqDto) {
         Corp corp = CorpConverter.toCorp(corpCreateReqDto);
-        corpRepository.save(corp);
-
-        authCommandService.savePassword(corp, encodePassword(corpCreateReqDto.password()));
+        try {
+            corpRepository.save(corp);
+            authCommandService.savePassword(corp, encodePassword(corpCreateReqDto.password()));
+        } catch (DataIntegrityViolationException e) {
+            throw new CorpException(CorpErrorCode.CORP_DUPLICATED);
+        }
     }
 
     @Override
