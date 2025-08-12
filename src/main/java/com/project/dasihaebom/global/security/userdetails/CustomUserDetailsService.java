@@ -1,8 +1,7 @@
 package com.project.dasihaebom.global.security.userdetails;
 
 import com.project.dasihaebom.domain.auth.entity.Auth;
-import com.project.dasihaebom.domain.auth.repository.CorpAuthRepository;
-import com.project.dasihaebom.domain.auth.repository.WorkerAuthRepository;
+import com.project.dasihaebom.domain.auth.repository.AuthRepository;
 import com.project.dasihaebom.domain.user.corp.entity.Corp;
 import com.project.dasihaebom.domain.user.corp.repository.CorpRepository;
 import com.project.dasihaebom.domain.user.worker.entity.Worker;
@@ -23,8 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final WorkerRepository workerRepository;
     private final CorpRepository corpRepository;
-    private final WorkerAuthRepository workerAuthRepository;
-    private final CorpAuthRepository corpAuthRepository;
+    private final AuthRepository authRepository;
 
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
@@ -35,7 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<Worker> workerOpt = workerRepository.findByPhoneNumber(userId);
         if (workerOpt.isPresent()) {
             Worker worker = workerOpt.get();
-            Auth workerAuth = workerAuthRepository.findByWorker(worker)
+            Auth workerAuth = authRepository.findByWorker(worker)
                     .orElseThrow(() -> new UsernameNotFoundException("개인 사용자 없음"));
             return new CustomUserDetails(worker.getId(), worker.getPhoneNumber(), workerAuth.getPassword(), worker.getRole());
         }
@@ -44,7 +42,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<Corp> corpOpt = corpRepository.findByLoginId(userId);
         if (corpOpt.isPresent()) {
             Corp corp = corpOpt.get();
-            Auth corpAuth = corpAuthRepository.findByCorp(corp)
+            Auth corpAuth = authRepository.findByCorp(corp)
                     .orElseThrow(() -> new UsernameNotFoundException("기업 사용자 없음"));
             return new CustomUserDetails(corp.getId(), corp.getLoginId(), corpAuth.getPassword(), corp.getRole());
         }

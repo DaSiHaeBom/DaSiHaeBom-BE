@@ -41,7 +41,7 @@ public class Corp extends BaseEntity {
     private Role role;
 
     // User가 삭제될 때, Auth도 같이 삭제
-    @OneToOne(mappedBy = "corp", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToOne(mappedBy = "corp", cascade = CascadeType.ALL, orphanRemoval = true)
     private Auth auth;
 
 

@@ -12,6 +12,7 @@ public class AuthConverter {
     // Worker ========================================================
     public static Auth toWorkerAuth(String encodedPassword, Worker worker) {
         return Auth.builder()
+                .loginId(worker.getPhoneNumber())
                 .password(encodedPassword)
                 .isTemp(false)
                 .worker(worker)
@@ -21,6 +22,7 @@ public class AuthConverter {
     // Corp ==========================================================
     public static Auth toCorpAuth(String encodedPassword, Corp corp) {
         return Auth.builder()
+                .loginId(corp.getLoginId())
                 .password(encodedPassword)
                 .isTemp(false)
                 .corp(corp)
