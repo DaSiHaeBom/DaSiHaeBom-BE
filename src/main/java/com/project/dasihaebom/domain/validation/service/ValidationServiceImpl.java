@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -37,11 +38,11 @@ public class ValidationServiceImpl implements ValidationService {
         final String msg = createMessageWithCode(code);
 
         // 문자 전송 실패시 예외 처리
-        try {
-            phoneNumberClient.sendSms(msg, phoneNumber);
-        } catch (Exception e) {
-            throw new ValidationException(ValidationErrorCode.CODE_SEND_ERROR);
-        }
+//        try {
+//            phoneNumberClient.sendSms(msg, phoneNumber);
+//        } catch (Exception e) {
+//            throw new ValidationException(ValidationErrorCode.CODE_SEND_ERROR);
+//        }
 
         // 성공 시
         // 레디스에 인증 정보 저장
@@ -49,6 +50,24 @@ public class ValidationServiceImpl implements ValidationService {
         // 쿨다운 키 저장 (연속 인증 방지)
         redisUtils.save(phoneNumber + ":cooldown", "cooldown...", 60000L, TimeUnit.MILLISECONDS);
 
+    }
+
+    @Override
+    public String verifyCode(ValidationReqDto.PhoneNumberValidationReqDto phoneNumberValidationReqDto) {
+        // 핸드폰 번호
+        final String phoneNumber = phoneNumberValidationReqDto.phoneNumber();
+        // 사욪자가 입력한 인증 코드
+        final String code = phoneNumberValidationReqDto.code();
+
+        // 레디스에 저장된 인증 코드
+        final String storedCode = redisUtils.get(phoneNumber + ":code");
+        // 비교
+        if (!Objects.equals(code, storedCode)) {
+            return "인증 번호 검증 실패";
+        }
+        // 성공시 회원 가입을 위해 삭제
+        redisUtils.delete(phoneNumber + ":code");
+        return "인증 번호 검증 성공!";
     }
 
     // 6자리 난수 생성기

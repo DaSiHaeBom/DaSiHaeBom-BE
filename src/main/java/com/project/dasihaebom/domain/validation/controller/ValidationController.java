@@ -28,4 +28,12 @@ public class ValidationController {
         validationService.sendCode(phoneNumberCodeReqDto);
         return CustomResponse.onSuccess("인증 번호 발송 성공!");
     }
+
+    @Operation(summary = "휴대폰 문자 인증 번호 검증")
+    @PostMapping("/phone/code/confirmation")
+    public CustomResponse<String> verifyCode(
+            @RequestBody @Valid ValidationReqDto.PhoneNumberValidationReqDto phoneNumberValidationReqDto
+    ) {
+        return CustomResponse.onSuccess(validationService.verifyCode(phoneNumberValidationReqDto));
+    }
 }

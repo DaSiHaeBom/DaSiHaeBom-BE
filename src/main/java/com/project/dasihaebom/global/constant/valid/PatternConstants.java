@@ -15,4 +15,6 @@ public class PatternConstants {
     public static final String USER_LOGIN_ID_PATTERN = "^(?=.*[a-zA-Z])[a-zA-Z\\d]{5,16}$";
     public static final String USER_CORP_NUMBER_PATTERN = "^\\d{10}$";
 
+    public static final String USER_CODE_PATTERN = "^\\d{6}$";
+
 }
