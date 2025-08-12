@@ -11,8 +11,8 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Table(name = "corp_auth")
-public class CorpAuth extends BaseEntity {
+@Table(name = "auth")
+public class Auth extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +25,10 @@ public class CorpAuth extends BaseEntity {
     private boolean isTemp;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "corp_id", unique = true, nullable = false)
+    @JoinColumn(name = "corp_id", unique = true)
     private Corp corp;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "worker_id", unique = true)
+    private Worker worker;
 }

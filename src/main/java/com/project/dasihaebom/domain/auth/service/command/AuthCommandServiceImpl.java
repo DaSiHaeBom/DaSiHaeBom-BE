@@ -1,8 +1,7 @@
 package com.project.dasihaebom.domain.auth.service.command;
 
 import com.project.dasihaebom.domain.auth.converter.AuthConverter;
-import com.project.dasihaebom.domain.auth.entity.CorpAuth;
-import com.project.dasihaebom.domain.auth.entity.WorkerAuth;
+import com.project.dasihaebom.domain.auth.entity.Auth;
 import com.project.dasihaebom.domain.auth.repository.CorpAuthRepository;
 import com.project.dasihaebom.domain.auth.repository.WorkerAuthRepository;
 import com.project.dasihaebom.domain.user.corp.entity.Corp;
@@ -26,11 +25,11 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
         // 지금 비밀번호를 저장할 객체가 Worker 인가?
         if (user instanceof Worker worker) {
-            WorkerAuth workerAuth = AuthConverter.toWorkerAuth(encodedPassword, worker);
+            Auth workerAuth = AuthConverter.toWorkerAuth(encodedPassword, worker);
             workerAuthRepository.save(workerAuth);
         }
         if (user instanceof Corp corp) {
-            CorpAuth corpAuth = AuthConverter.toCorpAuth(encodedPassword, corp);
+            Auth corpAuth = AuthConverter.toCorpAuth(encodedPassword, corp);
             corpAuthRepository.save(corpAuth);
         }
     }
