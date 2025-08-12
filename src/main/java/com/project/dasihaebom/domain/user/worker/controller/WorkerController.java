@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/users/workers")
 @Tag(name = "Worker", description = "개인 사용자 관련 API")
 public class WorkerController {
 
     private final WorkerCommandService workerCommandService;
 
     @Operation(summary = "개인 회원 가입")
-    @PostMapping("/workers")
+    @PostMapping("")
     public CustomResponse<String> createWorker(
             @RequestBody @Valid WorkerReqDto.WorkerCreateReqDto workerCreateReqDto
     ) {
@@ -28,7 +28,7 @@ public class WorkerController {
     }
 
     @Operation(summary = "개인 회원 정보 수정")
-    @PatchMapping("/workers")
+    @PatchMapping("/me")
     public CustomResponse<String> updateWorker(
             @RequestBody @Valid WorkerReqDto.WorkerUpdateReqDto workerUpdateReqDto
     ) {
