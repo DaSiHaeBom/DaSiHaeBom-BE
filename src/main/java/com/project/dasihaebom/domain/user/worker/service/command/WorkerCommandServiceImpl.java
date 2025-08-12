@@ -45,8 +45,8 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
     }
 
     @Override
-    public void updateWorker(WorkerReqDto.WorkerUpdateReqDto workerUpdateReqDto) {
-        Worker worker = workerRepository.findById(1L)
+    public void updateWorker(WorkerReqDto.WorkerUpdateReqDto workerUpdateReqDto, long workerId) {
+        Worker worker = workerRepository.findById(workerId)
                 .orElseThrow(() -> new WorkerException(WorkerErrorCode.WORKER_NOT_FOUND));
 
         // findById로 가져온 객체는 영속성 컨텍스트 안이라서 더티채킹 어쩌고저쩌고쏼라쏼라
