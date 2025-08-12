@@ -28,7 +28,7 @@ public class ValidationServiceImpl implements ValidationService {
     private final RedisUtils<String> redisUtils;
 
     @Override
-    public void sendCode(ValidationReqDto.PhoneNumberCodeReqDto phoneNumberCodeReqDto) {
+    public void sendCode(ValidationReqDto.PhoneNumberCodeReqDto phoneNumberCodeReqDto, String scope) {
 
         // 휴대폰 번호를 가져옴
         final String phoneNumber = phoneNumberCodeReqDto.phoneNumber();
@@ -50,7 +50,7 @@ public class ValidationServiceImpl implements ValidationService {
 
         // 성공 시
         // 레디스에 인증 정보 저장
-        redisUtils.save(phoneNumber + KEY_CODE_SUFFIX, code, CODE_EXP_TIME, TimeUnit.MILLISECONDS);
+        redisUtils.save(phoneNumber + KEY_CODE_SUFFIX, code + ":" + scope, CODE_EXP_TIME, TimeUnit.MILLISECONDS);
         // 쿨다운 키 저장 (연속 인증 방지)
         redisUtils.save(phoneNumber + KEY_COOLDOWN_SUFFIX, VALUE_COOLDOWN, COOLDOWN_EXP_TIME, TimeUnit.MILLISECONDS);
 
@@ -63,15 +63,22 @@ public class ValidationServiceImpl implements ValidationService {
         // 사욪자가 입력한 인증 코드
         final String code = phoneNumberValidationReqDto.code();
 
-        // 레디스에 저장된 인증 코드
-        final String storedCode = redisUtils.get(phoneNumber + KEY_CODE_SUFFIX);
+        // 레디스에 저장된 인증 코드 + 사용 스코프 ( :으로 구별되어 있음 )
+        final String[] value = redisUtils.get(phoneNumber + KEY_CODE_SUFFIX).split(":");
+        final String storedCode = value[0];
+        final String scope = value[1];
+
         // 비교
         if (!Objects.equals(code, storedCode)) {
             return CODE_CONFIRMATION_IS_FAILURE;
         }
         // 성공시 회원 가입을 위해 삭제
         redisUtils.delete(phoneNumber + KEY_CODE_SUFFIX);
-        return CODE_CONFIRMATION_IS_SUCCESS;
+
+        // 해당 스코프에서 사용할 인증이 완료되었음을 레디스에 저장
+        redisUtils.save(phoneNumber + KEY_SCOPE_SUFFIX, scope, SCOPE_EXP_TIME, TimeUnit.MILLISECONDS);
+
+        return CODE_CONFIRMATION_IS_SUCCESS + code;
     }
 
     // 6자리 난수 생성기
