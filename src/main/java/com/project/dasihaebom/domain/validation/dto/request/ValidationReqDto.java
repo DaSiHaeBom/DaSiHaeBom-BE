@@ -8,7 +8,7 @@ import static com.project.dasihaebom.global.constant.valid.PatternConstants.USER
 
 public class ValidationReqDto {
 
-    public record PhoneNumberValidationReqDto(
+    public record PhoneNumberCodeReqDto(
             @NotBlank(message = USER_BLANK_PHONE_NUMBER)
             @Pattern(regexp = USER_PHONE_NUMBER_PATTERN, message = USER_WRONG_PHONE_NUMBER)
             String phoneNumber

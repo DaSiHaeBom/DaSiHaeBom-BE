@@ -23,10 +23,10 @@ public class ValidationServiceImpl implements ValidationService {
     private final RedisUtils<String> redisUtils;
 
     @Override
-    public void sendCode(ValidationReqDto.PhoneNumberValidationReqDto phoneNumberValidationReqDto) {
+    public void sendCode(ValidationReqDto.PhoneNumberCodeReqDto phoneNumberCodeReqDto) {
 
         // 휴대폰 번호를 가져옴
-        final String phoneNumber = phoneNumberValidationReqDto.phoneNumber();
+        final String phoneNumber = phoneNumberCodeReqDto.phoneNumber();
         // 해당 휴대폰 번호로 인증 번호를 보낸 적이 있다면 1분 대기
         if (redisUtils.hasKey(phoneNumber + ":cooldown")) {
             throw new ValidationException(ValidationErrorCode.CODE_COOL_DOWN);

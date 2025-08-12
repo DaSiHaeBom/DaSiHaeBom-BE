@@ -4,5 +4,5 @@ import com.project.dasihaebom.domain.validation.dto.request.ValidationReqDto;
 
 public interface ValidationService {
 
-    void sendCode(ValidationReqDto.PhoneNumberValidationReqDto phoneNumberValidationReqDto);
+    void sendCode(ValidationReqDto.PhoneNumberCodeReqDto phoneNumberCodeReqDto);
 }

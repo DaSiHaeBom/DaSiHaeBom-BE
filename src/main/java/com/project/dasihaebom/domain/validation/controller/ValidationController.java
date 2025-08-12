@@ -23,9 +23,9 @@ public class ValidationController {
     @Operation(summary = "휴대폰 문자 인증 번호 발송")
     @PostMapping("/phone/code")
     public CustomResponse<String> sendCode(
-            @RequestBody @Valid ValidationReqDto.PhoneNumberValidationReqDto phoneNumberValidationReqDto
+            @RequestBody @Valid ValidationReqDto.PhoneNumberCodeReqDto phoneNumberCodeReqDto
     ) {
-        validationService.sendCode(phoneNumberValidationReqDto);
+        validationService.sendCode(phoneNumberCodeReqDto);
         return CustomResponse.onSuccess("인증 번호 발송 성공!");
     }
 }
