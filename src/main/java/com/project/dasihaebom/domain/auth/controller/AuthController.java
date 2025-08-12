@@ -18,8 +18,8 @@ public class AuthController {
 
     @Operation(summary = "로그인", description = "현재 쿠키 구현은 되어 있지만 스웨거에서 사용하기 위해 헤더 토큰 방식만 적용 <br> 쿠키는 Postman으로 해야 함")
     @PostMapping("/login")
-    public CustomResponse<?> workerLogin(
-            @RequestBody AuthReqDto.AuthLoginDto authWorkerLoginDto
+    public CustomResponse<?> Login(
+            @RequestBody AuthReqDto.AuthLoginDto authLoginDto
     ) {
         return null;
     }
