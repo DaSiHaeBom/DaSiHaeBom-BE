@@ -41,11 +41,11 @@ public class ValidationServiceImpl implements ValidationService {
         // 전송 String 생성
         final String msg = createMessageWithCode(code);
 
-        // 문자 전송 실패시 예외 처리
+//         문자 전송 실패시 예외 처리
 //        try {
-//            phoneNumberClient.sendCode(msg, phoneNumber);
+//            phoneNumberClient.sendMessage(msg, phoneNumber);
 //        } catch (Exception e) {
-//            throw new ValidationException(ValidationErrorCode.CODE_SEND_ERROR);
+//            throw new ValidationException(ValidationErrorCode.MESSAGE_SEND_ERROR);
 //        }
 
         // 성공 시
@@ -64,9 +64,15 @@ public class ValidationServiceImpl implements ValidationService {
         final String code = phoneNumberValidationReqDto.code();
 
         // 레디스에 저장된 인증 코드 + 사용 스코프 ( :으로 구별되어 있음 )
-        final String[] value = redisUtils.get(phoneNumber + KEY_CODE_SUFFIX).split(":");
-        final String storedCode = value[0];
-        final String scope = value[1];
+        final String value = redisUtils.get(phoneNumber + KEY_CODE_SUFFIX);
+        // 없으면 핸드폰 입력이 잘못됨
+        if (value == null) {
+            throw new ValidationException(ValidationErrorCode.WRONG_PHONE_NUMBER);
+        }
+
+        String[] values = value.split(":");
+        final String storedCode = values[0];
+        final String scope = values[1];
 
         // 비교
         if (!Objects.equals(code, storedCode)) {
@@ -89,9 +95,8 @@ public class ValidationServiceImpl implements ValidationService {
 
     private String createMessageWithCode(String code) {
         return "[다시해봄]\n" +
-                "본인확인 인증번호\n" +
-                "\n" +
-                "[" + code + "]를 화면에 입력해 주세요.\n" +
+                "본인확인 인증번호\n\n" +
+                "[" + code + "]\n" +
                 "인증번호는 3분간 유효합니다.";
     }
 }

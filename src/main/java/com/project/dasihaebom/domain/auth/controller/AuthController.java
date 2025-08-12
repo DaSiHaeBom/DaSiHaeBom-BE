@@ -45,4 +45,13 @@ public class AuthController {
         authCommandService.changePassword(authPasswordChangeReqDto, currentUser.getLoginId());
         return CustomResponse.onSuccess("비밀번호 변경이 완료되었습니다.");
     }
+
+    @Operation(summary = "임시 비밀번호 발급")
+    @PostMapping("me/temp-password")
+    public CustomResponse<String> resetPassword(
+            @RequestBody @Valid AuthReqDto.AuthTempPasswordReqDto authTempPasswordReqDto
+    ) {
+        authCommandService.tempPassword(authTempPasswordReqDto);
+        return CustomResponse.onSuccess("임시 비빌번호가 전화번호로 발송되었습니다.");
+    }
 }

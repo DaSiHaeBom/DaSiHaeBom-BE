@@ -17,4 +17,8 @@ public class PatternConstants {
 
     public static final String USER_CODE_PATTERN = "^\\d{6}$";
 
+    // TEMP PASSWORD
+    public static final String LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    public static final String DIGITS = "0123456789";
+    public static final String SPECIALS = "!@#$%^*";
 }

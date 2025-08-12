@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_RESET_PASSWORD;
+import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_TEMP_PASSWORD;
 import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_SIGNUP;
 
 @RestController
@@ -38,7 +38,7 @@ public class ValidationController {
             @RequestBody @Valid ValidationReqDto.PhoneNumberCodeReqDto phoneNumberCodeReqDto
     ) {
                                     // 비밀번호를 위한 인증은 비밀번호에서만 소모되어야 한다. 인증 정보 탈취 방지 스코프 정의
-        validationService.sendCode(phoneNumberCodeReqDto, SCOPE_RESET_PASSWORD);
+        validationService.sendCode(phoneNumberCodeReqDto, SCOPE_TEMP_PASSWORD);
         return CustomResponse.onSuccess("인증 번호 발송 성공!");
     }
 

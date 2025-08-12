@@ -26,4 +26,9 @@ public class AuthReqDto {
             String newPasswordConfirmation
     ) {
     }
+
+    public record AuthTempPasswordReqDto(
+            String phoneNumber
+    ) {
+    }
 }
