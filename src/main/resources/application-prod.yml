@@ -15,6 +15,12 @@ spring:
       hibernate:
         format_sql: true # 출력되는 SQL 쿼리를 보기 좋게 포맷팅
 
+  jwt:
+    secret: ${JWT_SECRET_KEY} # JWT 시크릿 키
+    token:
+      access-expiration-time: 999999999  # Access Token 만료 시간
+      refresh-expiration-time: 1000000000  #  Refresh Token 만료 시간
+
   corp:
     base-url: https://api.odcloud.kr/api/nts-businessman/v1/
     api-key: ${NTS_API_SERVICE_KEY}
