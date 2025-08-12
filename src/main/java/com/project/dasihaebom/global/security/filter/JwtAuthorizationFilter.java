@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -132,38 +133,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (ExpiredJwtException e) {
-
-            // 4. 토큰 만료 시 refreshToken으로 AccessToken 재발급
-            logger.warn("[ JwtAuthorizationFilter ] accessToken 이 만료되었습니다.");
-
-            // Cookie 에서 refresh token 검색
-            log.info("refresh token 쿠키 검색");
-            String refreshToken = getTokenFromCookies(request, "refresh-token");
-
-            // refresh token의 유효성 검사
-            log.info("[ JwtAuthorizationFilter ] refresh token의 유효성을 검사합니다.");
-            jwtUtil.validateToken(refreshToken);
-
-            // redis 에 해당 refresh token이 존재하는지 검사
-            if (!Objects.equals(redisUtils.get(jwtUtil.getEmail(refreshToken) + ":refresh"), refreshToken)) {
-                throw new CustomException(SecurityErrorCode.REQUIRED_RE_LOGIN);
-            }
-
-            // access token 재발급
-            log.info("[ JwtAuthorizationFilter ] refresh token 으로 access token 을 생성합니다.");
-            String accessToken = jwtUtil.reissueToken(refreshToken);
-
-            // 쿠키 재발급
-            log.info("[ JwtAuthorizationFilter ] 쿠키를 재생성 합니다.");
-            createJwtCookies(response, "access-token", accessToken, jwtUtil.getAccessExpMs());
-
-            authenticateAccessToken(accessToken);
-
-            filterChain.doFilter(request, response);
-
-//            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-//            response.setCharacterEncoding("UTF-8");
-//            response.getWriter().write("Access Token 이 만료되었습니다.");
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("Access Token 이 만료되었습니다.");
         }
     }
 

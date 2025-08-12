@@ -42,6 +42,7 @@ public class SecurityConfig {
             "/api/v1/users/workers",    // 개인 회원 가입
             "/api/v1/users/corps",      // 기업 회원 가입
             "/api/v1/users/corps/business-validation",  // 사업자 번호 조회
+            "/api/v1/security/reissue-cookie",
             "swagger-resources/**",
             "/swagger-ui/**",
             "/v3/api-docs/**",
