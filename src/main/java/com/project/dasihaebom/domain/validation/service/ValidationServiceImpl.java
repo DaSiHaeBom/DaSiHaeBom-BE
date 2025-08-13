@@ -28,7 +28,7 @@ public class ValidationServiceImpl implements ValidationService {
     private final RedisUtils<String> redisUtils;
 
     @Override
-    public void sendCode(ValidationReqDto.PhoneNumberCodeReqDto phoneNumberCodeReqDto, String scope) {
+    public String sendCode(ValidationReqDto.PhoneNumberCodeReqDto phoneNumberCodeReqDto, String scope) {
 
         // 휴대폰 번호를 가져옴
         final String phoneNumber = phoneNumberCodeReqDto.phoneNumber();
@@ -53,7 +53,7 @@ public class ValidationServiceImpl implements ValidationService {
         redisUtils.save(phoneNumber + KEY_CODE_SUFFIX, code + ":" + scope, CODE_EXP_TIME, TimeUnit.MILLISECONDS);
         // 쿨다운 키 저장 (연속 인증 방지)
         redisUtils.save(phoneNumber + KEY_COOLDOWN_SUFFIX, VALUE_COOLDOWN, COOLDOWN_EXP_TIME, TimeUnit.MILLISECONDS);
-
+        return code;
     }
 
     @Override
@@ -80,6 +80,8 @@ public class ValidationServiceImpl implements ValidationService {
         }
         // 성공시 회원 가입을 위해 삭제
         redisUtils.delete(phoneNumber + KEY_CODE_SUFFIX);
+
+        redisUtils.delete(phoneNumber + KEY_COOLDOWN_SUFFIX);
 
         // 해당 스코프에서 사용할 인증이 완료되었음을 레디스에 저장
         redisUtils.save(phoneNumber + KEY_SCOPE_SUFFIX, scope, SCOPE_EXP_TIME, TimeUnit.MILLISECONDS);

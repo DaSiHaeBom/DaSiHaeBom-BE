@@ -51,7 +51,7 @@ public class AuthController {
     public CustomResponse<String> resetPassword(
             @RequestBody @Valid AuthReqDto.AuthTempPasswordReqDto authTempPasswordReqDto
     ) {
-        authCommandService.tempPassword(authTempPasswordReqDto);
-        return CustomResponse.onSuccess("임시 비빌번호가 전화번호로 발송되었습니다.");
+        String password = authCommandService.tempPassword(authTempPasswordReqDto);
+        return CustomResponse.onSuccess("임시 비빌번호가 전화번호로 발송되었습니다. " + password);
     }
 }
