@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -77,6 +78,19 @@ public class IntroductionController {
         List<AnswerResDto.AnswerDetailDTO> responseDTOList = IntroductionConverter.toAnswerDetailDTOList(answerList);
         return CustomResponse.onSuccess(responseDTOList);
     }
+
+    @GetMapping("/answer/introduction")
+    @Operation(summary = "내 자기소개서 본문 & 요약 조회 API")
+    public CustomResponse<AnswerResDto.GeneratedIntroductionDTO> getMyIntroductions(
+            // TODO: @AuthenticationPrincipal 적용
+    ){
+        long tempWorkerId = 1L;
+        Introduction introduction = introductionQueryService.getMyIntroduction(tempWorkerId);
+
+        AnswerResDto.GeneratedIntroductionDTO responseDTO = IntroductionConverter.toGeneratedIntroductionDTO(introduction);
+        return CustomResponse.onSuccess(responseDTO);
+    }
+
 
     @PatchMapping("/answer/{questionId}")
     @Operation(summary = "답변 수정 API")
