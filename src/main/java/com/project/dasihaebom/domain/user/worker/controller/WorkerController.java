@@ -1,13 +1,38 @@
 package com.project.dasihaebom.domain.user.worker.controller;
 
+import com.project.dasihaebom.domain.user.worker.dto.request.WorkerReqDto;
+import com.project.dasihaebom.domain.user.worker.repository.WorkerRepository;
+import com.project.dasihaebom.domain.user.worker.service.command.WorkerCommandService;
+import com.project.dasihaebom.global.apiPayload.CustomResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/users")
 @Tag(name = "Worker", description = "개인 사용자 관련 API")
 public class WorkerController {
+
+    private final WorkerCommandService workerCommandService;
+
+    @Operation(summary = "개인 회원 가입")
+    @PostMapping("/workers")
+    public CustomResponse<String> createWorker(
+            @RequestBody @Valid WorkerReqDto.WorkerCreateReqDto workerCreateReqDto
+    ) {
+        workerCommandService.createWorker(workerCreateReqDto);
+        return CustomResponse.onSuccess("개인 회원 가입 완료");
+    }
+
+    @Operation(summary = "개인 회원 정보 수정")
+    @PatchMapping("/workers")
+    public CustomResponse<String> updateWorker(
+            @RequestBody @Valid WorkerReqDto.WorkerUpdateReqDto workerUpdateReqDto
+    ) {
+        workerCommandService.updateWorker(workerUpdateReqDto);
+        return CustomResponse.onSuccess("개인 회원 정보 수정 완료");
+    }
 }
