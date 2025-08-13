@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7.2
+    container_name: redis_container
+    ports:
+      - "6379:6379"
+    networks:
+      - musa-network
+    restart: unless-stopped
+
+  app:
+    image: gyueon/musa:latest
+    container_name: musa_container
+    ports:
+      - "8080:8080"
+    env_file:
+      - /home/ubuntu/secrets/.env
+    depends_on:
+      - redis
+    networks:
+      - musa-network
+    restart: unless-stopped
+
+networks:
+  musa-network:
+    driver: bridge
