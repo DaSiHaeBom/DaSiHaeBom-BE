@@ -10,6 +10,7 @@ import com.project.dasihaebom.domain.user.corp.exception.CorpException;
 import com.project.dasihaebom.domain.user.corp.repository.CorpRepository;
 import com.project.dasihaebom.global.client.corpNumber.CorpNumberClient;
 import com.project.dasihaebom.global.client.corpNumber.dto.NtsCorpInfoResDto;
+import com.project.dasihaebom.global.util.RedisUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
+import static com.project.dasihaebom.global.constant.redis.RedisConstants.*;
 import static com.project.dasihaebom.global.constant.valid.MessageConstants.CORP_NUMBER_IS_NOT_REGISTERED;
 import static com.project.dasihaebom.global.util.UpdateUtils.updateIfChanged;
 
@@ -37,6 +40,7 @@ public class CorpCommandServiceImpl implements CorpCommandService {
 
     // API Client
     private final CorpNumberClient corpNumberClient;
+    private final RedisUtils<String> redisUtils;
 
 
     @Override
@@ -75,6 +79,12 @@ public class CorpCommandServiceImpl implements CorpCommandService {
 
         // 인증 성공 여부
         boolean isValid = !Objects.equals(corpTaxType, CORP_NUMBER_IS_NOT_REGISTERED);
+
+        // 성공 했다면 성공 정보를 redis에 저장
+        if (isValid) {
+            final String corpNumber =  corpNumberValidReqDto.corpNumber();
+            redisUtils.save(corpNumber + KEY_CORP_NUMBER_SUFFIX, VALUE_VALID, SCOPE_EXP_TIME, TimeUnit.MILLISECONDS);
+        }
 
         return CorpConverter.toCorpNumberValidResDto(corpNumberValidReqDto, isValid);
     }

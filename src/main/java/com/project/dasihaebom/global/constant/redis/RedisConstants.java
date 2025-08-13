@@ -13,10 +13,16 @@ public class RedisConstants {
     public static final String KEY_COOLDOWN_SUFFIX = ":cooldown";
     public static final String KEY_SCOPE_SUFFIX = ":scope";
 
+    // CORP NUMBER VALIDATION
+    public static final String KEY_CORP_NUMBER_SUFFIX = ":corp-number";
+
     // -------VALUE-------
 
     // PHONE NUMBER VALIDATION
     public static final String VALUE_COOLDOWN = "cooldown...";
+
+    // CORP NUMBER VALIDATION
+    public static final String VALUE_VALID = "valid";
 
     // -------TIME--------
 
