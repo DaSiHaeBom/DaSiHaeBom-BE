@@ -22,6 +22,8 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static com.project.dasihaebom.global.constant.redis.RedisConstants.*;
+import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_CORP_NUMBER;
+import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_SIGNUP;
 import static com.project.dasihaebom.global.constant.valid.MessageConstants.CORP_NUMBER_IS_NOT_REGISTERED;
 import static com.project.dasihaebom.global.util.UpdateUtils.updateIfChanged;
 
@@ -45,6 +47,20 @@ public class CorpCommandServiceImpl implements CorpCommandService {
 
     @Override
     public void createCorp(CorpReqDto.CorpCreateReqDto corpCreateReqDto) {
+
+        // 휴대폰 인증이 있는지 확인
+        final String phoneNumber = corpCreateReqDto.phoneNumber();
+        // 해당 인증이 회원 가입을 위한 것인지 확인
+        if (!Objects.equals(redisUtils.get(phoneNumber + KEY_SCOPE_SUFFIX), SCOPE_SIGNUP)) {
+            throw new CorpException(CorpErrorCode.PHONE_VALIDATION_DOES_NOT_EXIST);
+        }
+
+        // 사업자 인증이 있는지 확인
+        final String corpNumber = corpCreateReqDto.corpNumber();
+        if (!Objects.equals(redisUtils.get(corpNumber + KEY_SCOPE_SUFFIX), SCOPE_CORP_NUMBER)) {
+            throw new CorpException(CorpErrorCode.CORP_VALIDATION_FAILURE);
+        }
+
         Corp corp = CorpConverter.toCorp(corpCreateReqDto);
         try {
             corpRepository.save(corp);
@@ -52,6 +68,10 @@ public class CorpCommandServiceImpl implements CorpCommandService {
         } catch (DataIntegrityViolationException e) {
             throw new CorpException(CorpErrorCode.CORP_DUPLICATED);
         }
+
+        // 인증 정보 삭제
+        redisUtils.delete(phoneNumber + KEY_SCOPE_SUFFIX);
+        redisUtils.delete(corpNumber + KEY_SCOPE_SUFFIX);
     }
 
     @Override
@@ -83,7 +103,7 @@ public class CorpCommandServiceImpl implements CorpCommandService {
         // 성공 했다면 성공 정보를 redis에 저장
         if (isValid) {
             final String corpNumber =  corpNumberValidReqDto.corpNumber();
-            redisUtils.save(corpNumber + KEY_CORP_NUMBER_SUFFIX, VALUE_VALID, SCOPE_EXP_TIME, TimeUnit.MILLISECONDS);
+            redisUtils.save(corpNumber + KEY_SCOPE_SUFFIX, SCOPE_CORP_NUMBER, SCOPE_EXP_TIME, TimeUnit.MILLISECONDS);
         }
 
         return CorpConverter.toCorpNumberValidResDto(corpNumberValidReqDto, isValid);

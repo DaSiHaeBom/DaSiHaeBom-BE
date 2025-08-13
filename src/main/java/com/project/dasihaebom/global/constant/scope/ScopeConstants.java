@@ -4,4 +4,5 @@ public class ScopeConstants {
 
     public static final String SCOPE_SIGNUP = "sign-up";
     public static final String SCOPE_TEMP_PASSWORD = "temp-password";
+    public static final String SCOPE_CORP_NUMBER = "corp-number";
 }
