@@ -76,6 +76,8 @@ public class IntroductionCommandServiceImpl implements IntroductionCommandServic
             throw new IntroductionException(IntroductionErrorCode.ANSWERS_NOT_ENOUGH);
         }
 
+
+        /* ==================gpt호출 임시 주석처리======================
         // 2. 자기소개서 본문 생성
         String fullTextPrompt = promptBuilder.buildFullTextPrompt(myAnswers);
         String generatedFullText = gptService.generate(fullTextPrompt);
@@ -83,6 +85,10 @@ public class IntroductionCommandServiceImpl implements IntroductionCommandServic
         // 3. 한 줄 요약 생성
         String summaryPrompt = promptBuilder.buildSummaryPrompt(generatedFullText);
         String generatedSummary = gptService.generate(summaryPrompt);
+
+         */
+        String generatedFullText = "이것은 GPT를 호출하지 않고 생성된 자기소개서 본문 예시입니다. api 통신을 위해 임시 생성된 데이터입니다.";
+        String generatedSummary = "성실함을 갖춘 테스트 인재";
 
         // 4. 이전 자기소개서 삭제
         introductionRepository.deleteAllByWorkerId(workerId);
