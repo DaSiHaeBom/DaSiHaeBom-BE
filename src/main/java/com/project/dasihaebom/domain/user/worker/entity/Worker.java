@@ -43,6 +43,9 @@ public class Worker extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private LoginType loginType;
 
+    // XXXrepsoitory.delete() 등으로 삭제했을 때,
+    // User을 참조했던 애들이 같이 지워질 수 있게
+    // cascade, orphan 설정 해주세요
 
     // User가 삭제되면 Auth도 삭제
     @OneToOne(mappedBy = "worker", cascade = CascadeType.ALL, orphanRemoval = true)

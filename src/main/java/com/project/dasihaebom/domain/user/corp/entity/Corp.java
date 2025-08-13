@@ -40,6 +40,10 @@ public class Corp extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    // XXXrepsoitory.delete() 등으로 삭제했을 때,
+    // User을 참조했던 애들이 같이 지워질 수 있게
+    // cascade, orphan 설정 해주세요
+
     // User가 삭제될 때, Auth도 같이 삭제
     @OneToOne(mappedBy = "corp", cascade = CascadeType.ALL, orphanRemoval = true)
     private Auth auth;
