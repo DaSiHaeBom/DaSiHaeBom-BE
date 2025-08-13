@@ -7,6 +7,7 @@ import com.project.dasihaebom.domain.user.worker.entity.Worker;
 import com.project.dasihaebom.domain.user.worker.exception.WorkerErrorCode;
 import com.project.dasihaebom.domain.user.worker.exception.WorkerException;
 import com.project.dasihaebom.domain.user.worker.repository.WorkerRepository;
+import com.project.dasihaebom.global.util.RedisUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
+import static com.project.dasihaebom.global.constant.redis.RedisConstants.KEY_SCOPE_SUFFIX;
+import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_SIGNUP;
 import static com.project.dasihaebom.global.util.UpdateUtils.updateIfChanged;
 
 
@@ -30,9 +35,19 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
     // Service
     private final AuthCommandService authCommandService;
 
+    private final RedisUtils<String> redisUtils;
+
 
     @Override
     public void createWorker(WorkerReqDto.WorkerCreateReqDto workerCreateReqDto) {
+
+        // 휴대폰 인증이 있는지 확인
+        final String phoneNumber = workerCreateReqDto.phoneNumber();
+        // 해당 인증이 회원 가입을 위한 것인지 확인
+        if (!Objects.equals(redisUtils.get(phoneNumber + KEY_SCOPE_SUFFIX), SCOPE_SIGNUP)) {
+            throw new WorkerException(WorkerErrorCode.PHONE_VALIDATION_DOES_NOT_EXIST);
+        }
+
         Worker worker = WorkerConverter.toWorker(workerCreateReqDto);
         try {
             workerRepository.save(worker);
@@ -40,6 +55,9 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
         } catch (DataIntegrityViolationException e) {
             throw new WorkerException(WorkerErrorCode.WORKER_DUPLICATED);
         }
+
+        // 가입 성공 시 인증 정보 삭제
+        redisUtils.delete(phoneNumber + KEY_SCOPE_SUFFIX);
     }
 
     @Override
