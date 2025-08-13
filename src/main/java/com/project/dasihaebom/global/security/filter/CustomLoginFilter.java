@@ -93,6 +93,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
 
         //Client 에게 줄 Response 를 Build
         JwtDto jwtDto = JwtDto.builder()
+                .message("쿠키에 저장되었습니다.")
                 .accessToken(accessToken) //access token 생성
                 .refreshToken(refreshToken) //refresh token 생성
                 .build();

@@ -21,7 +21,7 @@ public class CorpController {
 
     private final CorpCommandService corpCommandService;
 
-    @Operation(summary = "기업 회원 가입")
+    @Operation(summary = "기업 회원 가입", description = "아이디, 전화번호, 사업자 번호가 겹치면 가입 안됨")
     @PostMapping()
     public CustomResponse<String> createCorp(
             @RequestBody @Valid CorpReqDto.CorpCreateReqDto corpCreateReqDto
@@ -40,7 +40,7 @@ public class CorpController {
         return CustomResponse.onSuccess("기업 회원 정보 수정 완료");
     }
 
-    @Operation(summary = "사업자 번호 유효성 검사")
+    @Operation(summary = "사업자 번호 유효성 검사", description = "사업자 번호 인증 성공 -> true / 인증 실패 or API 오류 -> false")
     @PostMapping("/business-validation")
     public CustomResponse<CorpResDto.CorpNumberValidResDto> validCorpNumber(
             @RequestBody @Valid CorpReqDto.CorpNumberValidReqDto corpNumberValidReqDto

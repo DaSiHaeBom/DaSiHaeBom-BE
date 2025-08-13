@@ -81,7 +81,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     }
 
     @Override
-    public void tempPassword(AuthReqDto.AuthTempPasswordReqDto authTempPasswordReqDto) {
+    public String tempPassword(AuthReqDto.AuthTempPasswordReqDto authTempPasswordReqDto) {
 
         // 휴대폰 인증이 있는지 확인
         final String phoneNumber = authTempPasswordReqDto.phoneNumber();
@@ -106,10 +106,12 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 //        }
 
         // 전송이 성공하면 비밀번호 변경
-        auth.updatePassword(tempPassword);
+        auth.updatePassword(passwordEncoder.encode(tempPassword));
 
         // 변경 성공하면 인증 정보 삭제
         redisUtils.delete(phoneNumber + KEY_SCOPE_SUFFIX);
+
+        return tempPassword;
     }
 
     private String createTempPassword() {

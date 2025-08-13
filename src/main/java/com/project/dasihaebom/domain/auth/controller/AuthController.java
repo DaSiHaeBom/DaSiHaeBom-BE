@@ -36,7 +36,7 @@ public class AuthController {
         return null;
     }
 
-    @Operation(summary = "비밀번호 변경")
+    @Operation(summary = "비밀번호 변경", description = "현재 비밀번호와 바꿀 비밀번호를 입력해 검증 후 비밀번호를 변경한다")
     @PostMapping("/me/password")
     public CustomResponse<String> changePassword(
             @RequestBody @Valid AuthReqDto.AuthPasswordChangeReqDto authPasswordChangeReqDto,
@@ -46,12 +46,12 @@ public class AuthController {
         return CustomResponse.onSuccess("비밀번호 변경이 완료되었습니다.");
     }
 
-    @Operation(summary = "임시 비밀번호 발급")
+    @Operation(summary = "임시 비밀번호 발급", description = "비밀번호 변경 휴대폰 인증 완료 후 실행 <br> 메시지 전송 구현 완료했지만, 비밀번호는 일단 ResBody로 제공")
     @PostMapping("/temp-password")
     public CustomResponse<String> resetPassword(
             @RequestBody @Valid AuthReqDto.AuthTempPasswordReqDto authTempPasswordReqDto
     ) {
-        authCommandService.tempPassword(authTempPasswordReqDto);
-        return CustomResponse.onSuccess("임시 비빌번호가 전화번호로 발송되었습니다.");
+        String password = authCommandService.tempPassword(authTempPasswordReqDto);
+        return CustomResponse.onSuccess("임시 비빌번호가 전화번호로 발송되었습니다. " + password);
     }
 }
