@@ -15,6 +15,11 @@ spring:
       hibernate:
         format_sql: true # 출력되는 SQL 쿼리를 보기 좋게 포맷팅
 
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST}
+      port: ${SPRING_DATA_REDIS_PORT}
+
   jwt:
     secret: ${JWT_SECRET_KEY} # JWT 시크릿 키
     token:
