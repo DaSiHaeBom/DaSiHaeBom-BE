@@ -20,7 +20,7 @@ public class WorkerController {
 
     private final WorkerCommandService workerCommandService;
 
-    @Operation(summary = "개인 회원 가입")
+    @Operation(summary = "개인 회원 가입", description = "전화번호가 겹치면 가입이 안됨")
     @PostMapping("")
     public CustomResponse<String> createWorker(
             @RequestBody @Valid WorkerReqDto.WorkerCreateReqDto workerCreateReqDto

@@ -23,7 +23,7 @@ public class ValidationController {
 
     private final ValidationService validationService;
 
-    @Operation(summary = "회원 가입 휴대폰 문자 인증 번호 발송")
+    @Operation(summary = "회원 가입 휴대폰 문자 인증 번호 발송", description = "회원 가입시에만 사용 <br> 메시지 구현 완료 했으나, 일단 resBody로 제공")
     @PostMapping("/phone/code/sign-up")
     public CustomResponse<String> sendSignUpCode(
             @RequestBody @Valid ValidationReqDto.PhoneNumberCodeReqDto phoneNumberCodeReqDto
@@ -32,7 +32,7 @@ public class ValidationController {
         return CustomResponse.onSuccess("인증 번호 발송 성공!");
     }
 
-    @Operation(summary = "임시 비밀번호 휴대폰 문자 인증 번호 발송")
+    @Operation(summary = "임시 비밀번호 휴대폰 문자 인증 번호 발송", description = "임시 비밀번호 발급에만 사용 <br> 메시지 구현 완료 했으나, 일단 resBody로 제공")
     @PostMapping("/phone/code/reset-password")
     public CustomResponse<String> sendResetPasswordCode(
             @RequestBody @Valid ValidationReqDto.PhoneNumberCodeReqDto phoneNumberCodeReqDto
