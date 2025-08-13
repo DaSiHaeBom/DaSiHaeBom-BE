@@ -9,8 +9,6 @@ import com.project.dasihaebom.domain.auth.repository.AuthRepository;
 import com.project.dasihaebom.domain.user.corp.entity.Corp;
 import com.project.dasihaebom.domain.user.worker.entity.Worker;
 import com.project.dasihaebom.domain.user.worker.repository.WorkerRepository;
-import com.project.dasihaebom.domain.validation.exception.ValidationErrorCode;
-import com.project.dasihaebom.domain.validation.exception.ValidationException;
 import com.project.dasihaebom.global.client.phonenumber.PhoneNumberClient;
 import com.project.dasihaebom.global.util.RedisUtils;
 import jakarta.transaction.Transactional;
@@ -89,7 +87,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         final String phoneNumber = authTempPasswordReqDto.phoneNumber();
         // 해당 인증이 비밀번호 변경을 위한 것인지 확인
         if (!Objects.equals(redisUtils.get(phoneNumber + KEY_SCOPE_SUFFIX), SCOPE_TEMP_PASSWORD)) {
-            throw new AuthException(AuthErrorCode.PHONE_VALIDATION_IS_NOT_EXIST);
+            throw new AuthException(AuthErrorCode.PHONE_VALIDATION_DOES_NOT_EXIST);
         }
 
         // 존재하면 비밀번호 임시 발급 시작

@@ -11,6 +11,8 @@ public class RedisConstants {
     // PHONE NUMBER VALIDATION
     public static final String KEY_CODE_SUFFIX = ":code";
     public static final String KEY_COOLDOWN_SUFFIX = ":cooldown";
+
+    // SCOPE
     public static final String KEY_SCOPE_SUFFIX = ":scope";
 
     // -------VALUE-------
@@ -23,5 +25,7 @@ public class RedisConstants {
     // PHONE NUMBER VALIDATION
     public static final long CODE_EXP_TIME = 300000L;
     public static final long COOLDOWN_EXP_TIME = 60000L;
+
+    // SCOPE
     public static final long SCOPE_EXP_TIME = 900000L;
 }
