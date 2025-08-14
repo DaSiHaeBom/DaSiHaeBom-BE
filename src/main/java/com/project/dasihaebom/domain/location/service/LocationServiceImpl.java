@@ -38,6 +38,7 @@ public class LocationServiceImpl implements LocationService {
     public double getDistance(long workerId, long corpId) {
         Optional<Location> locationOpt = locationRepository.findByWorkerIdAndCorpId(workerId, corpId);
 
+        // 거리 정보가 비어 있다면 -> 첫 생성
         if (locationOpt.isEmpty()) {
             log.info("거리 정보가 존재하지 않아 거리 정보를 생성합니다.");
             Location location = createDistance(workerId, corpId);
@@ -45,10 +46,13 @@ public class LocationServiceImpl implements LocationService {
             return location.getDistance();
         }
 
+        // 이미 존재하는 거리 정보 -> 생성할 필요 없이 바로 반환
         Location location = locationOpt.get();
+
         return location.getDistance();
     }
 
+    // 거리 정보가 없을 때, 거리 정보를 생성하는 메서드
     private Location createDistance(long workerId, long corpId) {
 
         Worker worker = workerRepository.findById(workerId)
@@ -73,6 +77,7 @@ public class LocationServiceImpl implements LocationService {
         return location;
     }
 
+    // 하버사인 공식을 이용해 구면에서의 거리 반환
     private double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
         final double EARTH_RADIUS = 6371.0;
 
