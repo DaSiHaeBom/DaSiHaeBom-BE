@@ -30,13 +30,4 @@ public class LocationConverter {
 
         return List.of(Double.parseDouble(coordinatesInfo.x()), Double.parseDouble(coordinatesInfo.y()));
     }
-
-    public static LocationResDto.CoordinateInfoResDto toCoordinateInfoResDto(List<Double> workerCoordinates, List<Double> corpCoordinates) {
-        return LocationResDto.CoordinateInfoResDto.builder()
-                .wLat(getLat(workerCoordinates))
-                .wLng(getLng(workerCoordinates))
-                .cLat(getLat(corpCoordinates))
-                .cLng(getLng(corpCoordinates))
-                .build();
-    }
 }

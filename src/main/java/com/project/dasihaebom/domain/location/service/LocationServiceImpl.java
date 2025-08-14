@@ -88,19 +88,4 @@ public class LocationServiceImpl implements LocationService {
 
         return Math.round(distanceKm * 10.0) / 10.0; // 소수점 첫째 자리까지 반올림
     }
-
-    // 개인, 기업의 좌표를 반환
-    private LocationResDto.CoordinateInfoResDto getCoordinate(long workerId, long corpId) {
-
-        Worker worker = workerRepository.findById(workerId)
-                .orElseThrow(() -> new WorkerException(WorkerErrorCode.WORKER_NOT_FOUND));
-
-        Corp corp = corpRepository.findById(corpId)
-                .orElseThrow(() -> new CorpException(CorpErrorCode.CORP_NOT_FOUND));
-
-        List<Double> workerCoordinates = worker.getCoordinates();
-        List<Double> corpCoordinates = corp.getCoordinates();
-
-        return LocationConverter.toCoordinateInfoResDto(workerCoordinates, corpCoordinates);
-    }
 }
