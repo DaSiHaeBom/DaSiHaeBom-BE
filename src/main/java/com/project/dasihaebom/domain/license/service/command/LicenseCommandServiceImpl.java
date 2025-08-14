@@ -4,6 +4,8 @@ import com.project.dasihaebom.domain.license.converter.LicenseConverter;
 import com.project.dasihaebom.domain.license.dto.request.LicenseReqDto;
 import com.project.dasihaebom.domain.license.dto.response.LicenseResDto;
 import com.project.dasihaebom.domain.license.entity.License;
+import com.project.dasihaebom.domain.license.exception.LicenseErrorCode;
+import com.project.dasihaebom.domain.license.exception.LicenseException;
 import com.project.dasihaebom.domain.license.repository.LicenseRepository;
 import com.project.dasihaebom.domain.user.worker.entity.Worker;
 import com.project.dasihaebom.domain.user.worker.exception.WorkerErrorCode;
@@ -13,6 +15,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
+
+import static com.project.dasihaebom.global.util.UpdateUtils.updateIfChanged;
 
 @Slf4j
 @Service
@@ -33,5 +39,19 @@ public class LicenseCommandServiceImpl implements LicenseCommandService {
         licenseRepository.save(license);
 
         return LicenseConverter.toLicenseCreateResDto(license);
+    }
+
+    @Override
+    public void updateLicense(long licenseId, LicenseReqDto.LicenseUpdateReqDto licenseUpdateReqDto, long workerId) {
+        License license = licenseRepository.findById(licenseId)
+                .orElseThrow(() -> new LicenseException(LicenseErrorCode.LICENSE_NOT_FOUND));
+
+        if (!Objects.equals(license.getWorker().getId(), workerId)) {
+            throw new LicenseException(LicenseErrorCode.LICENSE_ACCESS_DENIED);
+        }
+
+        updateIfChanged(licenseUpdateReqDto.name(), license.getName(), license::changeName);
+        updateIfChanged(licenseUpdateReqDto.issuedAt(), license.getIssuedAt(), license::changeIssuedAt);
+        updateIfChanged(licenseUpdateReqDto.issuer(), license.getIssuer(), license::changeIssuer);
     }
 }

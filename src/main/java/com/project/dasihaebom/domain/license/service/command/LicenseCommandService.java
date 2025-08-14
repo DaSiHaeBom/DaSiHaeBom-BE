@@ -6,4 +6,6 @@ import com.project.dasihaebom.domain.license.dto.response.LicenseResDto;
 public interface LicenseCommandService {
 
     LicenseResDto.LicenseCreateResDto createLicense(LicenseReqDto.LicenseCreateReqDto licenseCreateReqDto, long workerId);
+
+    void updateLicense(long licenseId, LicenseReqDto.LicenseUpdateReqDto licenseUpdateReqDto, long workerId);
 }

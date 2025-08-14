@@ -9,4 +9,11 @@ public class LicenseReqDto {
             String issuer
     ) {
     }
+
+    public record LicenseUpdateReqDto(
+            String name,
+            LocalDate issuedAt,
+            String issuer
+    ) {
+    }
 }

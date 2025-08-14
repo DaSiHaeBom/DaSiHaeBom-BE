@@ -31,4 +31,15 @@ public class License extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "worker_id", unique = true)
     private Worker worker;
+
+    // 엔티티 변경 메서드
+    public void changeName(String name) {
+        this.name = name;
+    }
+    public void changeIssuedAt(LocalDate issuedAt) {
+        this.issuedAt = issuedAt;
+    }
+    public void changeIssuer(String issuer) {
+        this.issuer = issuer;
+    }
 }
