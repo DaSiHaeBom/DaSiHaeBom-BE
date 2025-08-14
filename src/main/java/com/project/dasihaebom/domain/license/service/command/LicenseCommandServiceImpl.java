@@ -28,7 +28,7 @@ public class LicenseCommandServiceImpl implements LicenseCommandService {
         Worker worker = workerRepository.findById(workerId)
                 .orElseThrow(() -> new WorkerException(WorkerErrorCode.WORKER_NOT_FOUND));
 
-        License license = LicenseConverter.toLicense(licenseCreateReqDto);
+        License license = LicenseConverter.toLicense(licenseCreateReqDto, worker);
 
         licenseRepository.save(license);
 
