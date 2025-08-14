@@ -19,7 +19,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Objects;
 
+import static com.project.dasihaebom.global.constant.redis.RedisConstants.KEY_ACCESS_TOKEN_SUFFIX;
 import static com.project.dasihaebom.global.util.CookieUtils.getTokenFromCookies;
 
 @Slf4j
@@ -116,14 +118,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 return;
             }
 
-//            log.info("[ JwtAuthorizationFilter ] 로그아웃 여부 확인");
-//            String isLogout = redisTemplate.opsForValue().get("Logout " + accessToken);
-//            if (isLogout != null) {
-////                throw new AuthException(AuthErrorCode.BLACKLISTED_TOKEN);
-//                log.info("[ JwtAuthorizationFilter ] 블랙리스트 토큰. 인증 생략하고 다음 필터로 진행");
-//                filterChain.doFilter(request, response);
-//                return;
-//            }
+            log.info("[ JwtAuthorizationFilter ] 로그아웃 여부 확인");
+            if (Objects.equals(accessToken, redisUtils.get(jwtUtil.getEmail(accessToken) + KEY_ACCESS_TOKEN_SUFFIX))) {
+                log.info("[ JwtAuthorizationFilter ] 블랙리스트 토큰. 인증 생략하고 다음 필터로 진행");
+                filterChain.doFilter(request, response);
+                return;
+            }
 
             // 3. Access Token을 이용한 인증 처리
             authenticateAccessToken(accessToken);
