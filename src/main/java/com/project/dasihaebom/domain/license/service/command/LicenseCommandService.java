@@ -8,4 +8,6 @@ public interface LicenseCommandService {
     LicenseResDto.LicenseCreateResDto createLicense(LicenseReqDto.LicenseCreateReqDto licenseCreateReqDto, long workerId);
 
     void updateLicense(long licenseId, LicenseReqDto.LicenseUpdateReqDto licenseUpdateReqDto, long workerId);
+
+    void deleteLicense(long licenseId, long workerId);
 }

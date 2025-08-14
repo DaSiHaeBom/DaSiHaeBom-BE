@@ -54,4 +54,16 @@ public class LicenseCommandServiceImpl implements LicenseCommandService {
         updateIfChanged(licenseUpdateReqDto.issuedAt(), license.getIssuedAt(), license::changeIssuedAt);
         updateIfChanged(licenseUpdateReqDto.issuer(), license.getIssuer(), license::changeIssuer);
     }
+
+    @Override
+    public void deleteLicense(long licenseId, long workerId) {
+        License license = licenseRepository.findById(licenseId)
+                .orElseThrow(() -> new LicenseException(LicenseErrorCode.LICENSE_NOT_FOUND));
+
+        if (!Objects.equals(license.getWorker().getId(), workerId)) {
+            throw new LicenseException(LicenseErrorCode.LICENSE_ACCESS_DENIED);
+        }
+
+        licenseRepository.deleteById(licenseId);
+    }
 }

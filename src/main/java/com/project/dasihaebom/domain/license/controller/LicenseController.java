@@ -39,4 +39,14 @@ public class LicenseController {
         licenseCommandService.updateLicense(licenseId, licenseUpdateReqDto, currentUser.getId());
         return CustomResponse.onSuccess("자격증 수정 완료");
     }
+
+    @Operation(summary = "자격증 삭제")
+    @DeleteMapping("/{licenseId}")
+    public CustomResponse<String> deleteLicense(
+            @PathVariable long licenseId,
+            @AuthenticationPrincipal CurrentUser currentUser
+    ) {
+        licenseCommandService.deleteLicense(licenseId, currentUser.getId());
+        return CustomResponse.onSuccess(HttpStatus.NO_CONTENT, "자격증 삭제 완료");
+    }
 }
