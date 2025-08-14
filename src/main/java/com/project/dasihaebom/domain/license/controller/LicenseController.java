@@ -60,4 +60,12 @@ public class LicenseController {
     ) {
         return CustomResponse.onSuccess(licenseQueryService.getLicenseDetail(licenseId, currentUser.getId()));
     }
+
+    @Operation(summary = "내 자격증 조회")
+    @GetMapping()
+    public CustomResponse<LicenseResDto.LicenseListResDto> getMyLicensesList(
+            @AuthenticationPrincipal CurrentUser currentUser
+    ) {
+        return CustomResponse.onSuccess(licenseQueryService.getMyLicensesList(currentUser.getId()));
+    }
 }

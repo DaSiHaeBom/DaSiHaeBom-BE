@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -31,5 +32,16 @@ public class LicenseQueryServiceImpl implements LicenseQueryService {
         }
 
         return LicenseConverter.toLicenseDetailResDto(license);
+    }
+
+    @Override
+    public LicenseResDto.LicenseListResDto getMyLicensesList(long workerId) {
+        List<License> licenses = licenseRepository.findAllByWorkerId(workerId);
+
+        List<LicenseResDto.LicenseDetailResDto> licenseDetailResDtoList = licenses.stream()
+                .map(LicenseConverter::toLicenseDetailResDto)
+                .toList();
+
+        return LicenseConverter.toLicenseListResDto(licenseDetailResDtoList);
     }
 }

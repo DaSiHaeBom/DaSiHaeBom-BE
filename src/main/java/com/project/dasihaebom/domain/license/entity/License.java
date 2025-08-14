@@ -28,8 +28,8 @@ public class License extends BaseEntity {
     @Column(name = "issuer", nullable = false)
     private String issuer;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "worker_id", unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "worker_id")
     private Worker worker;
 
     // 엔티티 변경 메서드

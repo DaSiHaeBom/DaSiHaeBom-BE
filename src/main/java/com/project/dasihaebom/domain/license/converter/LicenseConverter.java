@@ -7,6 +7,8 @@ import com.project.dasihaebom.domain.user.worker.entity.Worker;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LicenseConverter {
 
@@ -33,6 +35,12 @@ public class LicenseConverter {
                 .issuer((license.getIssuer()))
                 .createdAt(license.getCreatedAt())
                 .updatedAt(license.getUpdatedAt())
+                .build();
+    }
+
+    public static LicenseResDto.LicenseListResDto toLicenseListResDto(List<LicenseResDto.LicenseDetailResDto> licenses) {
+        return LicenseResDto.LicenseListResDto.builder()
+                .licenses(licenses)
                 .build();
     }
 }
