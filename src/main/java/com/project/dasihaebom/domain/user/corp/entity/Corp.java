@@ -1,6 +1,7 @@
 package com.project.dasihaebom.domain.user.corp.entity;
 
 import com.project.dasihaebom.domain.auth.entity.Auth;
+import com.project.dasihaebom.domain.location.entity.Location;
 import com.project.dasihaebom.domain.user.Role;
 import com.project.dasihaebom.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -52,6 +53,9 @@ public class Corp extends BaseEntity {
     // User가 삭제될 때, Auth도 같이 삭제
     @OneToOne(mappedBy = "corp", cascade = CascadeType.ALL, orphanRemoval = true)
     private Auth auth;
+
+    @OneToMany(mappedBy = "corp", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Location> location;
 
 
     // 엔티티 수정 전용 메서드

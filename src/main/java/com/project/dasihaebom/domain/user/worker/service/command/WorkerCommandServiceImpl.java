@@ -3,8 +3,11 @@ package com.project.dasihaebom.domain.user.worker.service.command;
 import com.project.dasihaebom.domain.auth.service.command.AuthCommandService;
 import com.project.dasihaebom.domain.location.converter.LocationConverter;
 import com.project.dasihaebom.domain.location.repository.LocationRepository;
-import com.project.dasihaebom.domain.user.corp.converter.CorpConverter;
+import com.project.dasihaebom.domain.user.Role;
 import com.project.dasihaebom.domain.user.corp.entity.Corp;
+import com.project.dasihaebom.domain.user.corp.exception.CorpErrorCode;
+import com.project.dasihaebom.domain.user.corp.exception.CorpException;
+import com.project.dasihaebom.domain.user.corp.repository.CorpRepository;
 import com.project.dasihaebom.domain.user.worker.converter.WorkerConverter;
 import com.project.dasihaebom.domain.user.worker.dto.request.WorkerReqDto;
 import com.project.dasihaebom.domain.user.worker.entity.Worker;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.project.dasihaebom.global.constant.redis.RedisConstants.KEY_SCOPE_SUFFIX;
 import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_SIGNUP;
@@ -45,6 +49,7 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
 
     private final RedisUtils<String> redisUtils;
     private final LocationRepository locationRepository;
+    private final CorpRepository corpRepository;
 
 
     @Override
@@ -92,6 +97,20 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
             worker.changeCoordinates(coordinatesToUpdate);
             // 기존에 연결되어 있던 거리 캐시 삭제
             locationRepository.deleteByWorkerId(workerId);
+        }
+    }
+
+    @Override
+    public void deleteUser(long userId, Role role) {
+        if (role == Role.WORKER) {
+            Worker worker = workerRepository.findById(userId)
+                    .orElseThrow(() -> new WorkerException(WorkerErrorCode.WORKER_NOT_FOUND));
+            workerRepository.delete(worker);
+        }
+        if (role == Role.CORP) {
+            Corp corp = corpRepository.findById(userId)
+                    .orElseThrow(() -> new CorpException(CorpErrorCode.CORP_NOT_FOUND));
+            corpRepository.delete(corp);
         }
     }
 
