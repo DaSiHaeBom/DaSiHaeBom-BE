@@ -46,4 +46,19 @@ public class WebClientConfig {
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE + "; charset=UTF-8")
                 .build();
     }
+
+    @Bean(name = "coordinateWebClient")
+    // 핸드폰 번호 인증 웹 클라이언트
+    public WebClient coordinateWebClient(
+            @Value("${spring.kakao.local-api.base-url}") String baseUrl
+    ) {
+        DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory(baseUrl);
+        // 더 이상 uri를 인코딩 하지 않음
+        factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
+
+        return WebClient.builder()
+                .baseUrl(baseUrl)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE + "; charset=UTF-8")
+                .build();
+    }
 }
