@@ -1,6 +1,7 @@
 package com.project.dasihaebom.domain.user.worker.entity;
 
 import com.project.dasihaebom.domain.auth.entity.Auth;
+import com.project.dasihaebom.domain.license.entity.License;
 import com.project.dasihaebom.domain.user.LoginType;
 import com.project.dasihaebom.domain.user.Role;
 import com.project.dasihaebom.global.entity.BaseEntity;
@@ -55,6 +56,9 @@ public class Worker extends BaseEntity {
     // User가 삭제되면 Auth도 삭제
     @OneToOne(mappedBy = "worker", cascade = CascadeType.ALL, orphanRemoval = true)
     private Auth auth;
+
+    @OneToOne(mappedBy = "worker", cascade = CascadeType.ALL, orphanRemoval = true)
+    private License license;
 
     // 엔티티 수정 전용 메서드
     public void changePhoneNumber(String phoneNumber){
