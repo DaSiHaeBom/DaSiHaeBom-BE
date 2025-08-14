@@ -1,5 +1,7 @@
 package com.project.dasihaebom.global.client.location.coordinate;
 
+import com.project.dasihaebom.global.client.exception.ClientErrorCode;
+import com.project.dasihaebom.global.client.exception.ClientException;
 import com.project.dasihaebom.global.client.location.coordinate.dto.KakaoCoordinateInfoResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +22,7 @@ public class CoordinateClient {
     @Value("${spring.kakao.api-key}") String apiKey;
 
     public KakaoCoordinateInfoResDto getKakaoCoordinateInfo(String address){
-        return coordinateWebClient.get()
+        KakaoCoordinateInfoResDto response = coordinateWebClient.get()
                 // EncodingMode.NONE 이므로 인코딩 하지는 않음
                 .uri(uriBuilder -> uriBuilder
                         .path(endPoint)
@@ -34,5 +36,9 @@ public class CoordinateClient {
                 .bodyToMono(KakaoCoordinateInfoResDto.class)
                 .block(Duration.ofSeconds(1));
 
+        if (response == null || response.documents() == null || response.documents().isEmpty()) {
+            throw new ClientException(ClientErrorCode.WRONG_ADDRESS);
+        }
+        return response;
     }
 }
