@@ -31,6 +31,14 @@ spring:
     api-key: ${MESSAGE_API_KEY}
     callback: ${MESSAGE_CALL_BACK}
 
+  kakao:
+    local-api:
+      base-url: https://dapi.kakao.com
+      map:
+        coordinate:
+          endpoint: /v2/local/search/address
+    api-key: ${KAKAO_API_KEY}
+
 gpt:
   model: gpt-4.1-nano
   api:
