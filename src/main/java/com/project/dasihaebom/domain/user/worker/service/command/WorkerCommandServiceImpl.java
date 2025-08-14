@@ -91,7 +91,7 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
             // 주소 변경으로 인한 좌표 변경
             worker.changeCoordinates(coordinatesToUpdate);
             // 기존에 연결되어 있던 거리 캐시 삭제
-            locationRepository.deleteByCorpId(workerId);
+            locationRepository.deleteByWorkerId(workerId);
         }
     }
 
