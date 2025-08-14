@@ -24,4 +24,15 @@ public class LicenseConverter {
                 .licenseId(license.getId())
                 .build();
     }
+
+    public static LicenseResDto.LicenseDetailResDto toLicenseDetailResDto(License license) {
+        return LicenseResDto.LicenseDetailResDto.builder()
+                .licenseId(license.getId())
+                .name(license.getName())
+                .issuedAt(license.getIssuedAt())
+                .issuer((license.getIssuer()))
+                .createdAt(license.getCreatedAt())
+                .updatedAt(license.getUpdatedAt())
+                .build();
+    }
 }

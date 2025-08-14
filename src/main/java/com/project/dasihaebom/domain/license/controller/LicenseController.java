@@ -3,6 +3,7 @@ package com.project.dasihaebom.domain.license.controller;
 import com.project.dasihaebom.domain.license.dto.request.LicenseReqDto;
 import com.project.dasihaebom.domain.license.dto.response.LicenseResDto;
 import com.project.dasihaebom.domain.license.service.command.LicenseCommandService;
+import com.project.dasihaebom.domain.license.service.query.LicenseQueryService;
 import com.project.dasihaebom.global.apiPayload.CustomResponse;
 import com.project.dasihaebom.global.security.userdetails.CurrentUser;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class LicenseController {
 
     private final LicenseCommandService licenseCommandService;
+    private final LicenseQueryService licenseQueryService;
 
     @Operation(summary = "자격증 생성")
     @PostMapping()
@@ -48,5 +50,14 @@ public class LicenseController {
     ) {
         licenseCommandService.deleteLicense(licenseId, currentUser.getId());
         return CustomResponse.onSuccess(HttpStatus.NO_CONTENT, "자격증 삭제 완료");
+    }
+
+    @Operation(summary = "자격증 단일 조회")
+    @GetMapping("/{licenseId}")
+    public CustomResponse<LicenseResDto.LicenseDetailResDto> getLicenseDetail(
+            @PathVariable long licenseId,
+            @AuthenticationPrincipal CurrentUser currentUser
+    ) {
+        return CustomResponse.onSuccess(licenseQueryService.getLicenseDetail(licenseId, currentUser.getId()));
     }
 }
