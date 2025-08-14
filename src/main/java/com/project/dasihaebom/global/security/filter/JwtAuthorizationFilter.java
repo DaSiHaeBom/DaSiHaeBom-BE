@@ -1,10 +1,8 @@
 package com.project.dasihaebom.global.security.filter;
 
 import com.project.dasihaebom.domain.user.Role;
-import com.project.dasihaebom.global.apiPayload.exception.CustomException;
-import com.project.dasihaebom.global.security.exception.SecurityErrorCode;
-import com.project.dasihaebom.global.security.utils.JwtUtil;
 import com.project.dasihaebom.global.security.userdetails.CustomUserDetails;
+import com.project.dasihaebom.global.security.utils.JwtUtil;
 import com.project.dasihaebom.global.util.RedisUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -23,7 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Objects;
 
-import static com.project.dasihaebom.global.util.CookieUtils.createJwtCookies;
+import static com.project.dasihaebom.global.constant.redis.RedisConstants.KEY_ACCESS_TOKEN_SUFFIX;
 import static com.project.dasihaebom.global.util.CookieUtils.getTokenFromCookies;
 
 @Slf4j
@@ -104,14 +102,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             log.info("access token 쿠키 검색");
             String accessToken = getTokenFromCookies(request, "access-token");
 
-//            // 스웨거 전용 헤더에 토큰 넣기
+            // 스웨거 전용 헤더에 토큰 넣기
 //            log.warn("\u001B[31m스\u001B[33m웨\u001B[32m거\u001B[36m \u001B[34m사\u001B[35m용\u001B[31m으\u001B[33m로\u001B[32m \u001B[36m쿠\u001B[34m키\u001B[35m \u001B[31m로\u001B[33m그\u001B[32m인\u001B[36m \u001B[34m방\u001B[35m식\u001B[31m을\u001B[33m \u001B[32m이\u001B[36m용\u001B[34m하\u001B[35m고\u001B[31m \u001B[33m있\u001B[32m지\u001B[36m \u001B[34m않\u001B[35m습\u001B[31m니\u001B[33m다\u001B[32m.\u001B[36m \u001B[34m서\u001B[35m버\u001B[31m \u001B[33m배\u001B[32m포\u001B[36m시\u001B[34m \u001B[35m제\u001B[31m거\u001B[0m");
 //            log.warn("\u001B[31m스\u001B[33m웨\u001B[32m거\u001B[36m \u001B[34m사\u001B[35m용\u001B[31m으\u001B[33m로\u001B[32m \u001B[36m쿠\u001B[34m키\u001B[35m \u001B[31m로\u001B[33m그\u001B[32m인\u001B[36m \u001B[34m방\u001B[35m식\u001B[31m을\u001B[33m \u001B[32m이\u001B[36m용\u001B[34m하\u001B[35m고\u001B[31m \u001B[33m있\u001B[32m지\u001B[36m \u001B[34m않\u001B[35m습\u001B[31m니\u001B[33m다\u001B[32m.\u001B[36m \u001B[34m서\u001B[35m버\u001B[31m \u001B[33m배\u001B[32m포\u001B[36m시\u001B[34m \u001B[35m제\u001B[31m거\u001B[0m");
 //            log.warn("\u001B[31m스\u001B[33m웨\u001B[32m거\u001B[36m \u001B[34m사\u001B[35m용\u001B[31m으\u001B[33m로\u001B[32m \u001B[36m쿠\u001B[34m키\u001B[35m \u001B[31m로\u001B[33m그\u001B[32m인\u001B[36m \u001B[34m방\u001B[35m식\u001B[31m을\u001B[33m \u001B[32m이\u001B[36m용\u001B[34m하\u001B[35m고\u001B[31m \u001B[33m있\u001B[32m지\u001B[36m \u001B[34m않\u001B[35m습\u001B[31m니\u001B[33m다\u001B[32m.\u001B[36m \u001B[34m서\u001B[35m버\u001B[31m \u001B[33m배\u001B[32m포\u001B[36m시\u001B[34m \u001B[35m제\u001B[31m거\u001B[0m");
 //            if (accessToken == null) {
 //                accessToken = jwtUtil.resolveAccessToken(request);
 //            }
-//
+
 
             // 2. Access Token이 없으면 다음 필터로 바로 진행
             if (accessToken == null) {
@@ -120,14 +118,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 return;
             }
 
-//            log.info("[ JwtAuthorizationFilter ] 로그아웃 여부 확인");
-//            String isLogout = redisTemplate.opsForValue().get("Logout " + accessToken);
-//            if (isLogout != null) {
-////                throw new AuthException(AuthErrorCode.BLACKLISTED_TOKEN);
-//                log.info("[ JwtAuthorizationFilter ] 블랙리스트 토큰. 인증 생략하고 다음 필터로 진행");
-//                filterChain.doFilter(request, response);
-//                return;
-//            }
+            log.info("[ JwtAuthorizationFilter ] 로그아웃 여부 확인");
+            if (Objects.equals(accessToken, redisUtils.get(jwtUtil.getEmail(accessToken) + KEY_ACCESS_TOKEN_SUFFIX))) {
+                log.info("[ JwtAuthorizationFilter ] 블랙리스트 토큰. 인증 생략하고 다음 필터로 진행");
+                filterChain.doFilter(request, response);
+                return;
+            }
 
             // 3. Access Token을 이용한 인증 처리
             authenticateAccessToken(accessToken);

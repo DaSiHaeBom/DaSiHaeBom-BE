@@ -1,7 +1,6 @@
 package com.project.dasihaebom.domain.user.worker.controller;
 
 import com.project.dasihaebom.domain.user.worker.dto.request.WorkerReqDto;
-import com.project.dasihaebom.domain.user.worker.repository.WorkerRepository;
 import com.project.dasihaebom.domain.user.worker.service.command.WorkerCommandService;
 import com.project.dasihaebom.global.apiPayload.CustomResponse;
 import com.project.dasihaebom.global.security.userdetails.CurrentUser;
@@ -9,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,5 +37,14 @@ public class WorkerController {
     ) {
         workerCommandService.updateWorker(workerUpdateReqDto, currentUser.getId());
         return CustomResponse.onSuccess("개인 회원 정보 수정 완료");
+    }
+
+    @Operation(summary = "회원 탈퇴", description = "worker에 있긴 하지만 기업 회원도 탈퇴 가능합니다")
+    @DeleteMapping("/withdrawal")
+    public CustomResponse<String> deleteUser(
+            @AuthenticationPrincipal CurrentUser currentUser
+    ) {
+        workerCommandService.deleteUser(currentUser.getId(), currentUser.getRole());
+        return CustomResponse.onSuccess(HttpStatus.NO_CONTENT, "회원 탈퇴 성공");
     }
 }

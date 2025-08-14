@@ -1,4 +1,4 @@
-package com.project.dasihaebom.domain.license.exception;
+package com.project.dasihaebom.global.client.exception;
 
 import com.project.dasihaebom.global.apiPayload.code.BaseErrorCode;
 import lombok.AllArgsConstructor;
@@ -7,10 +7,9 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum LicenseErrorCode implements BaseErrorCode {
+public enum ClientErrorCode implements BaseErrorCode {
     // ErrorCode
-    LICENSE_NOT_FOUND(HttpStatus.NOT_FOUND, "LICENSE404", "자격증 정보가 없습니다."),
-    LICENSE_ACCESS_DENIED(HttpStatus.FORBIDDEN, "LICENSE403", "해당 자격증에 접근 권한이 없습니다"),
+    WRONG_ADDRESS(HttpStatus.BAD_REQUEST, "COORD_400", "카카오 API에서 좌표를 찾을 수 없습니다.")
     ;
 
     private final HttpStatus httpStatus;

@@ -1,12 +1,20 @@
 package com.project.dasihaebom.domain.user.worker.service.command;
 
 import com.project.dasihaebom.domain.auth.service.command.AuthCommandService;
+import com.project.dasihaebom.domain.location.converter.LocationConverter;
+import com.project.dasihaebom.domain.location.repository.LocationRepository;
+import com.project.dasihaebom.domain.user.Role;
+import com.project.dasihaebom.domain.user.corp.entity.Corp;
+import com.project.dasihaebom.domain.user.corp.exception.CorpErrorCode;
+import com.project.dasihaebom.domain.user.corp.exception.CorpException;
+import com.project.dasihaebom.domain.user.corp.repository.CorpRepository;
 import com.project.dasihaebom.domain.user.worker.converter.WorkerConverter;
 import com.project.dasihaebom.domain.user.worker.dto.request.WorkerReqDto;
 import com.project.dasihaebom.domain.user.worker.entity.Worker;
 import com.project.dasihaebom.domain.user.worker.exception.WorkerErrorCode;
 import com.project.dasihaebom.domain.user.worker.exception.WorkerException;
 import com.project.dasihaebom.domain.user.worker.repository.WorkerRepository;
+import com.project.dasihaebom.global.client.location.coordinate.CoordinateClient;
 import com.project.dasihaebom.global.util.RedisUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +23,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.project.dasihaebom.global.constant.redis.RedisConstants.KEY_SCOPE_SUFFIX;
 import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_SIGNUP;
@@ -35,7 +45,11 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
     // Service
     private final AuthCommandService authCommandService;
 
+    private final CoordinateClient coordinateClient;
+
     private final RedisUtils<String> redisUtils;
+    private final LocationRepository locationRepository;
+    private final CorpRepository corpRepository;
 
 
     @Override
@@ -48,7 +62,10 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
             throw new WorkerException(WorkerErrorCode.PHONE_VALIDATION_DOES_NOT_EXIST);
         }
 
-        Worker worker = WorkerConverter.toWorker(workerCreateReqDto);
+        final String address = workerCreateReqDto.address();
+        List<Double> workerCoordinates = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(address));
+        Worker worker = WorkerConverter.toWorker(workerCreateReqDto, workerCoordinates);
+
         try {
             workerRepository.save(worker);
             authCommandService.savePassword(worker, encodePassword(workerCreateReqDto.password()));
@@ -69,7 +86,32 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
         updateIfChanged(workerUpdateReqDto.phoneNumber(), worker.getPhoneNumber(), worker::changePhoneNumber);
         updateIfChanged(workerUpdateReqDto.username(), worker.getUsername(), worker::changeUsername);
         updateIfChanged(workerUpdateReqDto.birthDate(), worker.getBirthDate(), worker::changeBirthDate);
-        updateIfChanged(workerUpdateReqDto.address(), worker.getAddress(), worker::changeAddress);
+
+        if (!workerUpdateReqDto.address().equals(worker.getAddress())) {
+            updateIfChanged(workerUpdateReqDto.address(), worker.getAddress(), worker::changeAddress);
+
+            // 변경된 주소로 좌표 api 호출
+            final String addressToUpdate = workerUpdateReqDto.address();
+            final List<Double> coordinatesToUpdate = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(addressToUpdate));
+            // 주소 변경으로 인한 좌표 변경
+            worker.changeCoordinates(coordinatesToUpdate);
+            // 기존에 연결되어 있던 거리 캐시 삭제
+            locationRepository.deleteByWorkerId(workerId);
+        }
+    }
+
+    @Override
+    public void deleteUser(long userId, Role role) {
+        if (role == Role.WORKER) {
+            Worker worker = workerRepository.findById(userId)
+                    .orElseThrow(() -> new WorkerException(WorkerErrorCode.WORKER_NOT_FOUND));
+            workerRepository.delete(worker);
+        }
+        if (role == Role.CORP) {
+            Corp corp = corpRepository.findById(userId)
+                    .orElseThrow(() -> new CorpException(CorpErrorCode.CORP_NOT_FOUND));
+            corpRepository.delete(corp);
+        }
     }
 
     private String encodePassword(String rawPassword) {
