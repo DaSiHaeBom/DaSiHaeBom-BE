@@ -1,5 +1,6 @@
 package com.project.dasihaebom.domain.validation.service;
 
+import com.project.dasihaebom.domain.auth.repository.AuthRepository;
 import com.project.dasihaebom.domain.validation.dto.request.ValidationReqDto;
 import com.project.dasihaebom.domain.validation.exception.ValidationErrorCode;
 import com.project.dasihaebom.domain.validation.exception.ValidationException;
@@ -15,6 +16,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static com.project.dasihaebom.global.constant.redis.RedisConstants.*;
+import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_SIGNUP;
 import static com.project.dasihaebom.global.constant.valid.MessageConstants.CODE_CONFIRMATION_IS_FAILURE;
 import static com.project.dasihaebom.global.constant.valid.MessageConstants.CODE_CONFIRMATION_IS_SUCCESS;
 
@@ -26,12 +28,18 @@ public class ValidationServiceImpl implements ValidationService {
 
     private final PhoneNumberClient phoneNumberClient;
     private final RedisUtils<String> redisUtils;
+    private final AuthRepository authRepository;
 
     @Override
     public String sendCode(ValidationReqDto.PhoneNumberCodeReqDto phoneNumberCodeReqDto, String scope) {
-
         // 휴대폰 번호를 가져옴
         final String phoneNumber = phoneNumberCodeReqDto.phoneNumber();
+
+        // 만약 회원 가입 인증인 경우 가입된 핸드폰 번호라면 인증을 막아 가입을 막는다
+        if (Objects.equals(scope, SCOPE_SIGNUP) && authRepository.findByPhoneNumber(phoneNumber).isPresent()) {
+            throw new ValidationException(ValidationErrorCode.ALREADY_USED_PHONE_NUMBER);
+        }
+
         // 해당 휴대폰 번호로 인증 번호를 보낸 적이 있다면 1분 대기
         if (redisUtils.hasKey(phoneNumber + KEY_COOLDOWN_SUFFIX)) {
             throw new ValidationException(ValidationErrorCode.CODE_COOL_DOWN);
