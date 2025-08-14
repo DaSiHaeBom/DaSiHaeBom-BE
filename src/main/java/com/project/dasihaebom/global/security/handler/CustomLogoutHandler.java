@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
+import static com.project.dasihaebom.global.constant.redis.RedisConstants.KEY_ACCESS_TOKEN_SUFFIX;
+import static com.project.dasihaebom.global.constant.redis.RedisConstants.KEY_REFRESH_TOKEN_SUFFIX;
 import static com.project.dasihaebom.global.util.CookieUtils.createJwtCookies;
 import static com.project.dasihaebom.global.util.CookieUtils.getTokenFromCookies;
 
@@ -32,8 +34,8 @@ public class CustomLogoutHandler implements LogoutHandler {
 
         // 로그아웃 블랙리스트 등록
         log.info("[ Redis 저장 ] key = Logout {}", loginId);
-        redisUtils.save(loginId + ":Rlogout", refreshToken, jwtUtil.getRefreshExpMs(), TimeUnit.MILLISECONDS);
-        redisUtils.save(loginId + ":Alogout", accessToken, jwtUtil.getAccessExpMs(), TimeUnit.MILLISECONDS);
+        redisUtils.save(loginId + KEY_REFRESH_TOKEN_SUFFIX, refreshToken, jwtUtil.getRefreshExpMs(), TimeUnit.MILLISECONDS);
+        redisUtils.save(loginId + KEY_ACCESS_TOKEN_SUFFIX, accessToken, jwtUtil.getAccessExpMs(), TimeUnit.MILLISECONDS);
         log.info("[ CustomLogoutHandler ] Logout 블랙리스트 등록 완료");
 
         redisUtils.delete(loginId + ":refresh");
