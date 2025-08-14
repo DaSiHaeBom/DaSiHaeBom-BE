@@ -7,6 +7,8 @@ import com.project.dasihaebom.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Builder
@@ -42,6 +44,9 @@ public class Worker extends BaseEntity {
     @Column(name = "login_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private LoginType loginType;
+
+    @Column(name = "coordinates")
+    private List<Double> coordinates;
 
     // XXXrepsoitory.delete() 등으로 삭제했을 때,
     // User을 참조했던 애들이 같이 지워질 수 있게

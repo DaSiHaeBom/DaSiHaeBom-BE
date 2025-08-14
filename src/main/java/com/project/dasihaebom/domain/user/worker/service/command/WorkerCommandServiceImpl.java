@@ -1,12 +1,16 @@
 package com.project.dasihaebom.domain.user.worker.service.command;
 
 import com.project.dasihaebom.domain.auth.service.command.AuthCommandService;
+import com.project.dasihaebom.domain.location.converter.LocationConverter;
+import com.project.dasihaebom.domain.user.corp.converter.CorpConverter;
+import com.project.dasihaebom.domain.user.corp.entity.Corp;
 import com.project.dasihaebom.domain.user.worker.converter.WorkerConverter;
 import com.project.dasihaebom.domain.user.worker.dto.request.WorkerReqDto;
 import com.project.dasihaebom.domain.user.worker.entity.Worker;
 import com.project.dasihaebom.domain.user.worker.exception.WorkerErrorCode;
 import com.project.dasihaebom.domain.user.worker.exception.WorkerException;
 import com.project.dasihaebom.domain.user.worker.repository.WorkerRepository;
+import com.project.dasihaebom.global.client.location.coordinate.CoordinateClient;
 import com.project.dasihaebom.global.util.RedisUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +19,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 import static com.project.dasihaebom.global.constant.redis.RedisConstants.KEY_SCOPE_SUFFIX;
@@ -35,6 +40,8 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
     // Service
     private final AuthCommandService authCommandService;
 
+    private final CoordinateClient coordinateClient;
+
     private final RedisUtils<String> redisUtils;
 
 
@@ -48,7 +55,10 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
             throw new WorkerException(WorkerErrorCode.PHONE_VALIDATION_DOES_NOT_EXIST);
         }
 
-        Worker worker = WorkerConverter.toWorker(workerCreateReqDto);
+        final String address = workerCreateReqDto.address();
+        List<Double> workerCoordinates = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(address));
+        Worker worker = WorkerConverter.toWorker(workerCreateReqDto, workerCoordinates);
+
         try {
             workerRepository.save(worker);
             authCommandService.savePassword(worker, encodePassword(workerCreateReqDto.password()));

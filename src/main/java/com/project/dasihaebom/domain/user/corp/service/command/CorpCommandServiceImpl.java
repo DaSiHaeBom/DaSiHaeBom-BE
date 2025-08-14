@@ -1,6 +1,7 @@
 package com.project.dasihaebom.domain.user.corp.service.command;
 
 import com.project.dasihaebom.domain.auth.service.command.AuthCommandService;
+import com.project.dasihaebom.domain.location.converter.LocationConverter;
 import com.project.dasihaebom.domain.user.corp.converter.CorpConverter;
 import com.project.dasihaebom.domain.user.corp.dto.request.CorpReqDto;
 import com.project.dasihaebom.domain.user.corp.dto.response.CorpResDto;
@@ -10,6 +11,7 @@ import com.project.dasihaebom.domain.user.corp.exception.CorpException;
 import com.project.dasihaebom.domain.user.corp.repository.CorpRepository;
 import com.project.dasihaebom.global.client.corpNumber.CorpNumberClient;
 import com.project.dasihaebom.global.client.corpNumber.dto.NtsCorpInfoResDto;
+import com.project.dasihaebom.global.client.location.coordinate.CoordinateClient;
 import com.project.dasihaebom.global.util.RedisUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +45,8 @@ public class CorpCommandServiceImpl implements CorpCommandService {
 
     // API Client
     private final CorpNumberClient corpNumberClient;
+    private final CoordinateClient coordinateClient;
+
     private final RedisUtils<String> redisUtils;
 
 
@@ -61,7 +66,10 @@ public class CorpCommandServiceImpl implements CorpCommandService {
             throw new CorpException(CorpErrorCode.CORP_VALIDATION_FAILURE);
         }
 
-        Corp corp = CorpConverter.toCorp(corpCreateReqDto);
+        final String address = corpCreateReqDto.corpAddress();
+        List<Double> corpCoordinates = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(address));
+
+        Corp corp = CorpConverter.toCorp(corpCreateReqDto, corpCoordinates);
         try {
             corpRepository.save(corp);
             authCommandService.savePassword(corp, encodePassword(corpCreateReqDto.password()));
