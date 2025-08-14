@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +51,16 @@ public class LocationServiceImpl implements LocationService {
         Location location = locationOpt.get();
 
         return location.getDistance();
+    }
+
+    @Override
+    // 자소서 검색에서 검색된 모든 개인의 아이디를 리스트로 입력받아 기업과의 거리를 입력된 개인 아이디 순서대로 리스트로 반환
+    public List<Double> getDistanceList(List<Long> workerIdList, long corpId) {
+        List<Double> distanceList = new ArrayList<>();
+        for (long workerId : workerIdList) {
+            distanceList.add(getDistance(workerId, corpId));
+        }
+        return distanceList;
     }
 
     // 거리 정보가 없을 때, 거리 정보를 생성하는 메서드
