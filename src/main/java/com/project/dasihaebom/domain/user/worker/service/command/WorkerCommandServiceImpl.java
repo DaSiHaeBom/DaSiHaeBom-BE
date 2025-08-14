@@ -2,6 +2,7 @@ package com.project.dasihaebom.domain.user.worker.service.command;
 
 import com.project.dasihaebom.domain.auth.service.command.AuthCommandService;
 import com.project.dasihaebom.domain.location.converter.LocationConverter;
+import com.project.dasihaebom.domain.location.repository.LocationRepository;
 import com.project.dasihaebom.domain.user.corp.converter.CorpConverter;
 import com.project.dasihaebom.domain.user.corp.entity.Corp;
 import com.project.dasihaebom.domain.user.worker.converter.WorkerConverter;
@@ -43,6 +44,7 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
     private final CoordinateClient coordinateClient;
 
     private final RedisUtils<String> redisUtils;
+    private final LocationRepository locationRepository;
 
 
     @Override
@@ -79,7 +81,18 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
         updateIfChanged(workerUpdateReqDto.phoneNumber(), worker.getPhoneNumber(), worker::changePhoneNumber);
         updateIfChanged(workerUpdateReqDto.username(), worker.getUsername(), worker::changeUsername);
         updateIfChanged(workerUpdateReqDto.birthDate(), worker.getBirthDate(), worker::changeBirthDate);
-        updateIfChanged(workerUpdateReqDto.address(), worker.getAddress(), worker::changeAddress);
+
+        if (!workerUpdateReqDto.address().equals(worker.getAddress())) {
+            updateIfChanged(workerUpdateReqDto.address(), worker.getAddress(), worker::changeAddress);
+
+            // 변경된 주소로 좌표 api 호출
+            final String addressToUpdate = workerUpdateReqDto.address();
+            final List<Double> coordinatesToUpdate = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(addressToUpdate));
+            // 주소 변경으로 인한 좌표 변경
+            worker.changeCoordinates(coordinatesToUpdate);
+            // 기존에 연결되어 있던 거리 캐시 삭제
+            locationRepository.deleteByCorpId(workerId);
+        }
     }
 
     private String encodePassword(String rawPassword) {

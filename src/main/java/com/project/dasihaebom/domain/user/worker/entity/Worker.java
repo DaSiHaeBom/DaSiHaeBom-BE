@@ -69,4 +69,7 @@ public class Worker extends BaseEntity {
     public void changeAddress(String address){
         this.address = address;
     }
+    public void changeCoordinates(List<Double> coordinates){
+        this.coordinates = coordinates;
+    }
 }

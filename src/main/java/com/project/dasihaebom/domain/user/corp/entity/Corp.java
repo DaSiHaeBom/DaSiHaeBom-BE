@@ -70,4 +70,7 @@ public class Corp extends BaseEntity {
     public void changeCorpAddress(String corpAddress) {
         this.corpAddress = corpAddress;
     }
+    public void changeCoordinates(List<Double> coordinates) {
+        this.coordinates = coordinates;
+    }
 }
