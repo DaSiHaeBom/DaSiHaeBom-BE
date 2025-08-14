@@ -57,8 +57,8 @@ public class Worker extends BaseEntity {
     @OneToOne(mappedBy = "worker", cascade = CascadeType.ALL, orphanRemoval = true)
     private Auth auth;
 
-    @OneToOne(mappedBy = "worker", cascade = CascadeType.ALL, orphanRemoval = true)
-    private License license;
+    @OneToMany(mappedBy = "worker", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<License> license;
 
     // 엔티티 수정 전용 메서드
     public void changePhoneNumber(String phoneNumber){

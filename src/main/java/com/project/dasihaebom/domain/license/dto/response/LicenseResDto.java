@@ -1,5 +1,6 @@
 package com.project.dasihaebom.domain.license.dto.response;
 
+import com.project.dasihaebom.domain.license.entity.LicenseType;
 import lombok.Builder;
 
 import java.time.LocalDate;
@@ -29,5 +30,18 @@ public class LicenseResDto {
     public record LicenseListResDto(
             List<LicenseDetailResDto> licenses
     ) {
+    }
+
+    @Builder
+    public record LicenseTypeSearchResDto(
+            List<LicenseTypeDetailResDto> licenseTypes
+    ) {
+        @Builder
+        public record LicenseTypeDetailResDto(
+                long id,
+                String name,
+                String issuer
+        ) {
+        }
     }
 }

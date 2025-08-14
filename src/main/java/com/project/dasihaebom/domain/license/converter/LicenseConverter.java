@@ -3,6 +3,7 @@ package com.project.dasihaebom.domain.license.converter;
 import com.project.dasihaebom.domain.license.dto.request.LicenseReqDto;
 import com.project.dasihaebom.domain.license.dto.response.LicenseResDto;
 import com.project.dasihaebom.domain.license.entity.License;
+import com.project.dasihaebom.domain.license.entity.LicenseType;
 import com.project.dasihaebom.domain.user.worker.entity.Worker;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -41,6 +42,20 @@ public class LicenseConverter {
     public static LicenseResDto.LicenseListResDto toLicenseListResDto(List<LicenseResDto.LicenseDetailResDto> licenses) {
         return LicenseResDto.LicenseListResDto.builder()
                 .licenses(licenses)
+                .build();
+    }
+
+    public static LicenseResDto.LicenseTypeSearchResDto.LicenseTypeDetailResDto toLicenseTypeDetailResDto(LicenseType licenseType) {
+        return LicenseResDto.LicenseTypeSearchResDto.LicenseTypeDetailResDto.builder()
+                .id(licenseType.getId())
+                .name(licenseType.getName())
+                .issuer(licenseType.getIssuer())
+                .build();
+    }
+
+    public static LicenseResDto.LicenseTypeSearchResDto toLicenseTypeSearchResDto(List<LicenseResDto.LicenseTypeSearchResDto.LicenseTypeDetailResDto> licenseTypes) {
+        return LicenseResDto.LicenseTypeSearchResDto.builder()
+                .licenseTypes(licenseTypes)
                 .build();
     }
 }

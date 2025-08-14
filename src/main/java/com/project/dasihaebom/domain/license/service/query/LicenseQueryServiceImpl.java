@@ -3,9 +3,11 @@ package com.project.dasihaebom.domain.license.service.query;
 import com.project.dasihaebom.domain.license.converter.LicenseConverter;
 import com.project.dasihaebom.domain.license.dto.response.LicenseResDto;
 import com.project.dasihaebom.domain.license.entity.License;
+import com.project.dasihaebom.domain.license.entity.LicenseType;
 import com.project.dasihaebom.domain.license.exception.LicenseErrorCode;
 import com.project.dasihaebom.domain.license.exception.LicenseException;
 import com.project.dasihaebom.domain.license.repository.LicenseRepository;
+import com.project.dasihaebom.domain.license.repository.LicenseTypeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,7 @@ import java.util.Objects;
 public class LicenseQueryServiceImpl implements LicenseQueryService {
 
     private final LicenseRepository licenseRepository;
+    private final LicenseTypeRepository licenseTypeRepository;
 
     @Override
     public LicenseResDto.LicenseDetailResDto getLicenseDetail(long licenseId, long workerId) {
@@ -43,5 +46,17 @@ public class LicenseQueryServiceImpl implements LicenseQueryService {
                 .toList();
 
         return LicenseConverter.toLicenseListResDto(licenseDetailResDtoList);
+    }
+
+    @Override
+    public LicenseResDto.LicenseTypeSearchResDto searchLicenses(String keyword) {
+        List<LicenseType> licenseTypes = licenseTypeRepository.findAllByKeyword(keyword);
+
+        List<LicenseResDto.LicenseTypeSearchResDto.LicenseTypeDetailResDto> licenseTypeDetailResDtoList =
+                licenseTypes.stream()
+                        .map(LicenseConverter::toLicenseTypeDetailResDto)
+                        .toList();
+
+        return LicenseConverter.toLicenseTypeSearchResDto(licenseTypeDetailResDtoList);
     }
 }

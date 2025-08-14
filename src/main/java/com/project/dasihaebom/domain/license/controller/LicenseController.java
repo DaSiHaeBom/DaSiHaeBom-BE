@@ -68,4 +68,12 @@ public class LicenseController {
     ) {
         return CustomResponse.onSuccess(licenseQueryService.getMyLicensesList(currentUser.getId()));
     }
+
+    @Operation(summary = "자격증 목록 검색")
+    @GetMapping("/search")
+    public CustomResponse<LicenseResDto.LicenseTypeSearchResDto> searchLicenses(
+            @RequestParam String keyword
+    ) {
+        return CustomResponse.onSuccess(licenseQueryService.searchLicenses(keyword));
+    }
 }
