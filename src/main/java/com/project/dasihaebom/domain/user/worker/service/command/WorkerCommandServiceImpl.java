@@ -15,6 +15,7 @@ import com.project.dasihaebom.domain.user.worker.exception.WorkerErrorCode;
 import com.project.dasihaebom.domain.user.worker.exception.WorkerException;
 import com.project.dasihaebom.domain.user.worker.repository.WorkerRepository;
 import com.project.dasihaebom.global.client.location.coordinate.CoordinateClient;
+import com.project.dasihaebom.global.security.utils.JwtUtil;
 import com.project.dasihaebom.global.util.RedisUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +27,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
-import static com.project.dasihaebom.global.constant.redis.RedisConstants.KEY_SCOPE_SUFFIX;
+import static com.project.dasihaebom.global.constant.redis.RedisConstants.*;
 import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_SIGNUP;
 import static com.project.dasihaebom.global.util.UpdateUtils.updateIfChanged;
 
@@ -48,6 +50,7 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
     private final CoordinateClient coordinateClient;
 
     private final RedisUtils<String> redisUtils;
+    private final JwtUtil jwtUtil;
     private final LocationRepository locationRepository;
     private final CorpRepository corpRepository;
 
@@ -101,18 +104,22 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
     }
 
     @Override
-    public void deleteUser(long userId, Role role) {
+    public void deleteUser(long userId, Role role, String accessToken, String refreshToken) {
         if (role == Role.WORKER) {
             Worker worker = workerRepository.findById(userId)
                     .orElseThrow(() -> new WorkerException(WorkerErrorCode.WORKER_NOT_FOUND));
             workerRepository.delete(worker);
+            jwtUtil.saveBlackListToken(worker.getPhoneNumber(), accessToken, refreshToken);
         }
         if (role == Role.CORP) {
             Corp corp = corpRepository.findById(userId)
                     .orElseThrow(() -> new CorpException(CorpErrorCode.CORP_NOT_FOUND));
             corpRepository.delete(corp);
+            jwtUtil.saveBlackListToken(corp.getLoginId(), accessToken, refreshToken);
         }
     }
+
+
 
     private String encodePassword(String rawPassword) {
         return passwordEncoder.encode(rawPassword);

@@ -9,5 +9,5 @@ public interface WorkerCommandService {
 
     void updateWorker(WorkerReqDto.WorkerUpdateReqDto workerUpdateReqDto, long workerId);
 
-    void deleteUser(long userId, Role role);
+    void deleteUser(long userId, Role role, String accessToken, String refreshToken);
 }
