@@ -90,17 +90,17 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
-            log.info("검색된 쿠키 : ");
+            log.info("[ JwtAuthorizationFilter ] 검색된 쿠키 -----------------------");
             for (Cookie cookie : cookies) {
-                log.info("쿠키명 : {}, 값 : {}", cookie.getName(), cookie.getValue().substring(0, 15));
+                log.info("[ JwtAuthorizationFilter ] 쿠키명 : {}, 값 : {}...", cookie.getName(), cookie.getValue().substring(0, 15));
             }
+            log.info("[ JwtAuthorizationFilter ] ---------------------------------");
         } else {
-            log.warn("현재 쿠키 자체가 없습니다");
+            log.warn("[ JwtAuthorizationFilter ] 현재 쿠키 없음");
         }
 
         try {
             // 1. Cookie 에서 Access Token 추출
-            log.info("access token 쿠키 검색");
             String accessToken = getTokenFromCookies(request, ACCESS_COOKIE_NAME);
 
             // 스웨거 전용 헤더에 토큰 넣기
@@ -114,22 +114,21 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
             // 2. Access Token이 없으면 다음 필터로 바로 진행
             if (accessToken == null) {
-                log.info("[ JwtAuthorizationFilter ] Access Token 없음, 다음 필터로 진행");
+                log.info("[ JwtAuthorizationFilter ] Access Token 없음, 다음 필터 진행");
                 filterChain.doFilter(request, response);
                 return;
             }
 
             log.info("[ JwtAuthorizationFilter ] 로그아웃 여부 확인");
-            log.info(jwtUtil.getJti(accessToken));
             if (Objects.equals(accessToken, redisUtils.get(jwtUtil.getJti(accessToken) + KEY_BLACK_LIST_SUFFIX))) {
-                log.info("[ JwtAuthorizationFilter ] 블랙리스트 토큰. 인증 생략하고 다음 필터로 진행");
+                log.info("[ JwtAuthorizationFilter ] 블랙리스트 토큰, 인증 생략 후 다음 필터 진행");
                 filterChain.doFilter(request, response);
                 return;
             }
 
             // 3. Access Token을 이용한 인증 처리
             authenticateAccessToken(accessToken);
-            log.info("[ JwtAuthorizationFilter ] 종료. 다음 필터로 넘어갑니다.");
+            log.info("[ JwtAuthorizationFilter ] 다음 필터 진행");
 
             filterChain.doFilter(request, response);
 
@@ -142,11 +141,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     // Access Token을 바탕으로 인증 객체 생성 및 SecurityContext에 저장
     private void authenticateAccessToken(String accessToken) {
-        log.info("[ JwtAuthorizationFilter ] 토큰으로 인가 과정을 시작합니다. ");
+        log.info("[ JwtAuthorizationFilter ] 토큰으로 인가 과정을 시작");
 
         // 1. Access Token의 유효성 검증
         jwtUtil.validateToken(accessToken);
-        log.info("[ JwtAuthorizationFilter ] Access Token 유효성 검증 성공. ");
+        log.info("[ JwtAuthorizationFilter ] Access Token 유효성 검증 성공");
 
         // 2. Access Token에서 사용자 정보 추출 후 CustomUserDetails 생성
         Long userId = jwtUtil.getId(accessToken);

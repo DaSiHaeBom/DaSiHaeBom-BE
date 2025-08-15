@@ -26,21 +26,22 @@ public class CookieUtils {
     }
 
     public static String getTokenFromCookies(HttpServletRequest request, String cookieName) {
-        log.info("쿠키에서 토큰을 추출하기 위해 쿠키를 검색합니다.");
+        log.info("[ CookieUtils ] 쿠키 검색");
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if (cookie.getName().equals(cookieName)) {
-                    log.info("{} 쿠키가 존재합니다.", cookieName);
+                    log.info("[ CookieUtils ] {} 쿠키 존재", cookieName);
                     return cookie.getValue();
                 }
             }
 
-            log.warn("사용 가능한 쿠키가 존재하지 않습니다.");
-            log.warn("현재 쿠키 목록");
+            log.warn("[ CookieUtils ] 사용 가능한 쿠키가 존재하지 않음");
+            log.warn("[ CookieUtils ] 현재 쿠키 목록 -------------------");
             for (Cookie cookie : request.getCookies()) {
-                log.warn(" - {}", cookie.getName());
+                log.warn("[ CookieUtils ]  - {}", cookie.getName());
+                log.warn("[ CookieUtils ] ------------------------------------");
             }
-            log.warn("accessToken 쿠키가 존재하지 않습니다.");
+            log.warn("[ CookieUtils ] {} 쿠키가 존재하지 않음", cookieName);
         }
         return null;
     }

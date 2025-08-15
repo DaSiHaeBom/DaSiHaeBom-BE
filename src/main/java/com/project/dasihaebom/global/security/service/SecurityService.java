@@ -30,7 +30,7 @@ public class SecurityService {
         }
 
         // refresh token의 유효성 검사
-        log.info("[ JwtAuthorizationFilter ] refresh token의 유효성을 검사합니다.");
+        log.info("[ reissueCookie ] refresh token의 유효성을 검사합니다.");
         jwtUtil.validateToken(refreshToken);
 
         // redis 에 해당 refresh token이 존재하는지 검사
@@ -40,7 +40,7 @@ public class SecurityService {
         }
 
         // access token 재발급
-        log.info("[ JwtAuthorizationFilter ] refresh token 으로 access token 을 생성합니다.");
+        log.info("[ reissueCookie ] refresh token 으로 access token 을 생성합니다.");
         return jwtUtil.reissueToken(refreshToken);
     }
 }
