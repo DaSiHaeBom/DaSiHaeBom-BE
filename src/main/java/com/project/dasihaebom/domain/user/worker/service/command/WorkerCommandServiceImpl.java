@@ -63,7 +63,7 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
         final String phoneNumber = workerCreateReqDto.phoneNumber();
         // 해당 인증이 회원 가입을 위한 것인지 확인
         if (!Objects.equals(redisUtils.get(phoneNumber + KEY_SCOPE_SUFFIX), SCOPE_SIGNUP)) {
-            throw new WorkerException(WorkerErrorCode.PHONE_VALIDATION_DOES_NOT_EXIST);
+            throw new WorkerException(WorkerErrorCode.SIGN_UP_PHONE_VALIDATION_DOES_NOT_EXIST);
         }
 
         final String address = workerCreateReqDto.address();
@@ -93,7 +93,7 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
             String phoneNumber = workerUpdateReqDto.phoneNumber();
             // 해당 인증이 전화번호 변경을 위한 것인지 확인
             if (!Objects.equals(redisUtils.get(phoneNumber + KEY_SCOPE_SUFFIX), SCOPE_CHANGE_PHONE_NUMBER)) {
-                throw new WorkerException(WorkerErrorCode.PHONE_VALIDATION_DOES_NOT_EXIST);
+                throw new WorkerException(WorkerErrorCode.PROFILE_PHONE_VALIDATION_DOES_NOT_EXIST);
             }
             updateIfChanged(workerUpdateReqDto.phoneNumber(), worker.getPhoneNumber(), worker::changePhoneNumber);
             // 인증 정보 삭제

@@ -11,7 +11,8 @@ public enum WorkerErrorCode implements BaseErrorCode {
     // ErrorCode
     WORKER_NOT_FOUND(HttpStatus.NOT_FOUND, "WORKER404", "회원을 찾을 수 없습니다."),
     WORKER_DUPLICATED(HttpStatus.CONFLICT, "WORKER409", "이미 가입된 사용자 입니다."),
-    PHONE_VALIDATION_DOES_NOT_EXIST(HttpStatus.UNAUTHORIZED, "WORK401", "회원 가입 휴대폰 인증을 시도하지 않았거나 변조되었거나 만료되었습니다."),
+    SIGN_UP_PHONE_VALIDATION_DOES_NOT_EXIST(HttpStatus.UNAUTHORIZED, "WORK401", "회원 가입 휴대폰 인증을 시도하지 않았거나 변조되었거나 만료되었습니다."),
+    PROFILE_PHONE_VALIDATION_DOES_NOT_EXIST(HttpStatus.UNAUTHORIZED, "WORK401", "회원 가입 휴대폰 인증을 시도하지 않았거나 변조되었거나 만료되었습니다."),
     ;
 
     private final HttpStatus httpStatus;

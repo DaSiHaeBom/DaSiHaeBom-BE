@@ -58,7 +58,7 @@ public class CorpCommandServiceImpl implements CorpCommandService {
         final String phoneNumber = corpCreateReqDto.phoneNumber();
         // 해당 인증이 회원 가입을 위한 것인지 확인
         if (!Objects.equals(redisUtils.get(phoneNumber + KEY_SCOPE_SUFFIX), SCOPE_SIGNUP)) {
-            throw new CorpException(CorpErrorCode.PHONE_VALIDATION_DOES_NOT_EXIST);
+            throw new CorpException(CorpErrorCode.SIGN_UP_PHONE_VALIDATION_DOES_NOT_EXIST);
         }
 
         // 사업자 인증이 있는지 확인
@@ -89,25 +89,34 @@ public class CorpCommandServiceImpl implements CorpCommandService {
                 .orElseThrow(() -> new CorpException(CorpErrorCode.CORP_NOT_FOUND));
 
         updateIfChanged(corpUpdateReqDto.ceoName(), corp.getCorpName(), corp::changeCeoName);
+        updateIfChanged(corpUpdateReqDto.corpName(), corp.getCorpName(), corp::changeCorpName);
 
+        // 전화 번호 변경시
         if (!corpUpdateReqDto.phoneNumber().equals(corp.getPhoneNumber())) {
             // 휴대폰 인증이 있는지 확인
             String phoneNumber = corpUpdateReqDto.phoneNumber();
             // 해당 인증이 전화번호 변경을 위한 것인지 확인
             if (!Objects.equals(redisUtils.get(phoneNumber + KEY_SCOPE_SUFFIX), SCOPE_CHANGE_PHONE_NUMBER)) {
-                throw new CorpException(CorpErrorCode.PHONE_VALIDATION_DOES_NOT_EXIST);
+                throw new CorpException(CorpErrorCode.PROFILE_PHONE_VALIDATION_DOES_NOT_EXIST);
             }
             updateIfChanged(corpUpdateReqDto.phoneNumber(), corp.getPhoneNumber(), corp::changePhoneNumber);
             // 인증 정보 삭제
             redisUtils.delete(phoneNumber + KEY_SCOPE_SUFFIX);
         }
-
-        updateIfChanged(corpUpdateReqDto.corpNumber(), corp.getCorpNumber(), corp::changeCorpNumber);
-        updateIfChanged(corpUpdateReqDto.corpName(), corp.getCorpName(), corp::changeCorpName);
-
+        // 사업자 번호 변경시
+        if (!corpUpdateReqDto.corpNumber().equals(corp.getCorpNumber())) {
+            // 사업자 인증이 있는지 확인
+            String corpNumber = corpUpdateReqDto.corpNumber();
+            if (!Objects.equals(redisUtils.get(corpNumber + KEY_SCOPE_SUFFIX), SCOPE_CORP_NUMBER)) {
+                throw new CorpException(CorpErrorCode.CORP_VALIDATION_FAILURE);
+            }
+            updateIfChanged(corpUpdateReqDto.corpNumber(), corp.getCorpNumber(), corp::changeCorpNumber);
+            // 인증 정보 삭제
+            redisUtils.delete(corpNumber + KEY_SCOPE_SUFFIX);
+        }
+        // 주소 변경시
         if (!corpUpdateReqDto.corpAddress().equals(corp.getCorpAddress())) {
             updateIfChanged(corpUpdateReqDto.corpAddress(), corp.getCorpAddress(), corp::changeCorpAddress);
-
             // 변경된 주소로 좌표 api 호출
             final String addressToUpdate = corpUpdateReqDto.corpAddress();
             final List<Double> coordinatesToUpdate = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(addressToUpdate));
