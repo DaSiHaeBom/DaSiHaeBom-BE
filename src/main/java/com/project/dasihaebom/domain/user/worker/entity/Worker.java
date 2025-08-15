@@ -1,13 +1,17 @@
 package com.project.dasihaebom.domain.user.worker.entity;
 
 import com.project.dasihaebom.domain.auth.entity.Auth;
+import com.project.dasihaebom.domain.introduction.entity.Answer;
+import com.project.dasihaebom.domain.introduction.entity.Introduction;
 import com.project.dasihaebom.domain.license.entity.License;
 import com.project.dasihaebom.domain.location.entity.Location;
+import com.project.dasihaebom.domain.resume.entity.Resume;
 import com.project.dasihaebom.domain.user.LoginType;
 import com.project.dasihaebom.domain.user.Role;
 import com.project.dasihaebom.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.query.named.ResultMemento;
 
 import java.util.List;
 
@@ -57,12 +61,21 @@ public class Worker extends BaseEntity {
     // User가 삭제되면 Auth도 삭제
     @OneToOne(mappedBy = "worker", cascade = CascadeType.ALL, orphanRemoval = true)
     private Auth auth;
-
+    // User가 삭제되면 Location도 삭제
     @OneToMany(mappedBy = "worker", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Location> location;
-
+    // User가 삭제되면 License도 삭제
     @OneToMany(mappedBy = "worker", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<License> license;
+    // User가 삭제되면 Introduction도 삭제
+    @OneToMany(mappedBy = "worker", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Introduction> introduction;
+    // User가 삭제되면 Answer도 삭제
+    @OneToMany(mappedBy = "worker", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Answer> answers;
+    // User가 삭제되면 Resume도 삭제
+    @OneToOne(mappedBy = "worker", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Resume resume;
 
     // 엔티티 수정 전용 메서드
     public void changePhoneNumber(String phoneNumber){
