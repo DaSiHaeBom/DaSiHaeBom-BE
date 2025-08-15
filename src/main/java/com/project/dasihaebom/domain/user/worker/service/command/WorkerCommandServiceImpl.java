@@ -15,6 +15,7 @@ import com.project.dasihaebom.domain.user.worker.exception.WorkerErrorCode;
 import com.project.dasihaebom.domain.user.worker.exception.WorkerException;
 import com.project.dasihaebom.domain.user.worker.repository.WorkerRepository;
 import com.project.dasihaebom.global.client.location.coordinate.CoordinateClient;
+import com.project.dasihaebom.global.security.utils.JwtUtil;
 import com.project.dasihaebom.global.util.RedisUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +27,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
-import static com.project.dasihaebom.global.constant.redis.RedisConstants.KEY_SCOPE_SUFFIX;
+import static com.project.dasihaebom.global.constant.redis.RedisConstants.*;
+import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_CHANGE_PHONE_NUMBER;
 import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_SIGNUP;
 import static com.project.dasihaebom.global.util.UpdateUtils.updateIfChanged;
 
@@ -48,6 +51,7 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
     private final CoordinateClient coordinateClient;
 
     private final RedisUtils<String> redisUtils;
+    private final JwtUtil jwtUtil;
     private final LocationRepository locationRepository;
     private final CorpRepository corpRepository;
 
@@ -59,7 +63,7 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
         final String phoneNumber = workerCreateReqDto.phoneNumber();
         // 해당 인증이 회원 가입을 위한 것인지 확인
         if (!Objects.equals(redisUtils.get(phoneNumber + KEY_SCOPE_SUFFIX), SCOPE_SIGNUP)) {
-            throw new WorkerException(WorkerErrorCode.PHONE_VALIDATION_DOES_NOT_EXIST);
+            throw new WorkerException(WorkerErrorCode.SIGN_UP_PHONE_VALIDATION_DOES_NOT_EXIST);
         }
 
         final String address = workerCreateReqDto.address();
@@ -86,10 +90,21 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
         updateIfChanged(workerUpdateReqDto.phoneNumber(), worker.getPhoneNumber(), worker::changePhoneNumber);
         updateIfChanged(workerUpdateReqDto.username(), worker.getUsername(), worker::changeUsername);
         updateIfChanged(workerUpdateReqDto.birthDate(), worker.getBirthDate(), worker::changeBirthDate);
-
+        // 전화번호 변경시
+        if (!workerUpdateReqDto.phoneNumber().equals(worker.getPhoneNumber())) {
+            // 휴대폰 인증이 있는지 확인
+            String phoneNumber = workerUpdateReqDto.phoneNumber();
+            // 해당 인증이 전화번호 변경을 위한 것인지 확인
+            if (!Objects.equals(redisUtils.get(phoneNumber + KEY_SCOPE_SUFFIX), SCOPE_CHANGE_PHONE_NUMBER)) {
+                throw new WorkerException(WorkerErrorCode.PROFILE_PHONE_VALIDATION_DOES_NOT_EXIST);
+            }
+            updateIfChanged(workerUpdateReqDto.phoneNumber(), worker.getPhoneNumber(), worker::changePhoneNumber);
+            // 인증 정보 삭제
+            redisUtils.delete(phoneNumber + KEY_SCOPE_SUFFIX);
+        }
+        // 주소 변경시
         if (!workerUpdateReqDto.address().equals(worker.getAddress())) {
             updateIfChanged(workerUpdateReqDto.address(), worker.getAddress(), worker::changeAddress);
-
             // 변경된 주소로 좌표 api 호출
             final String addressToUpdate = workerUpdateReqDto.address();
             final List<Double> coordinatesToUpdate = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(addressToUpdate));
@@ -101,18 +116,22 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
     }
 
     @Override
-    public void deleteUser(long userId, Role role) {
+    public void deleteUser(long userId, Role role, String accessToken, String refreshToken) {
         if (role == Role.WORKER) {
             Worker worker = workerRepository.findById(userId)
                     .orElseThrow(() -> new WorkerException(WorkerErrorCode.WORKER_NOT_FOUND));
             workerRepository.delete(worker);
+            jwtUtil.saveBlackListToken(worker.getPhoneNumber(), accessToken, refreshToken);
         }
         if (role == Role.CORP) {
             Corp corp = corpRepository.findById(userId)
                     .orElseThrow(() -> new CorpException(CorpErrorCode.CORP_NOT_FOUND));
             corpRepository.delete(corp);
+            jwtUtil.saveBlackListToken(corp.getLoginId(), accessToken, refreshToken);
         }
     }
+
+
 
     private String encodePassword(String rawPassword) {
         return passwordEncoder.encode(rawPassword);

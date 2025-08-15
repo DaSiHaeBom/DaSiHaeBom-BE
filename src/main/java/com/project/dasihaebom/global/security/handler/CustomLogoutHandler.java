@@ -12,8 +12,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.project.dasihaebom.global.constant.redis.RedisConstants.KEY_ACCESS_TOKEN_SUFFIX;
-import static com.project.dasihaebom.global.constant.redis.RedisConstants.KEY_REFRESH_TOKEN_SUFFIX;
+import static com.project.dasihaebom.global.constant.common.CommonConstants.ACCESS_COOKIE_NAME;
+import static com.project.dasihaebom.global.constant.common.CommonConstants.REFRESH_COOKIE_NAME;
+import static com.project.dasihaebom.global.constant.redis.RedisConstants.*;
 import static com.project.dasihaebom.global.util.CookieUtils.createJwtCookies;
 import static com.project.dasihaebom.global.util.CookieUtils.getTokenFromCookies;
 
@@ -28,21 +29,14 @@ public class CustomLogoutHandler implements LogoutHandler {
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 
-        String accessToken = getTokenFromCookies(request, "access-token");
-        String refreshToken = getTokenFromCookies(request, "refresh-token");
+        String accessToken = getTokenFromCookies(request, ACCESS_COOKIE_NAME);
+        String refreshToken = getTokenFromCookies(request, REFRESH_COOKIE_NAME);
         String loginId = jwtUtil.getEmail(refreshToken);
 
-        // 로그아웃 블랙리스트 등록
-        log.info("[ Redis 저장 ] key = Logout {}", loginId);
-        redisUtils.save(loginId + KEY_REFRESH_TOKEN_SUFFIX, refreshToken, jwtUtil.getRefreshExpMs(), TimeUnit.MILLISECONDS);
-        redisUtils.save(loginId + KEY_ACCESS_TOKEN_SUFFIX, accessToken, jwtUtil.getAccessExpMs(), TimeUnit.MILLISECONDS);
-        log.info("[ CustomLogoutHandler ] Logout 블랙리스트 등록 완료");
+        jwtUtil.saveBlackListToken(loginId, accessToken, refreshToken);
 
-        redisUtils.delete(loginId + ":refresh");
-        log.info("[ CustomLogoutHandler ] 블랙리스트 RefreshToken 삭제 완료");
-
-        createJwtCookies(response, "access-token", null, 0);
-        createJwtCookies(response, "refresh-token", null, 0);
+        createJwtCookies(response, ACCESS_COOKIE_NAME, null, 0);
+        createJwtCookies(response, REFRESH_COOKIE_NAME, null, 0);
         log.info("[ CustomLogoutHandler ] 쿠키 삭제 완료");
     }
 }

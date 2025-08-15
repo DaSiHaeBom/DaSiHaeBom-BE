@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import static com.project.dasihaebom.global.constant.common.CommonConstants.ACCESS_COOKIE_NAME;
+import static com.project.dasihaebom.global.constant.common.CommonConstants.REFRESH_COOKIE_NAME;
 import static com.project.dasihaebom.global.util.CookieUtils.createJwtCookies;
 import static com.project.dasihaebom.global.util.CookieUtils.getTokenFromCookies;
 
@@ -32,12 +34,12 @@ public class SecurityController {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        String refreshToken = getTokenFromCookies(request, "refresh-token");
+        String refreshToken = getTokenFromCookies(request, REFRESH_COOKIE_NAME);
         String accessToken = securityService.reissueCookie(refreshToken);
 
         // 쿠키 재발급
         log.info("[ JwtAuthorizationFilter ] 쿠키를 재생성 합니다.");
-        createJwtCookies(response, "access-token", accessToken, jwtUtil.getAccessExpMs());
+        createJwtCookies(response, ACCESS_COOKIE_NAME, accessToken, jwtUtil.getAccessExpMs());
 
         return CustomResponse.onSuccess("엑세스 쿠키가 재발급 되었습니다.");
     }

@@ -12,9 +12,11 @@ public class RedisConstants {
     public static final String KEY_CODE_SUFFIX = ":code";
     public static final String KEY_COOLDOWN_SUFFIX = ":cooldown";
 
-    // LOGOUT
-    public static final String KEY_ACCESS_TOKEN_SUFFIX = ":Alogout";
-    public static final String KEY_REFRESH_TOKEN_SUFFIX = ":RToken";
+    // BLACK LIST
+    public static final String KEY_BLACK_LIST_SUFFIX = ":blacklist";
+
+    // JWT
+    public static final String KEY_REFRESH_SUFFIX = ":refresh";
 
     // SCOPE
     public static final String KEY_SCOPE_SUFFIX = ":scope";
