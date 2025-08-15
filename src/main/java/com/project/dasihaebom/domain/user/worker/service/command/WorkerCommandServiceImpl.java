@@ -87,7 +87,10 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
                 .orElseThrow(() -> new WorkerException(WorkerErrorCode.WORKER_NOT_FOUND));
 
         // findById로 가져온 객체는 영속성 컨텍스트 안이라서 더티채킹 어쩌고저쩌고쏼라쏼라
-
+        updateIfChanged(workerUpdateReqDto.phoneNumber(), worker.getPhoneNumber(), worker::changePhoneNumber);
+        updateIfChanged(workerUpdateReqDto.username(), worker.getUsername(), worker::changeUsername);
+        updateIfChanged(workerUpdateReqDto.birthDate(), worker.getBirthDate(), worker::changeBirthDate);
+        // 전화번호 변경시
         if (!workerUpdateReqDto.phoneNumber().equals(worker.getPhoneNumber())) {
             // 휴대폰 인증이 있는지 확인
             String phoneNumber = workerUpdateReqDto.phoneNumber();
@@ -99,13 +102,9 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
             // 인증 정보 삭제
             redisUtils.delete(phoneNumber + KEY_SCOPE_SUFFIX);
         }
-        updateIfChanged(workerUpdateReqDto.phoneNumber(), worker.getPhoneNumber(), worker::changePhoneNumber);
-        updateIfChanged(workerUpdateReqDto.username(), worker.getUsername(), worker::changeUsername);
-        updateIfChanged(workerUpdateReqDto.birthDate(), worker.getBirthDate(), worker::changeBirthDate);
-
+        // 주소 변경시
         if (!workerUpdateReqDto.address().equals(worker.getAddress())) {
             updateIfChanged(workerUpdateReqDto.address(), worker.getAddress(), worker::changeAddress);
-
             // 변경된 주소로 좌표 api 호출
             final String addressToUpdate = workerUpdateReqDto.address();
             final List<Double> coordinatesToUpdate = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(addressToUpdate));
