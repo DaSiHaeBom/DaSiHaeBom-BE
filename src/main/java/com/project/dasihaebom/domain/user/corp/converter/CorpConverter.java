@@ -8,10 +8,12 @@ import com.project.dasihaebom.global.client.corpNumber.dto.NtsCorpInfoResDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CorpConverter {
 
-    public static Corp toCorp(CorpReqDto.CorpCreateReqDto corpCreateReqDto) {
+    public static Corp toCorp(CorpReqDto.CorpCreateReqDto corpCreateReqDto, List<Double> coordinates) {
         return Corp.builder()
                 .loginId(corpCreateReqDto.loginId())
                 .ceoName(corpCreateReqDto.ceoName())
@@ -20,6 +22,7 @@ public class CorpConverter {
                 .corpName(corpCreateReqDto.corpName())
                 .corpAddress(corpCreateReqDto.corpAddress())
                 .role(Role.CORP)
+                .coordinates(coordinates)
                 .build();
     }
 

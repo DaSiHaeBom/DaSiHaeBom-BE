@@ -25,7 +25,7 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
             Authentication authentication
     ) throws IOException {
 
-        log.info("[ CustomLogoutSuccessHandler  ] 로그아웃에 성공 하였습니다.");
+        log.info("[ CustomLogoutSuccessHandler  ] 로그아웃 성공");
         // CustomResponse 사용하여 응답 통일
         CustomResponse<String> responseBody = CustomResponse.onSuccess("로그아웃 성공");
 

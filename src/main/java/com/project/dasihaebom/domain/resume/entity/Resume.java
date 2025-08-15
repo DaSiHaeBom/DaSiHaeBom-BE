@@ -1,5 +1,6 @@
 package com.project.dasihaebom.domain.resume.entity;
 
+import com.project.dasihaebom.domain.introduction.entity.Introduction;
 import com.project.dasihaebom.domain.license.entity.License;
 import com.project.dasihaebom.domain.user.worker.entity.Gender;
 import com.project.dasihaebom.domain.user.worker.entity.Worker;
@@ -27,8 +28,8 @@ public class Resume extends BaseEntity {
     @Column(name = "username", nullable = false)
     private String username;
 
-    @Column(name = "age", nullable = false)
-    private Integer age;
+    @Column(name = "birth_date", nullable = false)
+    private String birthDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "gender", nullable = false)
@@ -55,5 +56,19 @@ public class Resume extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "worker_id", unique = true, nullable = false)
     private Worker worker;
+
+
+
+    // 비정규화 메서드 갱신(동기화)용
+    public void syncData(Worker worker, Introduction introduction, String licensesJson) {
+        this.username = worker.getUsername();
+        this.birthDate = worker.getBirthDate();
+        this.gender = worker.getGender();
+        this.address = worker.getAddress();
+        this.phoneNumber = worker.getPhoneNumber();
+        this.introductionFullText = introduction.getFullText();
+        this.introductionSummary = introduction.getSummary();
+        this.licenses = licensesJson;
+    }
 
 }

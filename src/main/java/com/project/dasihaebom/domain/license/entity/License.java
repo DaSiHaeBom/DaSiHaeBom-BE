@@ -5,6 +5,8 @@ import com.project.dasihaebom.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 @Builder
@@ -17,15 +19,27 @@ public class License extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
-    private String name; // 자격증명
+    @Column(name = "name", nullable = false)
+    private String name;
 
-    @Column(name = "issuer")
-    private String issuer; // 발급처
+    @Column(name = "issued_at", nullable = false)
+    private LocalDate issuedAt;
 
+    @Column(name = "issuer", nullable = false)
+    private String issuer;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "worker_id")
     private Worker worker;
 
+    // 엔티티 변경 메서드
+    public void changeName(String name) {
+        this.name = name;
+    }
+    public void changeIssuedAt(LocalDate issuedAt) {
+        this.issuedAt = issuedAt;
+    }
+    public void changeIssuer(String issuer) {
+        this.issuer = issuer;
+    }
 }

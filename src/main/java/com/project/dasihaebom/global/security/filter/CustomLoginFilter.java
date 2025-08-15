@@ -26,6 +26,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 
+import static com.project.dasihaebom.global.constant.common.CommonConstants.ACCESS_COOKIE_NAME;
+import static com.project.dasihaebom.global.constant.common.CommonConstants.REFRESH_COOKIE_NAME;
 import static com.project.dasihaebom.global.util.CookieUtils.createJwtCookies;
 
 @Slf4j
@@ -53,16 +55,16 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
         //Request Body 에서 추출
         String loginId = requestBody.loginId(); //Email 추출
         String password = requestBody.password(); //password 추출
-        log.info("[ Login Filter ]  LoginId ---> {} ", loginId);
-        log.info("[ Login Filter ]  Password ---> {} ", password);
+//        log.info("[ Login Filter ]  LoginId ---> {} ", loginId);
+//        log.info("[ Login Filter ]  Password ---> {} ", password);
 
         //UserNamePasswordToken 생성 (인증용 객체)
         UsernamePasswordAuthenticationToken authToken
                 = new UsernamePasswordAuthenticationToken(loginId, password, null);
 
 
-        log.info("[ Login Filter ] 인증용 객체 UsernamePasswordAuthenticationToken 이 생성되었습니다. ");
-        log.info("[ Login Filter ] 인증을 시도합니다.");
+        log.info("[ Login Filter ] 인증용 객체 UsernamePasswordAuthenticationToken 생성");
+        log.info("[ Login Filter ] 인증 시도");
 
         //인증 시도
         return authenticationManager.authenticate(authToken);
@@ -77,7 +79,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
             @NonNull Authentication authentication) throws IOException {
 
 
-        log.info("[ Login Filter ] 로그인에 성공 하였습니다.");
+        log.info("[ Login Filter ] 로그인 성공");
 
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
 
@@ -88,8 +90,8 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
         long accessExp = jwtUtil.getAccessExpMs();
         long refreshExp = jwtUtil.getRefreshExpMs();
 
-        createJwtCookies(response, "access-token", accessToken, accessExp);
-        createJwtCookies(response, "refresh-token", refreshToken, refreshExp);
+        createJwtCookies(response, ACCESS_COOKIE_NAME, accessToken, accessExp);
+        createJwtCookies(response, REFRESH_COOKIE_NAME, refreshToken, refreshExp);
 
         //Client 에게 줄 Response 를 Build
         JwtDto jwtDto = JwtDto.builder()
@@ -116,7 +118,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
             @NonNull HttpServletResponse response,
             @NonNull AuthenticationException failed) throws IOException {
 
-        log.info("[ Login Filter ] 로그인에 실패하였습니다.");
+        log.info("[ Login Filter ] 로그인 실패");
 
         String errorCode;
         String errorMessage;

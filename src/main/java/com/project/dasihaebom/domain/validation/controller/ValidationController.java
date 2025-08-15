@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_TEMP_PASSWORD;
-import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_SIGNUP;
+import static com.project.dasihaebom.global.constant.scope.ScopeConstants.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +26,7 @@ public class ValidationController {
     @PostMapping("/phone/code/sign-up")
     public CustomResponse<String> sendSignUpCode(
             @RequestBody @Valid ValidationReqDto.PhoneNumberCodeReqDto phoneNumberCodeReqDto
-    ) {                             // 회원 가입을 위한 인증은 회원 가입에서만 소모되어야 한다. 인증 정보 탈취 방지 스코프 정의
+    ) {                             // 회원 가입을 위한 인증은 회원 가입에서만 소모되어야 한다. 인증 정보 악의적 이용 방지 스코프 정의
         String code = validationService.sendCode(phoneNumberCodeReqDto, SCOPE_SIGNUP);
         return CustomResponse.onSuccess("인증 번호 발송 성공! " + code);
     }
@@ -37,8 +36,18 @@ public class ValidationController {
     public CustomResponse<String> sendResetPasswordCode(
             @RequestBody @Valid ValidationReqDto.PhoneNumberCodeReqDto phoneNumberCodeReqDto
     ) {
-                                    // 비밀번호를 위한 인증은 비밀번호에서만 소모되어야 한다. 인증 정보 탈취 방지 스코프 정의
+                                    // 비밀번호를 위한 인증은 비밀번호에서만 소모되어야 한다. 인증 정보 악의적 이용 방지 스코프 정의
         String code = validationService.sendCode(phoneNumberCodeReqDto, SCOPE_TEMP_PASSWORD);
+        return CustomResponse.onSuccess("인증 번호 발송 성공! " + code);
+    }
+
+    @Operation(summary = "내 정보 수정 핸드폰 번호 변경 휴대폰 문자 인증 번호 발송", description = "내 정보 수정에서만 사용 <br> 메시지 구현 완료 했으나, 일단 resBody로 제공")
+    @PostMapping("/phone/code/profile")
+    public CustomResponse<String> sendChangePhoneNumberCode(
+            @RequestBody @Valid ValidationReqDto.PhoneNumberCodeReqDto phoneNumberCodeReqDto
+    ) {
+                                    // 전화번호 수정을 위한 인증은 전화번호 수정에서만 소모되어야 한다. 인증 정보 악의적 이용 방지 스코프 정의
+        String code = validationService.sendCode(phoneNumberCodeReqDto, SCOPE_CHANGE_PHONE_NUMBER);
         return CustomResponse.onSuccess("인증 번호 발송 성공! " + code);
     }
 

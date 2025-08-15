@@ -1,16 +1,26 @@
 package com.project.dasihaebom.domain.user.worker.controller;
 
 import com.project.dasihaebom.domain.user.worker.dto.request.WorkerReqDto;
-import com.project.dasihaebom.domain.user.worker.repository.WorkerRepository;
 import com.project.dasihaebom.domain.user.worker.service.command.WorkerCommandService;
 import com.project.dasihaebom.global.apiPayload.CustomResponse;
 import com.project.dasihaebom.global.security.userdetails.CurrentUser;
+import com.project.dasihaebom.global.security.utils.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.concurrent.TimeUnit;
+
+import static com.project.dasihaebom.global.constant.common.CommonConstants.ACCESS_COOKIE_NAME;
+import static com.project.dasihaebom.global.constant.common.CommonConstants.REFRESH_COOKIE_NAME;
+import static com.project.dasihaebom.global.util.CookieUtils.createJwtCookies;
+import static com.project.dasihaebom.global.util.CookieUtils.getTokenFromCookies;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 public class WorkerController {
 
     private final WorkerCommandService workerCommandService;
+    private final JwtUtil jwtUtil;
 
     @Operation(summary = "개인 회원 가입", description = "전화번호가 겹치면 가입이 안됨")
     @PostMapping("")
@@ -37,5 +48,23 @@ public class WorkerController {
     ) {
         workerCommandService.updateWorker(workerUpdateReqDto, currentUser.getId());
         return CustomResponse.onSuccess("개인 회원 정보 수정 완료");
+    }
+
+    @Operation(summary = "회원 탈퇴", description = "worker에 있긴 하지만 기업 회원도 탈퇴 가능합니다")
+    @DeleteMapping("/withdrawal")
+    public CustomResponse<String> deleteUser(
+            @AuthenticationPrincipal CurrentUser currentUser,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        final String accessToken = getTokenFromCookies(request, ACCESS_COOKIE_NAME);
+        final String refreshToken = getTokenFromCookies(request, REFRESH_COOKIE_NAME);
+
+        workerCommandService.deleteUser(currentUser.getId(), currentUser.getRole(), accessToken, refreshToken);
+
+        createJwtCookies(response, ACCESS_COOKIE_NAME, null, 0);
+        createJwtCookies(response, REFRESH_COOKIE_NAME, null, 0);
+
+        return CustomResponse.onSuccess(HttpStatus.NO_CONTENT, "회원 탈퇴 성공");
     }
 }
