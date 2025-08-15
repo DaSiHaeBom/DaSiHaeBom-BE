@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.TimeUnit;
 
+import static com.project.dasihaebom.global.constant.common.CommonConstants.ACCESS_COOKIE_NAME;
+import static com.project.dasihaebom.global.constant.common.CommonConstants.REFRESH_COOKIE_NAME;
 import static com.project.dasihaebom.global.util.CookieUtils.createJwtCookies;
 import static com.project.dasihaebom.global.util.CookieUtils.getTokenFromCookies;
 
@@ -55,13 +57,13 @@ public class WorkerController {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        final String accessToken = getTokenFromCookies(request, "access-token");
-        final String refreshToken = getTokenFromCookies(request, "refresh-token");
+        final String accessToken = getTokenFromCookies(request, ACCESS_COOKIE_NAME);
+        final String refreshToken = getTokenFromCookies(request, REFRESH_COOKIE_NAME);
 
         workerCommandService.deleteUser(currentUser.getId(), currentUser.getRole(), accessToken, refreshToken);
 
-        createJwtCookies(response, "access-token", null, 0);
-        createJwtCookies(response, "refresh-token", null, 0);
+        createJwtCookies(response, ACCESS_COOKIE_NAME, null, 0);
+        createJwtCookies(response, REFRESH_COOKIE_NAME, null, 0);
 
         return CustomResponse.onSuccess(HttpStatus.NO_CONTENT, "회원 탈퇴 성공");
     }

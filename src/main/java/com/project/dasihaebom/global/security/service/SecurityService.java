@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
+import static com.project.dasihaebom.global.constant.redis.RedisConstants.KEY_REFRESH_SUFFIX;
 import static com.project.dasihaebom.global.util.CookieUtils.createJwtCookies;
 
 @Service
@@ -33,7 +34,7 @@ public class SecurityService {
         jwtUtil.validateToken(refreshToken);
 
         // redis 에 해당 refresh token이 존재하는지 검사
-        if (!Objects.equals(redisUtils.get(jwtUtil.getEmail(refreshToken) + ":refresh"), refreshToken)) {
+        if (!Objects.equals(redisUtils.get(jwtUtil.getEmail(refreshToken) + KEY_REFRESH_SUFFIX), refreshToken)) {
             // 서버에 리프레시 토큰이 없음 -> 재 로그인 안내
             throw new CustomException(SecurityErrorCode.REQUIRED_RE_LOGIN);
         }

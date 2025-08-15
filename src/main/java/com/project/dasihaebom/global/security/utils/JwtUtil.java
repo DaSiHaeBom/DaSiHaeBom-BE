@@ -19,8 +19,12 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static com.project.dasihaebom.global.constant.redis.RedisConstants.KEY_BLACK_LIST_SUFFIX;
+import static com.project.dasihaebom.global.constant.redis.RedisConstants.KEY_REFRESH_SUFFIX;
 
 @Slf4j
 @Component
@@ -76,6 +80,28 @@ public class JwtUtil {
                 .get("userId", Long.class);
     }
 
+    public String getJti(String token) throws SignatureException{
+        log.info("[ JwtUtil ] 토큰에서 jti를 추출합니다.");
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("jti", String.class);
+    }
+
+    public void saveBlackListToken(String loginId, String accessToken, String refreshToken) {
+        // 토큰의 jti를 가져옴
+        final String accessJti = getJti(accessToken);
+        final String refreshJti = getJti(refreshToken);
+        // 토큰 블랙리스트 등록
+        redisUtils.save(accessJti + KEY_BLACK_LIST_SUFFIX, accessToken, getRefreshExpMs(), TimeUnit.MILLISECONDS);
+        redisUtils.save(refreshJti + KEY_BLACK_LIST_SUFFIX, refreshToken, getAccessExpMs(), TimeUnit.MILLISECONDS);
+        // 리프레시 정보 삭제
+        redisUtils.delete(loginId + KEY_REFRESH_SUFFIX);
+
+    }
+
     public long getAccessExpMs() {
         return this.accessExpMs;
     }
@@ -90,6 +116,8 @@ public class JwtUtil {
         log.info("[ JwtUtil ] 토큰을 새로 생성합니다.");
         //현재 시간
         Instant issuedAt = Instant.now();
+        // 토큰에 부여할 고유 jti
+        final String jti = UUID.randomUUID().toString();
 
         //토큰에 부여할 권한
         String authorities = customUserDetails.getAuthorities().stream()
@@ -100,6 +128,7 @@ public class JwtUtil {
                 .header() //헤더 부분
                 .add("typ", "JWT") // JWT type
                 .and()
+                .id(jti)
                 .subject(customUserDetails.getUsername()) //Subject 에 username (email) 추가
                 .claim("userId", customUserDetails.getId())
                 .claim("role", authorities) //권한 추가
@@ -123,7 +152,7 @@ public class JwtUtil {
         // Redis 에 Refresh Token 저장
         redisUtils.save(
                 // {LoginId}:refresh -> refreshToken
-                customUserDetails.getUsername() + ":refresh",
+                customUserDetails.getUsername() + KEY_REFRESH_SUFFIX,
                 refreshToken,
                 refreshExpMs,
                 TimeUnit.MILLISECONDS

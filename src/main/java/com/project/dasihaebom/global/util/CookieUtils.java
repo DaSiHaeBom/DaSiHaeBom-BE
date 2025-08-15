@@ -30,7 +30,7 @@ public class CookieUtils {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if (cookie.getName().equals(cookieName)) {
-                    log.info("accessToken 쿠키가 존재합니다.");
+                    log.info("{} 쿠키가 존재합니다.", cookieName);
                     return cookie.getValue();
                 }
             }

@@ -26,6 +26,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 
+import static com.project.dasihaebom.global.constant.common.CommonConstants.ACCESS_COOKIE_NAME;
+import static com.project.dasihaebom.global.constant.common.CommonConstants.REFRESH_COOKIE_NAME;
 import static com.project.dasihaebom.global.util.CookieUtils.createJwtCookies;
 
 @Slf4j
@@ -88,8 +90,8 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
         long accessExp = jwtUtil.getAccessExpMs();
         long refreshExp = jwtUtil.getRefreshExpMs();
 
-        createJwtCookies(response, "access-token", accessToken, accessExp);
-        createJwtCookies(response, "refresh-token", refreshToken, refreshExp);
+        createJwtCookies(response, ACCESS_COOKIE_NAME, accessToken, accessExp);
+        createJwtCookies(response, REFRESH_COOKIE_NAME, refreshToken, refreshExp);
 
         //Client 에게 줄 Response 를 Build
         JwtDto jwtDto = JwtDto.builder()

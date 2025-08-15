@@ -109,23 +109,17 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
             Worker worker = workerRepository.findById(userId)
                     .orElseThrow(() -> new WorkerException(WorkerErrorCode.WORKER_NOT_FOUND));
             workerRepository.delete(worker);
-            saveBlackListToken(worker.getPhoneNumber(), accessToken, refreshToken);
+            jwtUtil.saveBlackListToken(worker.getPhoneNumber(), accessToken, refreshToken);
         }
         if (role == Role.CORP) {
             Corp corp = corpRepository.findById(userId)
                     .orElseThrow(() -> new CorpException(CorpErrorCode.CORP_NOT_FOUND));
             corpRepository.delete(corp);
-            saveBlackListToken(corp.getLoginId(), accessToken, refreshToken);
+            jwtUtil.saveBlackListToken(corp.getLoginId(), accessToken, refreshToken);
         }
     }
 
-    private void saveBlackListToken(String loginId, String accessToken, String refreshToken) {
-        // 회원탈퇴 블랙리스트 등록
-        redisUtils.save(loginId + KEY_REFRESH_TOKEN_SUFFIX, refreshToken, jwtUtil.getRefreshExpMs(), TimeUnit.MILLISECONDS);
-        redisUtils.save(loginId + KEY_ACCESS_TOKEN_SUFFIX, accessToken, jwtUtil.getAccessExpMs(), TimeUnit.MILLISECONDS);
-        // 리프레시 정보 삭제
-        redisUtils.delete(loginId + ":refresh");
-    }
+
 
     private String encodePassword(String rawPassword) {
         return passwordEncoder.encode(rawPassword);
