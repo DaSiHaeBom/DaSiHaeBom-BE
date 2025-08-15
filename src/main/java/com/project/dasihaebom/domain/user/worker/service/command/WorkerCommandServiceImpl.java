@@ -30,6 +30,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static com.project.dasihaebom.global.constant.redis.RedisConstants.*;
+import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_CHANGE_PHONE_NUMBER;
 import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_SIGNUP;
 import static com.project.dasihaebom.global.util.UpdateUtils.updateIfChanged;
 
@@ -86,6 +87,18 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
                 .orElseThrow(() -> new WorkerException(WorkerErrorCode.WORKER_NOT_FOUND));
 
         // findById로 가져온 객체는 영속성 컨텍스트 안이라서 더티채킹 어쩌고저쩌고쏼라쏼라
+
+        if (!workerUpdateReqDto.phoneNumber().equals(worker.getPhoneNumber())) {
+            // 휴대폰 인증이 있는지 확인
+            String phoneNumber = workerUpdateReqDto.phoneNumber();
+            // 해당 인증이 전화번호 변경을 위한 것인지 확인
+            if (!Objects.equals(redisUtils.get(phoneNumber + KEY_SCOPE_SUFFIX), SCOPE_CHANGE_PHONE_NUMBER)) {
+                throw new WorkerException(WorkerErrorCode.PHONE_VALIDATION_DOES_NOT_EXIST);
+            }
+            updateIfChanged(workerUpdateReqDto.phoneNumber(), worker.getPhoneNumber(), worker::changePhoneNumber);
+            // 인증 정보 삭제
+            redisUtils.delete(phoneNumber + KEY_SCOPE_SUFFIX);
+        }
         updateIfChanged(workerUpdateReqDto.phoneNumber(), worker.getPhoneNumber(), worker::changePhoneNumber);
         updateIfChanged(workerUpdateReqDto.username(), worker.getUsername(), worker::changeUsername);
         updateIfChanged(workerUpdateReqDto.birthDate(), worker.getBirthDate(), worker::changeBirthDate);
