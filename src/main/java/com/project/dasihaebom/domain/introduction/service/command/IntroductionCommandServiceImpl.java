@@ -11,6 +11,7 @@ import com.project.dasihaebom.domain.introduction.repository.AnswerRepository;
 import com.project.dasihaebom.domain.introduction.repository.IntroductionRepository;
 import com.project.dasihaebom.domain.introduction.repository.QuestionRepository;
 import com.project.dasihaebom.domain.introduction.service.query.IntroductionQueryService;
+import com.project.dasihaebom.domain.resume.service.command.ResumeCommandService;
 import com.project.dasihaebom.domain.user.worker.entity.Worker;
 import com.project.dasihaebom.domain.user.worker.exception.WorkerErrorCode;
 import com.project.dasihaebom.domain.user.worker.exception.WorkerException;
@@ -27,11 +28,16 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class IntroductionCommandServiceImpl implements IntroductionCommandService {
+
+    //Reoisitory
     private final IntroductionRepository introductionRepository;
     private final AnswerRepository answerRepository;
     private final WorkerRepository workerRepository;
     private final QuestionRepository questionRepository;
+
+    //Service
     private final IntroductionQueryService introductionQueryService;
+    private final ResumeCommandService resumeCommandService;
     private final GptService gptService;
     private final IntroductionPromptBuilder promptBuilder;
 
@@ -103,7 +109,11 @@ public class IntroductionCommandServiceImpl implements IntroductionCommandServic
                 .worker(worker)
                 .build();
 
-        return introductionRepository.save(newIntroduction);
+        introductionRepository.save(newIntroduction);
+
+        resumeCommandService.syncResume(workerId); //이력서 업데이트
+
+        return newIntroduction;
     }
 
 

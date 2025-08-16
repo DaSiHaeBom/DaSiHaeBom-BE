@@ -21,7 +21,6 @@ public class Resume extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "resume_id") //
     private Long id;
 
     // ================== Worker 정보 복사 ==================

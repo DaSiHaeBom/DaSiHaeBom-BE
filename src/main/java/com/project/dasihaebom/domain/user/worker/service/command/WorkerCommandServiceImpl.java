@@ -3,6 +3,7 @@ package com.project.dasihaebom.domain.user.worker.service.command;
 import com.project.dasihaebom.domain.auth.service.command.AuthCommandService;
 import com.project.dasihaebom.domain.location.converter.LocationConverter;
 import com.project.dasihaebom.domain.location.repository.LocationRepository;
+import com.project.dasihaebom.domain.resume.service.command.ResumeCommandService;
 import com.project.dasihaebom.domain.user.Role;
 import com.project.dasihaebom.domain.user.corp.entity.Corp;
 import com.project.dasihaebom.domain.user.corp.exception.CorpErrorCode;
@@ -47,6 +48,7 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
 
     // Service
     private final AuthCommandService authCommandService;
+    private final ResumeCommandService resumeCommandService;
 
     private final CoordinateClient coordinateClient;
 
@@ -113,6 +115,9 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
             // 기존에 연결되어 있던 거리 캐시 삭제
             locationRepository.deleteByWorkerId(workerId);
         }
+
+        //이력서 업데이트
+        resumeCommandService.syncResume(workerId);
     }
 
     @Override

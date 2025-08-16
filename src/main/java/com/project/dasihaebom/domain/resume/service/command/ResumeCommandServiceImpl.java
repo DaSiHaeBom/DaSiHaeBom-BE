@@ -33,15 +33,18 @@ public class ResumeCommandServiceImpl implements ResumeCommandService {
     private final ResumeRepository resumeRepository;
     private final ObjectMapper objectMapper;
 
+
+
+
     @Override
     public void syncResume(Long workerId) {
         // 원본 데이터 조회
         Worker worker = workerRepository.findById(workerId)
-                .orElseThrow(() -> new WorkerException(WorkerErrorCode.WORKER_NOT_FOUND)); // Worker 예외
+                .orElseThrow(() -> new WorkerException(WorkerErrorCode.WORKER_NOT_FOUND));
         Introduction introduction = introductionRepository.findTopByWorkerIdOrderByIdDesc(workerId)
-                .orElseThrow(() -> new IntroductionException(IntroductionErrorCode.INTRODUCTION_NOT_FOUND)); // Introduction 예외
+                .orElseThrow(() -> new IntroductionException(IntroductionErrorCode.INTRODUCTION_NOT_FOUND));
 
-        List<License> licenseList = worker.getLicenseList();
+        List<License> licenseList = worker.getLicense();
 
         // 라이선스 정보를 JSON 문자열로 변환
         String licensesJson;
