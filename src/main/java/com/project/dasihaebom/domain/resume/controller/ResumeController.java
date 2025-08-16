@@ -26,7 +26,7 @@ public class ResumeController {
     private final ResumeRepository resumeRepository;
     private final ResumeQueryService resumeQueryService;
 
-    @GetMapping("/my")
+    @GetMapping("resume/my")
     @Operation(summary = "내 이력서 상세 조회 API", description = "로그인한 사용자의 이력서 정보를 조회합니다.")
     public CustomResponse<ResumeResDto.ResumeDetailDTO> getMyResume(
             @AuthenticationPrincipal CustomUserDetails userDetails
@@ -37,9 +37,9 @@ public class ResumeController {
         return CustomResponse.onSuccess(responseDTO);
     }
 
-    @GetMapping("/{workerId}")
+    @GetMapping("resume/{workerId}")
     @Operation(summary = "특정 사용자 이력서 상세 조회 API (기업용)", description = "기업 회원이 특정 worker ID를 가진 사용자의 이력서를 조회합니다.")
-    @PreAuthorize("hasAuthority('CORP')")
+    @PreAuthorize("hasAuthority('CORP') or hasAuthority('ADMIN')")
     public CustomResponse<ResumeResDto.ResumeDetailDTO> getResumeByWorkerId(
             @PathVariable Long workerId
     ) {

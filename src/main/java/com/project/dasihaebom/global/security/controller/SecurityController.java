@@ -1,5 +1,7 @@
 package com.project.dasihaebom.global.security.controller;
 
+import com.project.dasihaebom.domain.user.corp.entity.Corp;
+import com.project.dasihaebom.domain.user.corp.repository.CorpRepository;
 import com.project.dasihaebom.domain.user.worker.entity.Worker;
 import com.project.dasihaebom.domain.user.worker.repository.WorkerRepository;
 import com.project.dasihaebom.global.apiPayload.CustomResponse;
@@ -27,6 +29,7 @@ public class SecurityController {
     private final SecurityService securityService;
     private final JwtUtil jwtUtil;
     private final WorkerRepository workerRepository;
+    private final CorpRepository corpRepository;
 
     @Operation(summary = "엑세스 쿠키 재발급", description = "엑세스 쿠키가 만료되어 없어졌고, 리프레시 쿠키가 있다면 엑세스 쿠키를 만들어준다.")
     @PostMapping("/reissue-cookie")
@@ -56,6 +59,25 @@ public class SecurityController {
                 worker.getUsername(),
                 null,
                 worker.getRole()
+        );
+
+        // 토큰을 생성하여 바로 반환합니다.
+        return jwtUtil.createJwtAccessToken(userDetails);
+    }
+
+    @Operation(summary = "기업 회원 테스트용 토큰 발급")
+    @GetMapping("/test/corp-token")
+    public String getCorpTestToken() {
+        // DB에서 1번 기업 회원을 조회합니다.
+        Corp corp = corpRepository.findById(1L)
+                .orElseThrow(() -> new IllegalArgumentException("1번 corp 계정이 DB에 없습니다."));
+
+        // Corp 정보로 UserDetails 객체를 생성합니다.
+        CustomUserDetails userDetails = new CustomUserDetails(
+                corp.getId(),
+                corp.getLoginId(),
+                null,
+                corp.getRole()
         );
 
         // 토큰을 생성하여 바로 반환합니다.
