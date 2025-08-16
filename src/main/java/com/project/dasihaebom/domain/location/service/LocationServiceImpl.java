@@ -72,8 +72,8 @@ public class LocationServiceImpl implements LocationService {
         Corp corp = corpRepository.findById(corpId)
                 .orElseThrow(() -> new CorpException(CorpErrorCode.CORP_NOT_FOUND));
 
-        List<Double> workerCoordinates = worker.getCoordinates();
-        List<Double> corpCoordinates = corp.getCoordinates();
+        List<Double> workerCoordinates = worker.getCoordinatesAsList();
+        List<Double> corpCoordinates = corp.getCoordinatesAsList();
 
         double distance = calculateDistance(
                 getLat(workerCoordinates),

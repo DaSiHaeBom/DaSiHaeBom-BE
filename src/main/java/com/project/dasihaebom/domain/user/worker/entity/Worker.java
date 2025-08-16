@@ -4,6 +4,7 @@ import com.project.dasihaebom.domain.auth.entity.Auth;
 import com.project.dasihaebom.domain.introduction.entity.Answer;
 import com.project.dasihaebom.domain.introduction.entity.Introduction;
 import com.project.dasihaebom.domain.license.entity.License;
+import com.project.dasihaebom.domain.location.entity.Coordinates;
 import com.project.dasihaebom.domain.location.entity.Location;
 import com.project.dasihaebom.domain.resume.entity.Resume;
 import com.project.dasihaebom.domain.user.LoginType;
@@ -51,8 +52,10 @@ public class Worker extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private LoginType loginType;
 
-    @Column(name = "coordinates")
-    private List<Double> coordinates;
+    @Embedded
+    private Coordinates coordinates;
+
+
 
     // XXXrepsoitory.delete() 등으로 삭제했을 때,
     // User을 참조했던 애들이 같이 지워질 수 있게
@@ -77,6 +80,27 @@ public class Worker extends BaseEntity {
     @OneToOne(mappedBy = "worker", cascade = CascadeType.ALL, orphanRemoval = true)
     private Resume resume;
 
+
+
+    @Transient
+    public List<Double> getCoordinatesAsList() {
+        if (this.coordinates == null) {
+            return null;
+        }
+        // 예: [경도, 위도] 순서로 반환
+        return List.of(this.coordinates.getLongitude(), this.coordinates.getLatitude());
+    }
+
+    @Transient
+    public Double getLongitude() {
+        return this.coordinates != null ? this.coordinates.getLongitude() : null;
+    }
+
+    @Transient
+    public Double getLatitude() {
+        return this.coordinates != null ? this.coordinates.getLatitude() : null;
+    }
+
     // 엔티티 수정 전용 메서드
     public void changePhoneNumber(String phoneNumber){
         this.phoneNumber = phoneNumber;
@@ -90,7 +114,5 @@ public class Worker extends BaseEntity {
     public void changeAddress(String address){
         this.address = address;
     }
-    public void changeCoordinates(List<Double> coordinates){
-        this.coordinates = coordinates;
-    }
+    public void changeCoordinates(Coordinates newCoordinates) {this.coordinates = newCoordinates;}
 }
