@@ -53,7 +53,6 @@ public class Corp extends BaseEntity {
     public Double getLongitude() {
         return this.coordinates != null ? this.coordinates.getLongitude() : null;
     }
-
     @Transient
     public Double getLatitude() {
         return this.coordinates != null ? this.coordinates.getLatitude() : null;

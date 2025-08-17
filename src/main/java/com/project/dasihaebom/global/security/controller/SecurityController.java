@@ -68,8 +68,8 @@ public class SecurityController {
     @Operation(summary = "기업 회원 테스트용 토큰 발급")
     @GetMapping("/test/corp-token")
     public String getCorpTestToken() {
-        // DB에서 1번 기업 회원을 조회합니다.
-        Corp corp = corpRepository.findById(1L)
+        // DB에서 9999번 기업 회원을 조회합니다.
+        Corp corp = corpRepository.findById(9999L)
                 .orElseThrow(() -> new IllegalArgumentException("1번 corp 계정이 DB에 없습니다."));
 
         // Corp 정보로 UserDetails 객체를 생성합니다.

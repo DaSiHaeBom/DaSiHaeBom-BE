@@ -82,6 +82,7 @@ public class Worker extends BaseEntity {
 
 
 
+    //위도,경도 위치 형변환 메서드
     @Transient
     public List<Double> getCoordinatesAsList() {
         if (this.coordinates == null) {
@@ -90,16 +91,16 @@ public class Worker extends BaseEntity {
         // 예: [경도, 위도] 순서로 반환
         return List.of(this.coordinates.getLongitude(), this.coordinates.getLatitude());
     }
-
     @Transient
     public Double getLongitude() {
         return this.coordinates != null ? this.coordinates.getLongitude() : null;
     }
-
     @Transient
     public Double getLatitude() {
         return this.coordinates != null ? this.coordinates.getLatitude() : null;
     }
+
+    //
 
     // 엔티티 수정 전용 메서드
     public void changePhoneNumber(String phoneNumber){

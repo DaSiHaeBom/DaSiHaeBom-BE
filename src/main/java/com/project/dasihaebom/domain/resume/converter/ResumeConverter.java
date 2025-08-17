@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.dasihaebom.domain.license.entity.License;
 import com.project.dasihaebom.domain.resume.dto.response.ResumeResDto;
 import com.project.dasihaebom.domain.resume.entity.Resume;
+import com.project.dasihaebom.domain.user.worker.entity.Worker;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,11 +48,11 @@ public class ResumeConverter {
                         .build())
                 .collect(Collectors.toList());
 
-        // 3. 최종 ResumeDetailDTO 생성
+        // 3.  ResumeDetailDTO 생성
         return ResumeResDto.ResumeDetailDTO.builder()
                 .resumeId(resume.getId())
                 .username(resume.getUsername())
-                .birthDate(resume.getBirthDate())
+                .birthDate(resume.getBirthDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")))
                 .gender(resume.getGender().toString())
                 .address(resume.getAddress())
                 .phoneNumber(resume.getPhoneNumber())
@@ -60,23 +61,58 @@ public class ResumeConverter {
                 .build();
     }
 
-
-    //생년월일을 만나이로 변환하는 매서드
-    private static Integer calculateAge(String birthDate) {
-
-        if (birthDate == null || birthDate.length() != 6) {
+    public static ResumeResDto.ResumeSummaryDTO toResumeSummaryDTO(Resume resume, Double distance) {
+        if (resume == null) {
             return null;
         }
 
-        // ⬇️ 2자리 연도를 1900년대로 해석하도록 포맷터를 설정합니다.
-        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-                .appendValueReduced(ChronoField.YEAR, 2, 2, 1930) // 기준 연도를 1930년으로 설정
-                .appendPattern("MMdd")
-                .toFormatter();
+        Worker worker = resume.getWorker();
 
-        LocalDate birth = LocalDate.parse(birthDate, formatter);
+
+        return ResumeResDto.ResumeSummaryDTO.builder()
+                .resumeId(resume.getId())
+                .workerId(worker.getId())
+                .age(calculateAge(resume.getBirthDate())) // LocalDate를 나이로 계산
+                .address(resume.getAddress())
+                .introductionSummary(resume.getIntroductionSummary())
+                .licenseNames(extractLicenseNames(worker)) // Worker의 자격증 목록에서 이름만 추출
+                .distance(distance)
+                .build();
+    }
+
+    public static ResumeResDto.ResumeCursorResponse toResumeCursorResponse(
+            List<ResumeResDto.ResumeSummaryDTO> resumes,
+            boolean hasNext,
+            Long nextCursorId,
+            Double nextCursorDistance
+    ) {
+        return ResumeResDto.ResumeCursorResponse.builder()
+                .resumes(resumes)
+                .hasNext(hasNext)
+                .nextCursorId(nextCursorId)
+                .nextCursorDistance(nextCursorDistance)
+                .build();
+    }
+
+
+    //생년월일을 만나이로 변환하는 매서드
+    private static Integer calculateAge(LocalDate birthDate) {
+
+        if (birthDate == null) {
+            return null;
+        }
+
         LocalDate today = LocalDate.now();
 
-        return Period.between(birth, today).getYears();
+        return Period.between(birthDate, today).getYears();
+    }
+
+    private static List<String> extractLicenseNames(Worker worker) {
+        if (worker.getLicense() == null) {
+            return Collections.emptyList();
+        }
+        return worker.getLicense().stream()
+                .map(License::getName)
+                .collect(Collectors.toList());
     }
 }
