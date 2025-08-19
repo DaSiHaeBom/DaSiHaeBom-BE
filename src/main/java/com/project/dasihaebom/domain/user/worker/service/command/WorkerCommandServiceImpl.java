@@ -132,7 +132,7 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
         }
 
         //이력서 업데이트
-        resumeCommandService.syncResume(workerId);
+//        resumeCommandService.syncResume(workerId);
     }
 
     @Override
