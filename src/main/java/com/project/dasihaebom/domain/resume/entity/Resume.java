@@ -63,17 +63,16 @@ public class Resume extends BaseEntity {
 
 
     // 비정규화 메서드 갱신(동기화)용
-    public void syncData(Worker worker, Introduction introduction, String licensesJson) {
-        this.username = worker.getUsername();
-
-        // Worker의 String 타입 getBirthDate()를 호출하여 LocalDate로 파싱 후 저장
+    public void syncData(Worker worker, String introductionFullText, String introductionSummary, String licensesJson) {
+        // Worker의 String 타입 getBirthDate()를 호출하여 LocalDate로 파싱 후 저장(나이 계산용)
         this.birthDate = parseBirthDateString(worker.getBirthDate());
 
+        this.username = worker.getUsername();
         this.gender = worker.getGender();
         this.address = worker.getAddress();
         this.phoneNumber = worker.getPhoneNumber();
-        this.introductionFullText = introduction.getFullText();
-        this.introductionSummary = introduction.getSummary();
+        this.introductionFullText = introductionFullText;
+        this.introductionSummary = introductionSummary;
         this.licenses = licensesJson;
     }
 

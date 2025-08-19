@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -39,28 +40,33 @@ public class ResumeCommandServiceImpl implements ResumeCommandService {
     @Override
     public void syncResume(Long workerId) {
         // 원본 데이터 조회
+        //개인정보 조회
         Worker worker = workerRepository.findById(workerId)
                 .orElseThrow(() -> new WorkerException(WorkerErrorCode.WORKER_NOT_FOUND));
-        Introduction introduction = introductionRepository.findTopByWorkerIdOrderByIdDesc(workerId)
-                .orElseThrow(() -> new IntroductionException(IntroductionErrorCode.INTRODUCTION_NOT_FOUND));
 
+        //
+        Optional<Introduction> introductionOpt = introductionRepository.findTopByWorkerIdOrderByIdDesc(workerId);
+
+
+        String fullText = introductionOpt.map(Introduction::getFullText).orElse("작성된 자기소개서가 없습니다.");
+        String summary = introductionOpt.map(Introduction::getSummary).orElse("");
+
+        // 자격증 정보를 JSON 문자열로 변환
         List<License> licenseList = worker.getLicense();
-
-        // 라이선스 정보를 JSON 문자열로 변환
         String licensesJson;
         try {
             licensesJson = objectMapper.writeValueAsString(licenseList);
         } catch (JsonProcessingException e) {
             log.error("자격증 정보 JSON 변환 실패: workerId={}", workerId, e);
-            throw new ResumeException(ResumeErrorCode.JSON_PROCESSING_ERROR); // ⬅️ Resume 예외
+            throw new ResumeException(ResumeErrorCode.JSON_PROCESSING_ERROR);
         }
 
         // 이력서 조회 또는 생성
         Resume resume = resumeRepository.findByWorker(worker)
                 .orElse(Resume.builder().worker(worker).build());
 
-        // 데이터 동기화 및 저장
-        resume.syncData(worker, introduction, licensesJson);
+        //  데이터 동기화 및 저장
+        resume.syncData(worker, fullText, summary, licensesJson);
         resumeRepository.save(resume);
     }
 }
