@@ -51,6 +51,16 @@ public class ValidationController {
         return CustomResponse.onSuccess("인증 번호 발송 성공! " + code);
     }
 
+    @Operation(summary = "아이디 찾기 휴대폰 문자 인증 번호 발송", description = "아이디 찾기에서만 사용 <br> 메시지 구현 완료 했으나, 일단 resBody로 제공")
+    @PostMapping("/phone/code/find-id")
+    public CustomResponse<String> sendLoginIdNumberCode(
+            @RequestBody @Valid ValidationReqDto.PhoneNumberCodeReqDto phoneNumberCodeReqDto
+    ) {
+        // 아이디 찾기를 위한 인증은 전화번호 수정에서만 소모되어야 한다. 인증 정보 악의적 이용 방지 스코프 정의
+        String code = validationService.sendCode(phoneNumberCodeReqDto, SCOPE_FIND_LOGIN_ID);
+        return CustomResponse.onSuccess("인증 번호 발송 성공! " + code);
+    }
+
     @Operation(summary = "휴대폰 문자 인증 번호 검증")
     @PostMapping("/phone/code/confirmation")
     public CustomResponse<String> verifyCode(

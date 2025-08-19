@@ -48,4 +48,10 @@ public class CorpConverter {
                 .corpAddress(corp.getCorpAddress())
                 .build();
     }
+
+    public static CorpResDto.CorpLoginIdResDto toCorpLoginIdResDto(String loginId) {
+        return CorpResDto.CorpLoginIdResDto.builder()
+                .loginId(loginId)
+                .build();
+    }
 }

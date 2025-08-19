@@ -50,6 +50,14 @@ public class CorpController {
         return CustomResponse.onSuccess(corpQueryService.getCorpProfile(currentUser.getId(), currentUser.getRole()));
     }
 
+    @Operation(summary = "아이디 찾기")
+    @PostMapping("/find-id")
+    public CustomResponse<CorpResDto.CorpLoginIdResDto> getLoginId(
+            @RequestBody CorpReqDto.CorpLoginIdReqDto corpLoginIdReqDto
+    ) {
+        return CustomResponse.onSuccess(corpQueryService.getCorpLoginId(corpLoginIdReqDto));
+    }
+
     @Operation(summary = "사업자 번호 유효성 검사", description = "사업자 번호 인증 성공 -> true / 인증 실패 or API 오류 -> false")
     @PostMapping("/business-validation")
     public CustomResponse<CorpResDto.CorpNumberValidResDto> validCorpNumber(
