@@ -26,4 +26,10 @@ public class CorpResDto {
             String corpAddress
     ) {
     }
+
+    @Builder
+    public record CorpLoginIdResDto(
+            String loginId
+    ) {
+    }
 }

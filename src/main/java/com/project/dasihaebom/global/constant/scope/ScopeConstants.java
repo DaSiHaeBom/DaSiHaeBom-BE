@@ -6,4 +6,5 @@ public class ScopeConstants {
     public static final String SCOPE_TEMP_PASSWORD = "temp-password";
     public static final String SCOPE_CORP_NUMBER = "corp-number";
     public static final String SCOPE_CHANGE_PHONE_NUMBER = "change-phone-number";
+    public static final String SCOPE_FIND_LOGIN_ID = "find-login-id";
 }
