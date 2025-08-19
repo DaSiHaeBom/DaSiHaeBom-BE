@@ -4,6 +4,7 @@ import com.project.dasihaebom.domain.location.entity.Coordinates;
 import com.project.dasihaebom.domain.user.LoginType;
 import com.project.dasihaebom.domain.user.Role;
 import com.project.dasihaebom.domain.user.worker.dto.request.WorkerReqDto;
+import com.project.dasihaebom.domain.user.worker.dto.response.WorkerResDto;
 import com.project.dasihaebom.domain.user.worker.entity.Worker;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,17 @@ public class WorkerConverter {
                 .role(Role.WORKER)
                 .loginType(LoginType.LOCAL)
                 .coordinates(coordinates)
+                .build();
+    }
+
+    public static WorkerResDto.WorkerProfileResDto toWorkerProfileResDto(Worker worker) {
+        return WorkerResDto.WorkerProfileResDto.builder()
+                .role(worker.getRole())
+                .phoneNumber(worker.getPhoneNumber())
+                .username(worker.getUsername())
+                .birthDate(worker.getBirthDate())
+                .gender(worker.getGender())
+                .address(worker.getAddress())
                 .build();
     }
 }

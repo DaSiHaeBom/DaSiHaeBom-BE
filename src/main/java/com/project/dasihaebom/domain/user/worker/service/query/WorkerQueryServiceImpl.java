@@ -1,5 +1,8 @@
 package com.project.dasihaebom.domain.user.worker.service.query;
 
+import com.project.dasihaebom.domain.user.Role;
+import com.project.dasihaebom.domain.user.worker.converter.WorkerConverter;
+import com.project.dasihaebom.domain.user.worker.dto.response.WorkerResDto;
 import com.project.dasihaebom.domain.user.worker.entity.Worker;
 import com.project.dasihaebom.domain.user.worker.exception.WorkerErrorCode;
 import com.project.dasihaebom.domain.user.worker.exception.WorkerException;
@@ -20,7 +23,14 @@ public class WorkerQueryServiceImpl implements WorkerQueryService {
     private final WorkerRepository workerRepository;
 
     @Override
-    public Optional<Worker> findWorkerByLoginId(String loginId) {
-        return workerRepository.findByPhoneNumber(loginId);
+    public WorkerResDto.WorkerProfileResDto getWorkerProfile(long workerId, Role role) {
+        if (role == Role.CORP) {
+            throw new WorkerException(WorkerErrorCode.ROLE_IS_NOT_WORKER);
+        }
+
+        Worker worker = workerRepository.findById(workerId)
+                .orElseThrow(() -> new WorkerException(WorkerErrorCode.WORKER_NOT_FOUND));
+
+        return WorkerConverter.toWorkerProfileResDto(worker);
     }
 }
