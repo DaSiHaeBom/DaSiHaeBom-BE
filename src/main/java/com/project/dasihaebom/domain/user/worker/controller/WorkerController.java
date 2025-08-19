@@ -1,7 +1,9 @@
 package com.project.dasihaebom.domain.user.worker.controller;
 
 import com.project.dasihaebom.domain.user.worker.dto.request.WorkerReqDto;
+import com.project.dasihaebom.domain.user.worker.dto.response.WorkerResDto;
 import com.project.dasihaebom.domain.user.worker.service.command.WorkerCommandService;
+import com.project.dasihaebom.domain.user.worker.service.query.WorkerQueryService;
 import com.project.dasihaebom.global.apiPayload.CustomResponse;
 import com.project.dasihaebom.global.security.userdetails.CurrentUser;
 import com.project.dasihaebom.global.security.utils.JwtUtil;
@@ -10,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,6 +33,7 @@ public class WorkerController {
 
     private final WorkerCommandService workerCommandService;
     private final JwtUtil jwtUtil;
+    private final WorkerQueryService workerQueryService;
 
     @Operation(summary = "개인 회원 가입", description = "전화번호가 겹치면 가입이 안됨")
     @PostMapping("")
@@ -66,5 +70,13 @@ public class WorkerController {
         createJwtCookies(response, REFRESH_COOKIE_NAME, null, 0);
 
         return CustomResponse.onSuccess(HttpStatus.NO_CONTENT, "회원 탈퇴 성공");
+    }
+
+    @Operation(summary = "개인 회원 정보 조회")
+    @GetMapping("/me")
+    public CustomResponse<WorkerResDto.WorkerProfileResDto> getWorkerProfile(
+            @AuthenticationPrincipal CurrentUser currentUser
+    ) {
+        return CustomResponse.onSuccess(workerQueryService.getWorkerProfile(currentUser.getId(), currentUser.getRole()));
     }
 }
