@@ -10,6 +10,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -93,7 +94,6 @@ public class ResumeRepositoryCustomImpl implements ResumeRepositoryCustom {
     }
 
     private BooleanExpression licenseCondition(List<String> licenses) {
-        // 요청된 자격증 목록이 없으면 필터링하지 않음
         if (licenses == null || licenses.isEmpty()) {
             return null;
         }
@@ -101,8 +101,11 @@ public class ResumeRepositoryCustomImpl implements ResumeRepositoryCustom {
         QResume resume = QResume.resume;
         QLicense license = QLicense.license;
 
-        // "license 테이블에서 현재 resume의 worker와 동일한 worker를 가지면서 그 license의 이름이 요청된 자격증 목록에 포함된 것이 존재하는지"
-        return license.worker.eq(resume.worker)
-                .and(license.name.in(licenses));
+        return JPAExpressions
+                .selectOne()
+                .from(license)
+                .where(license.worker.eq(resume.worker)
+                        .and(license.name.in(licenses)))
+                .exists();
     }
 }
