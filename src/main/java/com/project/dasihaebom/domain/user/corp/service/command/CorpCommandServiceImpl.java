@@ -2,6 +2,7 @@ package com.project.dasihaebom.domain.user.corp.service.command;
 
 import com.project.dasihaebom.domain.auth.service.command.AuthCommandService;
 import com.project.dasihaebom.domain.location.converter.LocationConverter;
+import com.project.dasihaebom.domain.location.entity.Coordinates;
 import com.project.dasihaebom.domain.location.repository.LocationRepository;
 import com.project.dasihaebom.domain.user.corp.converter.CorpConverter;
 import com.project.dasihaebom.domain.user.corp.dto.request.CorpReqDto;
@@ -114,15 +115,30 @@ public class CorpCommandServiceImpl implements CorpCommandService {
             // 인증 정보 삭제
             redisUtils.delete(corpNumber + KEY_SCOPE_SUFFIX);
         }
-        // 주소 변경시
+//        // 주소 변경시
+//        if (!corpUpdateReqDto.corpAddress().equals(corp.getCorpAddress())) {
+//            updateIfChanged(corpUpdateReqDto.corpAddress(), corp.getCorpAddress(), corp::changeCorpAddress);
+//            // 변경된 주소로 좌표 api 호출
+//            final String addressToUpdate = corpUpdateReqDto.corpAddress();
+//            final List<Double> coordinatesToUpdate = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(addressToUpdate));
+//            // 주소 변경으로 인한 좌표 변경
+//            corp.changeCoordinates(coordinatesToUpdate);
+//            // 기존에 연결되어 있던 거리 캐시 삭제
+//            locationRepository.deleteByCorpId(corpId);
+
+        // --- [위치 기반 조회를 위해 기존 엔티티 변경으로 인한 수정된 코드] ---
         if (!corpUpdateReqDto.corpAddress().equals(corp.getCorpAddress())) {
             updateIfChanged(corpUpdateReqDto.corpAddress(), corp.getCorpAddress(), corp::changeCorpAddress);
-            // 변경된 주소로 좌표 api 호출
+
             final String addressToUpdate = corpUpdateReqDto.corpAddress();
-            final List<Double> coordinatesToUpdate = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(addressToUpdate));
-            // 주소 변경으로 인한 좌표 변경
+            final List<Double> coordinatesAsList = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(addressToUpdate));
+
+            // 1. 서비스에서 Coordinates 객체로 변환 (순서 : 위도, 경도)
+            Coordinates coordinatesToUpdate = new Coordinates(coordinatesAsList.get(1), coordinatesAsList.get(0));
+
+            // 2. Corp 엔티티의 새로운 메서드 호출
             corp.changeCoordinates(coordinatesToUpdate);
-            // 기존에 연결되어 있던 거리 캐시 삭제
+
             locationRepository.deleteByCorpId(corpId);
         }
     }

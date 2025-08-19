@@ -13,6 +13,7 @@ public enum WorkerErrorCode implements BaseErrorCode {
     WORKER_DUPLICATED(HttpStatus.CONFLICT, "WORKER409", "이미 가입된 사용자 입니다."),
     SIGN_UP_PHONE_VALIDATION_DOES_NOT_EXIST(HttpStatus.UNAUTHORIZED, "WORK401", "회원 가입 휴대폰 인증을 시도하지 않았거나 변조되었거나 만료되었습니다."),
     PROFILE_PHONE_VALIDATION_DOES_NOT_EXIST(HttpStatus.UNAUTHORIZED, "WORK401", "회원 가입 휴대폰 인증을 시도하지 않았거나 변조되었거나 만료되었습니다."),
+    ROLE_IS_NOT_WORKER(HttpStatus.FORBIDDEN, "WORK403", "현재 회원 유형이 개인이 아닙니다"),
     ;
 
     private final HttpStatus httpStatus;

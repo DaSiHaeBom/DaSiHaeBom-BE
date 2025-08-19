@@ -2,6 +2,7 @@ package com.project.dasihaebom.domain.user.corp.entity;
 
 import com.project.dasihaebom.domain.auth.entity.Auth;
 import com.project.dasihaebom.domain.location.entity.Location;
+import com.project.dasihaebom.domain.location.entity.Coordinates;
 import com.project.dasihaebom.domain.user.Role;
 import com.project.dasihaebom.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -43,8 +44,19 @@ public class Corp extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name = "coordinates")
-    private List<Double> coordinates;
+    @Embedded
+    private Coordinates coordinates;
+
+    // --- 하위 호환성을 위한 위임(Delegate) 메서드 ---
+
+    @Transient
+    public Double getLongitude() {
+        return this.coordinates != null ? this.coordinates.getLongitude() : null;
+    }
+    @Transient
+    public Double getLatitude() {
+        return this.coordinates != null ? this.coordinates.getLatitude() : null;
+    }
 
     // XXXrepsoitory.delete() 등으로 삭제했을 때,
     // User을 참조했던 애들이 같이 지워질 수 있게
@@ -57,6 +69,15 @@ public class Corp extends BaseEntity {
     @OneToMany(mappedBy = "corp", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Location> location;
 
+
+    @Transient
+    public List<Double> getCoordinatesAsList() {
+        if (this.coordinates == null) {
+            return null;
+        }
+        // 경도, 위도 순서로 반환
+        return List.of(this.coordinates.getLongitude(), this.coordinates.getLatitude());
+    }
 
     // 엔티티 수정 전용 메서드
     public void changeCeoName(String ceoName) {
@@ -74,7 +95,5 @@ public class Corp extends BaseEntity {
     public void changeCorpAddress(String corpAddress) {
         this.corpAddress = corpAddress;
     }
-    public void changeCoordinates(List<Double> coordinates) {
-        this.coordinates = coordinates;
-    }
+    public void changeCoordinates(Coordinates newCoordinates) {this.coordinates = newCoordinates;}
 }

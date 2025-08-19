@@ -2,7 +2,9 @@ package com.project.dasihaebom.domain.user.worker.service.command;
 
 import com.project.dasihaebom.domain.auth.service.command.AuthCommandService;
 import com.project.dasihaebom.domain.location.converter.LocationConverter;
+import com.project.dasihaebom.domain.location.entity.Coordinates;
 import com.project.dasihaebom.domain.location.repository.LocationRepository;
+import com.project.dasihaebom.domain.resume.service.command.ResumeCommandService;
 import com.project.dasihaebom.domain.user.Role;
 import com.project.dasihaebom.domain.user.corp.entity.Corp;
 import com.project.dasihaebom.domain.user.corp.exception.CorpErrorCode;
@@ -47,6 +49,7 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
 
     // Service
     private final AuthCommandService authCommandService;
+    private final ResumeCommandService resumeCommandService;
 
     private final CoordinateClient coordinateClient;
 
@@ -103,16 +106,33 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
             redisUtils.delete(phoneNumber + KEY_SCOPE_SUFFIX);
         }
         // 주소 변경시
+//        if (!workerUpdateReqDto.address().equals(worker.getAddress())) {
+//            updateIfChanged(workerUpdateReqDto.address(), worker.getAddress(), worker::changeAddress);
+//            // 변경된 주소로 좌표 api 호출
+//            final String addressToUpdate = workerUpdateReqDto.address();
+//            final List<Double> coordinatesToUpdate = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(addressToUpdate));
+//            // 주소 변경으로 인한 좌표 변경
+//            worker.changeCoordinates(coordinatesToUpdate);
+//            // 기존에 연결되어 있던 거리 캐시 삭제
+//            locationRepository.deleteByWorkerId(workerId);
+//        }
         if (!workerUpdateReqDto.address().equals(worker.getAddress())) {
             updateIfChanged(workerUpdateReqDto.address(), worker.getAddress(), worker::changeAddress);
-            // 변경된 주소로 좌표 api 호출
+
             final String addressToUpdate = workerUpdateReqDto.address();
-            final List<Double> coordinatesToUpdate = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(addressToUpdate));
-            // 주소 변경으로 인한 좌표 변경
+            final List<Double> coordinatesAsList = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(addressToUpdate));
+
+            // 1. 서비스에서 Coordinates 객체로 변환 (순서: 위도, 경도)
+            Coordinates coordinatesToUpdate = new Coordinates(coordinatesAsList.get(1), coordinatesAsList.get(0));
+
+            // 2. Worker 엔티티의 새로운 메서드 호출
             worker.changeCoordinates(coordinatesToUpdate);
-            // 기존에 연결되어 있던 거리 캐시 삭제
+
             locationRepository.deleteByWorkerId(workerId);
         }
+
+        //이력서 업데이트
+        resumeCommandService.syncResume(workerId);
     }
 
     @Override

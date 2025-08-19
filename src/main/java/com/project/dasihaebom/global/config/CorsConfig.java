@@ -21,6 +21,8 @@ public class CorsConfig implements WebMvcConfigurer {
         ArrayList<String> allowedOrigins = new ArrayList<>();
         allowedOrigins.add("http://localhost:8080");
         allowedOrigins.add("http://localhost:5500");
+        allowedOrigins.add("http://localhost:5173");
+        allowedOrigins.add("http://localhost:5174");
         allowedOrigins.add("https://www.dlrbdjs.store");
 
         configuration.setAllowedOrigins(allowedOrigins);
