@@ -1,5 +1,6 @@
 package com.project.dasihaebom.domain.resume.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.dasihaebom.domain.resume.converter.ResumeConverter;
 import com.project.dasihaebom.domain.resume.dto.request.ResumeSearchCondition;
 import com.project.dasihaebom.domain.resume.dto.response.ResumeResDto;
@@ -36,14 +37,20 @@ public class ResumeController {
     private final ResumeQueryService resumeQueryService;
     private final CorpRepository corpRepository;
     private final PdfGenerateService pdfGenerateService;
+    private final ObjectMapper objectMapper;
 
-    @GetMapping("resume/search")
-    @Operation(summary = "이력서 목록 조회", description = "")
+    @PostMapping("resume/search")
+    @Operation(summary = "이력서 목록 조회", description = "조회지만 검색 필터가 많아 post로 reqBody를 받습니다.")
     @PreAuthorize("hasAuthority('CORP') or hasAuthority('ADMIN')")
     public CustomResponse<ResumeResDto.ResumeCursorResponse> searchResumes(
-            @ModelAttribute ResumeSearchCondition condition,
+            @RequestBody ResumeSearchCondition condition,  // @ModelAttribute → @RequestBody 변경
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
+        // 디버깅을 위한 로그
+        System.out.println("Received condition: " + condition);
+        System.out.println("Licenses: " + condition.getLicenses());
+        System.out.println("License count: " + (condition.getLicenses() != null ? condition.getLicenses().size() : "null"));
+
         // 1. userDetails에서 로그인한 기업의 ID를 가져옵니다.
         Long currentCorpId = userDetails.getId();
 
@@ -71,7 +78,7 @@ public class ResumeController {
     ) {
         Long workerId = userDetails.getId();
         Resume resume = resumeQueryService.getMyResume(workerId);
-        ResumeResDto.ResumeDetailDTO responseDTO = ResumeConverter.toResumeDetailDTO(resume);
+        ResumeResDto.ResumeDetailDTO responseDTO = ResumeConverter.toResumeDetailDTO(resume, objectMapper);
         return CustomResponse.onSuccess(responseDTO);
     }
 
@@ -82,11 +89,12 @@ public class ResumeController {
             @PathVariable Long workerId
     ) {
         Resume resume = resumeQueryService.getResumeByWorkerId(workerId);
-        ResumeResDto.ResumeDetailDTO responseDTO = ResumeConverter.toResumeDetailDTO(resume);
+        ResumeResDto.ResumeDetailDTO responseDTO = ResumeConverter.toResumeDetailDTO(resume, objectMapper);
         return CustomResponse.onSuccess(responseDTO);
     }
 
     @GetMapping("/{resumeId}/download")
+    @Operation(summary = "PDF 다운로드 api입니다.", description = "기본적인 html밖에 몰라서 디자인은 아쉬울 수도 있습니당")
     public ResponseEntity<byte[]> downloadResumePdf(@PathVariable Long resumeId) throws IOException {
 
         byte[] pdfBytes = pdfGenerateService.generateResumePdf(resumeId);

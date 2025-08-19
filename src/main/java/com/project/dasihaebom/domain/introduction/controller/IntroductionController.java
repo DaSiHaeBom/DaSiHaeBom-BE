@@ -27,15 +27,15 @@ public class IntroductionController {
     private final IntroductionCommandService introductionCommandService;
     private final IntroductionQueryService introductionQueryService;
 
-    @PostMapping("/answer/{questionId}")
-    @Operation(summary = "답변 생성 API")
-    public CustomResponse<AnswerResDto.AnswerDetailDTO> createAnswer(
+    @PutMapping("/answer/{questionId}")
+    @Operation(summary = "답변 저장(생성/수정) API")
+    public CustomResponse<AnswerResDto.AnswerDetailDTO> saveAnswer(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable Long questionId,
-            @RequestBody AnswerReqDto.CreateAnswerReqDto request
+            @RequestBody AnswerReqDto.SaveAnswerReqDto request
     ) {
         Long workerId = userDetails.getId();
-        Answer answer = introductionCommandService.createAnswer(workerId, questionId, request);
+        Answer answer = introductionCommandService.upsertAnswer(workerId, questionId, request);
         AnswerResDto.AnswerDetailDTO responseDTO = IntroductionConverter.toAnswerDetailDTO(answer);
         return CustomResponse.onSuccess(responseDTO);
     }
@@ -84,21 +84,5 @@ public class IntroductionController {
         AnswerResDto.GeneratedIntroductionDTO responseDTO = IntroductionConverter.toGeneratedIntroductionDTO(introduction);
         return CustomResponse.onSuccess(responseDTO);
     }
-
-
-    @PatchMapping("/answer/{questionId}")
-    @Operation(summary = "답변 수정 API")
-    public CustomResponse<AnswerResDto.AnswerDetailDTO> updateAnswer(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @PathVariable Long questionId,
-            @RequestBody AnswerReqDto.UpdateAnswerReqDto request
-    ) {
-        Long workerId = userDetails.getId();
-        Answer answer = introductionCommandService.updateAnswer(workerId, questionId, request);
-        AnswerResDto.AnswerDetailDTO responseDTO = IntroductionConverter.toAnswerDetailDTO(answer);
-        return CustomResponse.onSuccess(responseDTO);
-    }
-
-
 
 }

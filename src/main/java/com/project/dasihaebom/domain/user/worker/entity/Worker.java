@@ -1,5 +1,6 @@
 package com.project.dasihaebom.domain.user.worker.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.dasihaebom.domain.auth.entity.Auth;
 import com.project.dasihaebom.domain.introduction.entity.Answer;
 import com.project.dasihaebom.domain.introduction.entity.Introduction;
@@ -69,6 +70,7 @@ public class Worker extends BaseEntity {
     private List<Location> location;
     // User가 삭제되면 License도 삭제
     @OneToMany(mappedBy = "worker", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference // 자격증 엔티티와 부모관계임을 명시 - 양방향 관계에서 무한루프를 해결하기 위함
     private List<License> license;
     // User가 삭제되면 Introduction도 삭제
     @OneToMany(mappedBy = "worker", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -10,12 +10,16 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -38,7 +42,7 @@ public class ResumeRepositoryCustomImpl implements ResumeRepositoryCustom {
         return queryFactory
                 .select(resume, distanceExpression)
                 .from(resume)
-                .join(resume.worker, worker).fetchJoin()
+                .join(resume.worker, worker)
                 .where(
                         cursorCondition(condition, distanceExpression),
                         ageCondition(condition.getMinAge(), condition.getMaxAge()),
@@ -67,10 +71,8 @@ public class ResumeRepositoryCustomImpl implements ResumeRepositoryCustom {
     }
 
 
-    // ageCondition 메서드 수정
-
     private BooleanExpression ageCondition(Integer minAge, Integer maxAge) {
-        // [수정] QWorker -> QResume으로 변경
+
         QResume resume = QResume.resume;
 
         if (minAge == null && maxAge == null) {
@@ -94,17 +96,25 @@ public class ResumeRepositoryCustomImpl implements ResumeRepositoryCustom {
         return condition;
     }
 
+
     private BooleanExpression licenseCondition(List<String> licenses) {
-        // 요청된 자격증 목록이 없으면 필터링하지 않음
         if (licenses == null || licenses.isEmpty()) {
             return null;
         }
 
-        QResume resume = QResume.resume;
-        QLicense license = QLicense.license;
+        System.out.println("License condition for: " + licenses);
 
-        // "license 테이블에서 현재 resume의 worker와 동일한 worker를 가지면서 그 license의 이름이 요청된 자격증 목록에 포함된 것이 존재하는지??"
-        return license.worker.eq(resume.worker)
-                .and(license.name.in(licenses));
+        QLicense license = QLicense.license;
+        QResume resume = QResume.resume;
+
+        // AND 조건: 요청된 모든 자격증을 가지고 있어야 함
+        return resume.worker.id.in(
+                JPAExpressions
+                        .select(license.worker.id)
+                        .from(license)
+                        .where(license.name.in(licenses))
+                        .groupBy(license.worker.id)
+                        .having(license.name.countDistinct().eq((long) licenses.size()))
+        );
     }
 }

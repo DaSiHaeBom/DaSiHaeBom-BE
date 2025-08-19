@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -42,36 +43,27 @@ public class IntroductionCommandServiceImpl implements IntroductionCommandServic
     private final IntroductionPromptBuilder promptBuilder;
 
     @Override
-    public Answer createAnswer(Long workerId, Long questionId, AnswerReqDto.CreateAnswerReqDto request) {
-        // 1. 답변을 생성하기 전, 이미 작성한 답변이 있는지 확인
-        if (answerRepository.existsByWorkerIdAndQuestionId(workerId, questionId)) {
-            throw new IntroductionException(IntroductionErrorCode.ANSWER_ALREADY_EXISTS);
+    public Answer upsertAnswer(Long workerId, Long questionId, AnswerReqDto.SaveAnswerReqDto request) {
+
+        // 1. workerId와 questionId로 기존 답변이 있는지 조회합니다.
+        Optional<Answer> answerOpt = answerRepository.findByWorkerIdAndQuestionId(workerId, questionId);
+
+        if (answerOpt.isPresent()) {
+            // 2-1. [수정 로직] 이미 답변이 존재하면, 내용을 업데이트하고 반환합니다.
+            Answer existingAnswer = answerOpt.get();
+            existingAnswer.updateContent(request.content());
+            return existingAnswer;
+
+        } else {
+            // 2-2. [생성 로직] 답변이 없으면, 새로 생성하여 저장하고 반환합니다.
+            Worker worker = workerRepository.findById(workerId)
+                    .orElseThrow(() -> new WorkerException(WorkerErrorCode.WORKER_NOT_FOUND));
+            Question question = questionRepository.findById(questionId)
+                    .orElseThrow(() -> new IntroductionException(IntroductionErrorCode.QUESTION_NOT_FOUND));
+
+            Answer newAnswer = IntroductionConverter.toAnswer(request, worker, question);
+            return answerRepository.save(newAnswer);
         }
-
-        // 2. 답변과 연관된 Worker와 Question 엔티티를 DB에서 조회
-        Worker worker = workerRepository.findById(workerId)
-                .orElseThrow(() -> new WorkerException(WorkerErrorCode.WORKER_NOT_FOUND));
-        Question question = questionRepository.findById(questionId)
-                .orElseThrow(() -> new IntroductionException(IntroductionErrorCode.QUESTION_NOT_FOUND));
-
-        // 3. 새로운 Answer 엔티티를 생성
-        Answer newAnswer = IntroductionConverter.toAnswer(request, worker, question);
-
-        // 4. 생성한 엔티티를 저장하고 반환합니다.
-        return answerRepository.save(newAnswer);
-    }
-
-    @Override
-    public Answer updateAnswer(Long workerId, Long questionId, AnswerReqDto.UpdateAnswerReqDto request) {
-        // 1. 수정할 Answer 엔티티를 DB에서 조회 없으면 예외를 발생
-        Answer answer = answerRepository.findByWorkerIdAndQuestionId(workerId, questionId)
-                .orElseThrow(() -> new IntroductionException(IntroductionErrorCode.ANSWER_NOT_FOUND));
-
-        // 2. 엔티티의 내용을 업데이트
-        answer.updateContent(request.content());
-
-        // 3. @Transactional에 의해 dirty checking이 일어나므로, save 호출 없이 자동으로 DB에 반영
-        return answer;
     }
 
     @Override

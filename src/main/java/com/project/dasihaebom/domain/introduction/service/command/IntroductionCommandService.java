@@ -6,9 +6,8 @@ import com.project.dasihaebom.domain.introduction.entity.Introduction;
 
 public interface IntroductionCommandService {
 
-    Answer createAnswer(Long workerId, Long questionId, AnswerReqDto.CreateAnswerReqDto request);
 
-    Answer updateAnswer(Long workerId, Long questionId, AnswerReqDto.UpdateAnswerReqDto request);
+    Answer upsertAnswer(Long workerId, Long questionId, AnswerReqDto.SaveAnswerReqDto request);
 
     Introduction generateIntroduction(Long workerId);
 }

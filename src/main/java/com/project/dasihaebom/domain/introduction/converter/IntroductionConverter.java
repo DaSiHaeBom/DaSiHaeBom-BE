@@ -26,7 +26,7 @@ public class IntroductionConverter {
                 .build();
     } // 조회 응답 컨버터
 
-    public static Answer toAnswer(AnswerReqDto.CreateAnswerReqDto request, Worker worker, Question question) {
+    public static Answer toAnswer(AnswerReqDto.SaveAnswerReqDto request, Worker worker, Question question) {
         return Answer.builder()
                 .content(request.content())
                 .worker(worker)
@@ -41,7 +41,7 @@ public class IntroductionConverter {
     } // 조회 리스트 컨트롤러 컨버터
 
     public static AnswerResDto.GeneratedIntroductionDTO toGeneratedIntroductionDTO(Introduction introduction) {
-        return AnswerResDto.GeneratedIntroductionDTO.builder() // ⬅️ AnswerResDto 사용
+        return AnswerResDto.GeneratedIntroductionDTO.builder()
                 .introductionId(introduction.getId())
                 .fullText(introduction.getFullText())
                 .summary(introduction.getSummary())
