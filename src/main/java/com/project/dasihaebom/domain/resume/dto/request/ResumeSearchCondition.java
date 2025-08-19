@@ -1,5 +1,6 @@
 package com.project.dasihaebom.domain.resume.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,6 +15,8 @@ public class ResumeSearchCondition {
     private String sortBy;
     private Integer minAge;
     private Integer maxAge;
+
+    @JsonProperty("licenses")
     private List<String> licenses;
     private Double latitude;
     private Double longitude;

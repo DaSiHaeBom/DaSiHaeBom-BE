@@ -1,5 +1,6 @@
 package com.project.dasihaebom.domain.resume.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.dasihaebom.domain.resume.converter.ResumeConverter;
 import com.project.dasihaebom.domain.resume.dto.request.ResumeSearchCondition;
 import com.project.dasihaebom.domain.resume.dto.response.ResumeResDto;
@@ -36,6 +37,7 @@ public class ResumeController {
     private final ResumeQueryService resumeQueryService;
     private final CorpRepository corpRepository;
     private final PdfGenerateService pdfGenerateService;
+    private final ObjectMapper objectMapper;
 
     @GetMapping("resume/search")
     @Operation(summary = "이력서 목록 조회", description = "")
@@ -71,7 +73,7 @@ public class ResumeController {
     ) {
         Long workerId = userDetails.getId();
         Resume resume = resumeQueryService.getMyResume(workerId);
-        ResumeResDto.ResumeDetailDTO responseDTO = ResumeConverter.toResumeDetailDTO(resume);
+        ResumeResDto.ResumeDetailDTO responseDTO = ResumeConverter.toResumeDetailDTO(resume, objectMapper);
         return CustomResponse.onSuccess(responseDTO);
     }
 
@@ -82,7 +84,7 @@ public class ResumeController {
             @PathVariable Long workerId
     ) {
         Resume resume = resumeQueryService.getResumeByWorkerId(workerId);
-        ResumeResDto.ResumeDetailDTO responseDTO = ResumeConverter.toResumeDetailDTO(resume);
+        ResumeResDto.ResumeDetailDTO responseDTO = ResumeConverter.toResumeDetailDTO(resume, objectMapper);
         return CustomResponse.onSuccess(responseDTO);
     }
 

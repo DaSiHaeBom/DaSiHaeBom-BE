@@ -1,5 +1,6 @@
 package com.project.dasihaebom.domain.license.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.project.dasihaebom.domain.user.worker.entity.Worker;
 import com.project.dasihaebom.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -30,6 +31,7 @@ public class License extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "worker_id")
+    @JsonBackReference // 자식관계임을 명시
     private Worker worker;
 
     // 엔티티 변경 메서드
