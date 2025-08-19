@@ -37,4 +37,15 @@ public class CorpConverter {
 //                .corpInfo(corpInfo)
                 .build();
     }
+
+    public static CorpResDto.CorpProfileResDto toCorpProfileResDto(Corp corp) {
+        return CorpResDto.CorpProfileResDto.builder()
+                .role(corp.getRole())
+                .ceoName(corp.getCeoName())
+                .phoneNumber(corp.getPhoneNumber())
+                .corpNumber(corp.getCorpNumber())
+                .corpName(corp.getCorpName())
+                .corpAddress(corp.getCorpAddress())
+                .build();
+    }
 }
