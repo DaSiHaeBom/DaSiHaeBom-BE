@@ -40,7 +40,7 @@ public class ResumeController {
     private final ObjectMapper objectMapper;
 
     @PostMapping("resume/search")
-    @Operation(summary = "이력서 목록 조회", description = "")
+    @Operation(summary = "이력서 목록 조회", description = "조회지만 검색 필터가 많아 post로 reqBody를 받습니다.")
     @PreAuthorize("hasAuthority('CORP') or hasAuthority('ADMIN')")
     public CustomResponse<ResumeResDto.ResumeCursorResponse> searchResumes(
             @RequestBody ResumeSearchCondition condition,  // @ModelAttribute → @RequestBody 변경
@@ -94,6 +94,7 @@ public class ResumeController {
     }
 
     @GetMapping("/{resumeId}/download")
+    @Operation(summary = "PDF 다운로드 api입니다.", description = "기본적인 html밖에 몰라서 디자인은 아쉬울 수도 있습니당")
     public ResponseEntity<byte[]> downloadResumePdf(@PathVariable Long resumeId) throws IOException {
 
         byte[] pdfBytes = pdfGenerateService.generateResumePdf(resumeId);
