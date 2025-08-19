@@ -39,13 +39,18 @@ public class ResumeController {
     private final PdfGenerateService pdfGenerateService;
     private final ObjectMapper objectMapper;
 
-    @GetMapping("resume/search")
+    @PostMapping("resume/search")
     @Operation(summary = "이력서 목록 조회", description = "")
     @PreAuthorize("hasAuthority('CORP') or hasAuthority('ADMIN')")
     public CustomResponse<ResumeResDto.ResumeCursorResponse> searchResumes(
-            @ModelAttribute ResumeSearchCondition condition,
+            @RequestBody ResumeSearchCondition condition,  // @ModelAttribute → @RequestBody 변경
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
+        // 디버깅을 위한 로그
+        System.out.println("Received condition: " + condition);
+        System.out.println("Licenses: " + condition.getLicenses());
+        System.out.println("License count: " + (condition.getLicenses() != null ? condition.getLicenses().size() : "null"));
+
         // 1. userDetails에서 로그인한 기업의 ID를 가져옵니다.
         Long currentCorpId = userDetails.getId();
 

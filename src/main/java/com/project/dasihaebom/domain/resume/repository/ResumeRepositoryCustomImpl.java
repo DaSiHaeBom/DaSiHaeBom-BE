@@ -96,81 +96,25 @@ public class ResumeRepositoryCustomImpl implements ResumeRepositoryCustom {
         return condition;
     }
 
-    // ResumeRepositoryCustomImpl.java
 
     private BooleanExpression licenseCondition(List<String> licenses) {
         if (licenses == null || licenses.isEmpty()) {
             return null;
         }
 
-        System.out.println("Raw licenses input: " + licenses);
-
-        List<String> actualLicenses = new ArrayList<>();
-
-        // 이중 배열 문제 해결을 위한 특별 처리
-        if (licenses.size() == 1 && licenses.get(0).startsWith("[") && licenses.get(0).endsWith("]")) {
-            // 전체가 하나의 JSON 배열 문자열인 경우
-            String jsonArrayString = licenses.get(0);
-            System.out.println("Detected JSON array string: " + jsonArrayString);
-
-            // JSON 배열 문자열 파싱
-            String cleaned = jsonArrayString.substring(1, jsonArrayString.length() - 1); // [ ] 제거
-            String[] parts = cleaned.split(",");
-            for (String part : parts) {
-                String trimmed = part.trim().replaceAll("\"", ""); // 공백과 따옴표 제거
-                if (!trimmed.isEmpty()) {
-                    actualLicenses.add(trimmed);
-                }
-            }
-        } else if (licenses.size() == 2 &&
-                licenses.get(0).startsWith("[\"") &&
-                licenses.get(1).endsWith("\"]")) {
-            // 이상하게 잘린 경우 (현재 상황)
-            String first = licenses.get(0).substring(2); // [" 제거
-            String second = licenses.get(1);
-            second = second.substring(0, second.length() - 2); // "] 제거
-            second = second.replaceAll("\"", ""); // 따옴표 제거
-
-            actualLicenses.add(first);
-            actualLicenses.add(second);
-        } else {
-            // 정상적인 배열인 경우
-            for (String licenseStr : licenses) {
-                if (licenseStr.startsWith("[") && licenseStr.endsWith("]")) {
-                    String cleaned = licenseStr.substring(1, licenseStr.length() - 1);
-                    String[] parts = cleaned.split(",");
-                    for (String part : parts) {
-                        String trimmed = part.trim().replaceAll("\"", "");
-                        if (!trimmed.isEmpty()) {
-                            actualLicenses.add(trimmed);
-                        }
-                    }
-                } else {
-                    actualLicenses.add(licenseStr);
-                }
-            }
-        }
-
-        System.out.println("Processed licenses: " + actualLicenses);
-
-        if (actualLicenses.isEmpty()) {
-            return null;
-        }
+        System.out.println("License condition for: " + licenses);
 
         QLicense license = QLicense.license;
         QResume resume = QResume.resume;
-
-        System.out.println("AND condition - looking for workers with ALL licenses: " + actualLicenses);
-        System.out.println("Expected count: " + actualLicenses.size());
 
         // AND 조건: 요청된 모든 자격증을 가지고 있어야 함
         return resume.worker.id.in(
                 JPAExpressions
                         .select(license.worker.id)
                         .from(license)
-                        .where(license.name.in(actualLicenses))
+                        .where(license.name.in(licenses))
                         .groupBy(license.worker.id)
-                        .having(license.name.countDistinct().eq((long) actualLicenses.size()))
+                        .having(license.name.countDistinct().eq((long) licenses.size()))
         );
     }
 }
