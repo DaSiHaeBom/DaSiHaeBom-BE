@@ -27,7 +27,7 @@ import static com.project.dasihaebom.global.util.CookieUtils.getTokenFromCookies
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/users/workers")
+@RequestMapping("/api/v1/users")
 @Tag(name = "Worker", description = "개인 사용자 관련 API")
 public class WorkerController {
 
@@ -36,7 +36,7 @@ public class WorkerController {
     private final WorkerQueryService workerQueryService;
 
     @Operation(summary = "개인 회원 가입", description = "전화번호가 겹치면 가입이 안됨")
-    @PostMapping("")
+    @PostMapping("/workers")
     public CustomResponse<String> createWorker(
             @RequestBody @Valid WorkerReqDto.WorkerCreateReqDto workerCreateReqDto
     ) {
@@ -45,7 +45,7 @@ public class WorkerController {
     }
 
     @Operation(summary = "개인 회원 정보 수정")
-    @PatchMapping("/me")
+    @PatchMapping("/workers/me")
     public CustomResponse<String> updateWorker(
             @RequestBody @Valid WorkerReqDto.WorkerUpdateReqDto workerUpdateReqDto,
             @AuthenticationPrincipal CurrentUser currentUser
@@ -73,7 +73,7 @@ public class WorkerController {
     }
 
     @Operation(summary = "개인 회원 정보 조회")
-    @GetMapping("/me")
+    @GetMapping("/workers/me")
     public CustomResponse<WorkerResDto.WorkerProfileResDto> getWorkerProfile(
             @AuthenticationPrincipal CurrentUser currentUser
     ) {
