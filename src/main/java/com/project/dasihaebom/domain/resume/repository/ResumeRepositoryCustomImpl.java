@@ -67,10 +67,8 @@ public class ResumeRepositoryCustomImpl implements ResumeRepositoryCustom {
     }
 
 
-    // ageCondition 메서드 수정
-
     private BooleanExpression ageCondition(Integer minAge, Integer maxAge) {
-        // [수정] QWorker -> QResume으로 변경
+
         QResume resume = QResume.resume;
 
         if (minAge == null && maxAge == null) {
@@ -103,7 +101,7 @@ public class ResumeRepositoryCustomImpl implements ResumeRepositoryCustom {
         QResume resume = QResume.resume;
         QLicense license = QLicense.license;
 
-        // "license 테이블에서 현재 resume의 worker와 동일한 worker를 가지면서 그 license의 이름이 요청된 자격증 목록에 포함된 것이 존재하는지??"
+        // "license 테이블에서 현재 resume의 worker와 동일한 worker를 가지면서 그 license의 이름이 요청된 자격증 목록에 포함된 것이 존재하는지"
         return license.worker.eq(resume.worker)
                 .and(license.name.in(licenses));
     }

@@ -30,7 +30,7 @@ public class ResumeQueryServiceImpl implements ResumeQueryService {
     @Override
     public ResumeResDto.ResumeCursorResponse searchResumes(ResumeSearchCondition condition, Long userCorpId) {
 
-        // 검색을 요청한 기업 정보를 조회합니다.
+        // 검색을 요청한 기업 정보를 조회
         Corp userCorp = corpRepository.findById(userCorpId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 기업을 찾을 수 없습니다."));
 

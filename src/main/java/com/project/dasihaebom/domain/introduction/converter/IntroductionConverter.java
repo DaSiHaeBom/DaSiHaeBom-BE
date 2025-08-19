@@ -26,7 +26,7 @@ public class IntroductionConverter {
                 .build();
     } // 조회 응답 컨버터
 
-    public static Answer toAnswer(AnswerReqDto.CreateAnswerReqDto request, Worker worker, Question question) {
+    public static Answer toAnswer(AnswerReqDto.SaveAnswerReqDto request, Worker worker, Question question) {
         return Answer.builder()
                 .content(request.content())
                 .worker(worker)
