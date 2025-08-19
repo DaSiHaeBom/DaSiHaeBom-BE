@@ -28,15 +28,15 @@ public class ResumeConverter {
 
 
     //상세조회 컨버터
-    public static ResumeResDto.ResumeDetailDTO toResumeDetailDTO(Resume resume) {
+    public static ResumeResDto.ResumeDetailDTO toResumeDetailDTO(Resume resume, ObjectMapper objectMapper) {
 
-        // 1. licenses (JSON 문자열)를 List<License> 객체로 변환
         List<License> licenseList;
         try {
+            // 파라미터로 받은 objectMapper 사용
             licenseList = objectMapper.readValue(resume.getLicenses(), new TypeReference<>() {});
         } catch (Exception e) {
             log.error("자격증 정보 JSON 파싱 실패: resumeId={}", resume.getId(), e);
-            licenseList = Collections.emptyList(); // 파싱 실패 시 빈 리스트 반환
+            licenseList = Collections.emptyList();
         }
 
         // 2. List<License>를 List<LicenseDTO>로 변환

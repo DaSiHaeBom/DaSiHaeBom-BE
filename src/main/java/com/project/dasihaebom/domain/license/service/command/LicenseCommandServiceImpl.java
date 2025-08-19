@@ -7,6 +7,7 @@ import com.project.dasihaebom.domain.license.entity.License;
 import com.project.dasihaebom.domain.license.exception.LicenseErrorCode;
 import com.project.dasihaebom.domain.license.exception.LicenseException;
 import com.project.dasihaebom.domain.license.repository.LicenseRepository;
+import com.project.dasihaebom.domain.resume.service.command.ResumeCommandService;
 import com.project.dasihaebom.domain.user.worker.entity.Worker;
 import com.project.dasihaebom.domain.user.worker.exception.WorkerErrorCode;
 import com.project.dasihaebom.domain.user.worker.exception.WorkerException;
@@ -28,6 +29,7 @@ public class LicenseCommandServiceImpl implements LicenseCommandService {
 
     private final LicenseRepository licenseRepository;
     private final WorkerRepository workerRepository;
+    private final ResumeCommandService resumeCommandService;
 
     @Override
     public LicenseResDto.LicenseCreateResDto createLicense(LicenseReqDto.LicenseCreateReqDto licenseCreateReqDto, long workerId) {
@@ -37,6 +39,7 @@ public class LicenseCommandServiceImpl implements LicenseCommandService {
         License license = LicenseConverter.toLicense(licenseCreateReqDto, worker);
 
         licenseRepository.save(license);
+        resumeCommandService.syncResume(workerId);
 
         return LicenseConverter.toLicenseCreateResDto(license);
     }
@@ -53,6 +56,8 @@ public class LicenseCommandServiceImpl implements LicenseCommandService {
         updateIfChanged(licenseUpdateReqDto.name(), license.getName(), license::changeName);
         updateIfChanged(licenseUpdateReqDto.issuedAt(), license.getIssuedAt(), license::changeIssuedAt);
         updateIfChanged(licenseUpdateReqDto.issuer(), license.getIssuer(), license::changeIssuer);
+
+        resumeCommandService.syncResume(workerId);
     }
 
     @Override
@@ -65,5 +70,7 @@ public class LicenseCommandServiceImpl implements LicenseCommandService {
         }
 
         licenseRepository.deleteById(licenseId);
+
+        resumeCommandService.syncResume(workerId);
     }
 }
