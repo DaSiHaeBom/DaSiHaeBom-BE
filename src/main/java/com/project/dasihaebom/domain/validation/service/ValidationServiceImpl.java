@@ -16,8 +16,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static com.project.dasihaebom.global.constant.redis.RedisConstants.*;
-import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_CHANGE_PHONE_NUMBER;
-import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_SIGNUP;
+import static com.project.dasihaebom.global.constant.scope.ScopeConstants.*;
 import static com.project.dasihaebom.global.constant.valid.MessageConstants.CODE_CONFIRMATION_IS_FAILURE;
 import static com.project.dasihaebom.global.constant.valid.MessageConstants.CODE_CONFIRMATION_IS_SUCCESS;
 
@@ -36,10 +35,16 @@ public class ValidationServiceImpl implements ValidationService {
         // 휴대폰 번호를 가져옴
         final String phoneNumber = phoneNumberCodeReqDto.phoneNumber();
 
+        boolean phoneNumberExists = authRepository.findByPhoneNumber(phoneNumber).isPresent();
+        boolean isTempPasswordScope = Objects.equals(scope, SCOPE_TEMP_PASSWORD);
+        boolean isFindLoginIdScope = Objects.equals(scope, SCOPE_FIND_LOGIN_ID);
+        // 임시 비밀번호 발급 또는 로그인 아이디 찾기인데, 가입된 계정이 없는 경우
+        if ((isTempPasswordScope || isFindLoginIdScope) && !phoneNumberExists) {
+            throw new ValidationException(ValidationErrorCode.PHONE_NUMBER_IS_NOT_REGISTERED);
+        }
+
         boolean isSignUpScope = Objects.equals(scope, SCOPE_SIGNUP);
         boolean isChangePhoneNumberScope = Objects.equals(scope, SCOPE_CHANGE_PHONE_NUMBER);
-        boolean phoneNumberExists = authRepository.findByPhoneNumber(phoneNumber).isPresent();
-
         // 만약 회원 가입 또는 프로필 전화번호 변경 인증인 경우 가입된 핸드폰 번호라면 인증을 막아 가입을 막는다
         if ((isSignUpScope || isChangePhoneNumberScope) && phoneNumberExists) {
             throw new ValidationException(ValidationErrorCode.ALREADY_USED_PHONE_NUMBER);

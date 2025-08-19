@@ -2,6 +2,7 @@ package com.project.dasihaebom.domain.user.corp.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import org.springframework.security.core.parameters.P;
 
 import static com.project.dasihaebom.global.constant.valid.MessageConstants.*;
 import static com.project.dasihaebom.global.constant.valid.PatternConstants.*;
@@ -62,6 +63,13 @@ public class CorpReqDto {
             @NotBlank(message = USER_BLANK_CORP_NUMBER)
             @Pattern(regexp = USER_CORP_NUMBER_PATTERN, message = USER_WRONG_CORP_NUMBER)
             String corpNumber
+    ) {
+    }
+
+    public record CorpLoginIdReqDto(
+            @NotBlank(message = USER_BLANK_PHONE_NUMBER)
+            @Pattern(regexp = USER_PHONE_NUMBER_PATTERN, message = USER_WRONG_PHONE_NUMBER)
+            String phoneNumber
     ) {
     }
 }
