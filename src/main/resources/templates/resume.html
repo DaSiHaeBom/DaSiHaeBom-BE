@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>이력서</title>
+    <style>
+        body {
+            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+            margin: 40px;
+            color: #333;
+        }
+        h1, h2 {
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+            vertical-align: middle;
+        }
+        thead th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        tbody th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            width: 15%;
+        }
+        .intro-box {
+            border: 1px solid #ccc;
+            padding: 15px;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>이력서</h1>
+
+<h2>인적 사항</h2>
+<table>
+    <tbody>
+    <tr>
+        <th>이름</th>
+        <td th:text="${resume.username}">김상명</td>
+        <th>성별</th>
+        <td th:text="${resume.gender.description}">여</td>
+    </tr>
+    <tr>
+        <th>생년월일</th>
+        <td th:text="${#temporals.format(resume.birthDate, 'yyyy.MM.dd')}">1959.08.01</td>
+        <th>연락처</th>
+        <td th:text="${resume.phoneNumber}">010-1234-5678</td>
+    </tr>
+    <tr>
+        <th>주소</th>
+        <td colspan="3" th:text="${resume.address}">서울특별시 종로구 자하문로15길</td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>자격증</h2>
+<table>
+    <thead>
+    <tr>
+        <th>자격증명</th>
+        <th>취득날짜</th>
+        <th>발행처</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${not #lists.isEmpty(licenses)}" th:each="license : ${licenses}">
+        <td th:text="${license.name}">운전면허증(2종)</td>
+        <td th:text="${#temporals.format(license.issuedAt, 'yyyy.MM.dd')}">1987.09.15</td>
+        <td th:text="${license.issuer}">도로교통공단</td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(licenses)}">
+        <td colspan="3" style="text-align: center;">취득한 자격증이 없습니다.</td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>자기소개서</h2>
+<div class="intro-box">
+    <p th:utext="${introductionHtml}">
+        자기소개서 예시 텍스트입니다.
+    </p>
+</div>
+
+</body>
+</html>

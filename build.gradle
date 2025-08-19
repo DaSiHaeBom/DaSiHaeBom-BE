@@ -64,6 +64,11 @@ dependencies {
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+	// Thymeleaf - HTML 템플릿에 데이터를 채워넣기 위한 라이브러리
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	// openhtmltopdf - HTML을 PDF로 변환하기 위한 라이브러리
+	implementation 'com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10'
 }
 
 tasks.named('test') {
