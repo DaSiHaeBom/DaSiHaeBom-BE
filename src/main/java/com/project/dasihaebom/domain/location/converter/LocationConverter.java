@@ -28,6 +28,7 @@ public class LocationConverter {
     public static List<Double> toCoordinateList(KakaoCoordinateInfoResDto kakaoCoordinateInfoResDto ) {
         KakaoCoordinateInfoResDto.InfoItem coordinatesInfo = kakaoCoordinateInfoResDto.documents().get(0);
 
-        return List.of(Double.parseDouble(coordinatesInfo.x()), Double.parseDouble(coordinatesInfo.y()));
+        // 위도 y , 경도 x
+        return List.of(Double.parseDouble(coordinatesInfo.y()), Double.parseDouble(coordinatesInfo.x()));
     }
 }

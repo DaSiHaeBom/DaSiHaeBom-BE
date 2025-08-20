@@ -1,6 +1,7 @@
 package com.project.dasihaebom.domain.user.corp.converter;
 
 import com.project.dasihaebom.domain.location.entity.Coordinates;
+import com.project.dasihaebom.domain.user.Address;
 import com.project.dasihaebom.domain.user.Role;
 import com.project.dasihaebom.domain.user.corp.dto.request.CorpReqDto;
 import com.project.dasihaebom.domain.user.corp.dto.response.CorpResDto;
@@ -10,13 +11,18 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+import static com.project.dasihaebom.global.util.CoordinateUtils.getLat;
+import static com.project.dasihaebom.global.util.CoordinateUtils.getLng;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CorpConverter {
 
     public static Corp toCorp(CorpReqDto.CorpCreateReqDto corpCreateReqDto, List<Double> corpCoordinatesAsList) {
 
 
-        Coordinates coordinates = new Coordinates(corpCoordinatesAsList.get(1), corpCoordinatesAsList.get(0));
+        Coordinates coordinates = new Coordinates(getLat(corpCoordinatesAsList), getLng(corpCoordinatesAsList));
+
+        Address address = new Address(corpCreateReqDto.corpBaseAddress(), corpCreateReqDto.corpDetailAddress());
 
         return Corp.builder()
                 .loginId(corpCreateReqDto.loginId())
@@ -24,7 +30,7 @@ public class CorpConverter {
                 .phoneNumber(corpCreateReqDto.phoneNumber())
                 .corpNumber(corpCreateReqDto.corpNumber())
                 .corpName(corpCreateReqDto.corpName())
-                .corpAddress(corpCreateReqDto.corpAddress())
+                .corpAddress(address)
                 .role(Role.CORP)
                 .coordinates(coordinates)
                 .build();
@@ -45,7 +51,8 @@ public class CorpConverter {
                 .phoneNumber(corp.getPhoneNumber())
                 .corpNumber(corp.getCorpNumber())
                 .corpName(corp.getCorpName())
-                .corpAddress(corp.getCorpAddress())
+                .corpBaseAddress(corp.getCorpAddress().getBaseAddress())
+                .corpDetailAddress(corp.getCorpAddress().getDetailAddress())
                 .build();
     }
 

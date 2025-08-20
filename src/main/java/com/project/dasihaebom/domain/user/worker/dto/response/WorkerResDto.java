@@ -13,7 +13,8 @@ public class WorkerResDto {
             String username,
             String birthDate,
             Gender gender,
-            String address
+            String baseAddress,
+            String detailAddress
     ) {
     }
 }
