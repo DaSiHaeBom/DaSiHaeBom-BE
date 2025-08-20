@@ -15,6 +15,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.query.named.ResultMemento;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -71,7 +72,8 @@ public class Worker extends BaseEntity {
     // User가 삭제되면 License도 삭제
     @OneToMany(mappedBy = "worker", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference // 자격증 엔티티와 부모관계임을 명시 - 양방향 관계에서 무한루프를 해결하기 위함
-    private List<License> license;
+    @Builder.Default
+    private List<License> license = new ArrayList<>();
     // User가 삭제되면 Introduction도 삭제
     @OneToMany(mappedBy = "worker", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Introduction> introduction;
@@ -102,7 +104,19 @@ public class Worker extends BaseEntity {
         return this.coordinates != null ? this.coordinates.getLatitude() : null;
     }
 
-    //
+
+    // 더미 생성용 편의 매서드
+    public void addLicense(License license) {
+        this.license.add(license);
+    }
+    // 더미데이터 생성용 set메서드
+    public void setAuth(Auth auth) {
+        this.auth = auth;
+        // 양방향 관계 설정 (상대방 엔티티에도 나를 설정)
+        if (auth.getWorker() != this) {
+            auth.setWorker(this);
+        }
+    }
 
     // 엔티티 수정 전용 메서드
     public void changePhoneNumber(String phoneNumber){
