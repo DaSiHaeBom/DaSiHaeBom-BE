@@ -8,5 +8,7 @@ import java.util.Optional;
 public interface IntroductionRepository extends JpaRepository<Introduction,Long> {
     void deleteAllByWorkerId(Long workerId);
 
+    Optional<Introduction> findByWorkerId(Long workerId);
+
     Optional<Introduction> findTopByWorkerIdOrderByIdDesc(Long workerId);
 }

@@ -10,4 +10,8 @@ public interface IntroductionCommandService {
     Answer upsertAnswer(Long workerId, Long questionId, AnswerReqDto.SaveAnswerReqDto request);
 
     Introduction generateIntroduction(Long workerId);
+
+    Introduction updateIntroductionSummary(Long workerId, AnswerReqDto.UpdateIntroductionSummaryReqDto request);
+
+    Introduction updateIntroductionFullText(Long workerId, AnswerReqDto.UpdateIntroductionFullTextReqDto request);
 }

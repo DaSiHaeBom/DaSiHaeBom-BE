@@ -9,4 +9,14 @@ public class AnswerReqDto {
     public record SaveAnswerReqDto(
             String content // 질문에 대한 답변 내용
     ){}
+
+    @Builder
+    public record UpdateIntroductionSummaryReqDto(
+            String summary
+    ) {}
+
+    @Builder
+    public record UpdateIntroductionFullTextReqDto(
+            String fullText
+    ) {}
 }
