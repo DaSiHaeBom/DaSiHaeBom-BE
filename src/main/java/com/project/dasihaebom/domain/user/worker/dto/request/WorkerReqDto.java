@@ -33,10 +33,10 @@ public class WorkerReqDto {
             @NotNull(message = USER_BLANK_GENDER)
             Gender gender,
 
-            @NotBlank(message = USER_BLANK_ADDRESS)
+            @NotBlank(message = USER_BLANK_BASE_ADDRESS)
             String baseAddress,
 
-            @NotBlank(message = USER_BLANK_ADDRESS)
+            @NotBlank(message = USER_BLANK_DETAIL_ADDRESS)
             String detailAddress
     ) {
     }
@@ -54,10 +54,10 @@ public class WorkerReqDto {
             @Pattern(regexp = USER_BIRTHDATE_PATTERN, message = USER_WRONG_BIRTHDATE)
             String birthDate,
 
-            @NotBlank(message = USER_BLANK_ADDRESS)
+            @NotBlank(message = USER_BLANK_BASE_ADDRESS)
             String baseAddress,
 
-            @NotBlank(message = USER_BLANK_ADDRESS)
+            @NotBlank(message = USER_BLANK_DETAIL_ADDRESS)
             String detailAddress
     ) {
     }

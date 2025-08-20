@@ -32,7 +32,7 @@ public class CorpReqDto {
             @NotBlank(message = USER_BLANK_CORP_NAME)
             String corpName,
 
-            @NotBlank(message = USER_BLANK_ADDRESS)
+            @NotBlank(message = USER_BLANK_BASE_ADDRESS)
             String corpBaseAddress,
 
             String corpDetailAddress
@@ -55,7 +55,7 @@ public class CorpReqDto {
             @NotBlank(message = USER_BLANK_CORP_NAME)
             String corpName,
 
-            @NotBlank(message = USER_BLANK_ADDRESS)
+            @NotBlank(message = USER_BLANK_BASE_ADDRESS)
             String corpBaseAddress,
 
             String corpDetailAddress

@@ -12,7 +12,8 @@ public class MessageConstants {
     public static final String USER_BLANK_USERNAME = "이름 누락";
     public static final String USER_BLANK_BIRTHDATE = "나이 누락";
     public static final String USER_BLANK_GENDER = "성별 누락";
-    public static final String USER_BLANK_ADDRESS = "주소 누락";
+    public static final String USER_BLANK_BASE_ADDRESS = "기본 주소 누락";
+    public static final String USER_BLANK_DETAIL_ADDRESS = "상세 주소 누락";
 
     public static final String USER_BLANK_LOGIN_ID = "아이디 누락";
     public static final String USER_BLANK_CEO_NAME = "대표자명 누락";
