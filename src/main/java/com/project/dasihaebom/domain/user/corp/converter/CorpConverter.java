@@ -11,13 +11,16 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+import static com.project.dasihaebom.global.util.CoordinateUtils.getLat;
+import static com.project.dasihaebom.global.util.CoordinateUtils.getLng;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CorpConverter {
 
     public static Corp toCorp(CorpReqDto.CorpCreateReqDto corpCreateReqDto, List<Double> corpCoordinatesAsList) {
 
 
-        Coordinates coordinates = new Coordinates(corpCoordinatesAsList.get(1), corpCoordinatesAsList.get(0));
+        Coordinates coordinates = new Coordinates(getLat(corpCoordinatesAsList), getLng(corpCoordinatesAsList));
 
         Address address = new Address(corpCreateReqDto.corpBaseAddress(), corpCreateReqDto.corpDetailAddress());
 

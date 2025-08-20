@@ -35,6 +35,8 @@ import java.util.concurrent.TimeUnit;
 import static com.project.dasihaebom.global.constant.redis.RedisConstants.*;
 import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_CHANGE_PHONE_NUMBER;
 import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_SIGNUP;
+import static com.project.dasihaebom.global.util.CoordinateUtils.getLat;
+import static com.project.dasihaebom.global.util.CoordinateUtils.getLng;
 import static com.project.dasihaebom.global.util.UpdateUtils.updateIfChanged;
 
 
@@ -128,7 +130,7 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
             final List<Double> coordinatesAsList = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(addressToUpdate));
 
             // 1. 서비스에서 Coordinates 객체로 변환 (순서: 위도, 경도)
-            Coordinates coordinatesToUpdate = new Coordinates(coordinatesAsList.get(1), coordinatesAsList.get(0));
+            Coordinates coordinatesToUpdate = new Coordinates(getLat(coordinatesAsList), getLng(coordinatesAsList));
 
             // 2. Worker 엔티티의 새로운 메서드 호출
             worker.changeCoordinates(coordinatesToUpdate);

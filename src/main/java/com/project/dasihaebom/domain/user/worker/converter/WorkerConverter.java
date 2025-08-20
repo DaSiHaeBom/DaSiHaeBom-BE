@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+import static com.project.dasihaebom.global.util.CoordinateUtils.getLat;
+import static com.project.dasihaebom.global.util.CoordinateUtils.getLng;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class WorkerConverter {
 
@@ -19,7 +22,7 @@ public class WorkerConverter {
     public static Worker toWorker(WorkerReqDto.WorkerCreateReqDto workerCreateReqDto, List<Double> workerCoordinatesAsList) {
 
         // List<Double>을 Coordinates 객체로 변환하는 로직
-        Coordinates coordinates = new Coordinates(workerCoordinatesAsList.get(1), workerCoordinatesAsList.get(0)); // 순서: 위도, 경도
+        Coordinates coordinates = new Coordinates(getLat(workerCoordinatesAsList), getLng(workerCoordinatesAsList)); // 순서: 위도, 경도
 
         // 주소 객체 생성
         Address address = new Address(workerCreateReqDto.baseAddress(), workerCreateReqDto.detailAddress());

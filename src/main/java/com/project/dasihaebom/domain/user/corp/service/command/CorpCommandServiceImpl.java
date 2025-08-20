@@ -30,6 +30,8 @@ import java.util.concurrent.TimeUnit;
 import static com.project.dasihaebom.global.constant.redis.RedisConstants.*;
 import static com.project.dasihaebom.global.constant.scope.ScopeConstants.*;
 import static com.project.dasihaebom.global.constant.valid.MessageConstants.CORP_NUMBER_IS_NOT_REGISTERED;
+import static com.project.dasihaebom.global.util.CoordinateUtils.getLat;
+import static com.project.dasihaebom.global.util.CoordinateUtils.getLng;
 import static com.project.dasihaebom.global.util.UpdateUtils.updateIfChanged;
 
 @Slf4j
@@ -138,7 +140,7 @@ public class CorpCommandServiceImpl implements CorpCommandService {
             final List<Double> coordinatesAsList = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(addressToUpdate));
 
             // 1. 서비스에서 Coordinates 객체로 변환 (순서 : 위도, 경도)
-            Coordinates coordinatesToUpdate = new Coordinates(coordinatesAsList.get(1), coordinatesAsList.get(0));
+            Coordinates coordinatesToUpdate = new Coordinates(getLat(coordinatesAsList), getLng(coordinatesAsList));
 
             // 2. Corp 엔티티의 새로운 메서드 호출
             corp.changeCoordinates(coordinatesToUpdate);
