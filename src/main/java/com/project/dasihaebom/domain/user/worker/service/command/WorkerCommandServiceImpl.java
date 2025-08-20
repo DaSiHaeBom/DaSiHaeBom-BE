@@ -70,7 +70,7 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
             throw new WorkerException(WorkerErrorCode.SIGN_UP_PHONE_VALIDATION_DOES_NOT_EXIST);
         }
 
-        final String address = workerCreateReqDto.address();
+        final String address = workerCreateReqDto.baseAddress();
         List<Double> workerCoordinates = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(address));
         Worker worker = WorkerConverter.toWorker(workerCreateReqDto, workerCoordinates);
 

@@ -22,7 +22,7 @@ public class WorkerConverter {
         Coordinates coordinates = new Coordinates(workerCoordinatesAsList.get(1), workerCoordinatesAsList.get(0)); // 순서: 위도, 경도
 
         // 주소 객체 생성
-        Address address = new Address(workerCreateReqDto.address(), workerCreateReqDto.detailAddress());
+        Address address = new Address(workerCreateReqDto.baseAddress(), workerCreateReqDto.detailAddress());
 
         return Worker.builder()
                 .phoneNumber(workerCreateReqDto.phoneNumber())

@@ -34,7 +34,7 @@ public class WorkerReqDto {
             Gender gender,
 
             @NotBlank(message = USER_BLANK_ADDRESS)
-            String address,
+            String baseAddress,
 
             @NotBlank(message = USER_BLANK_ADDRESS)
             String detailAddress
