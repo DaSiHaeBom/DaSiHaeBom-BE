@@ -25,6 +25,7 @@ public class AnswerResDto {
             Long introductionId,
             String fullText,
             String summary,
+            String userName,
             LocalDateTime createdAt
     ) {}
 }

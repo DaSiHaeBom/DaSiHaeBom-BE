@@ -11,7 +11,6 @@ public interface IntroductionCommandService {
 
     Introduction generateIntroduction(Long workerId);
 
-    Introduction updateIntroductionSummary(Long workerId, AnswerReqDto.UpdateIntroductionSummaryReqDto request);
 
     Introduction updateIntroductionFullText(Long workerId, AnswerReqDto.UpdateIntroductionFullTextReqDto request);
 }

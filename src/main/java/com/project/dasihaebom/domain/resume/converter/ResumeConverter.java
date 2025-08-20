@@ -115,4 +115,8 @@ public class ResumeConverter {
                 .map(License::getName)
                 .collect(Collectors.toList());
     }
+
+    public static ResumeResDto.ResumeExistenceDTO toResumeExistenceDTO(boolean exists) {
+        return new ResumeResDto.ResumeExistenceDTO(exists);
+    }
 }

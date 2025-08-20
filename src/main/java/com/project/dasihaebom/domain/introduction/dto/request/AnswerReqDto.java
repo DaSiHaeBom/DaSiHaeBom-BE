@@ -10,10 +10,6 @@ public class AnswerReqDto {
             String content // 질문에 대한 답변 내용
     ){}
 
-    @Builder
-    public record UpdateIntroductionSummaryReqDto(
-            String summary
-    ) {}
 
     @Builder
     public record UpdateIntroductionFullTextReqDto(

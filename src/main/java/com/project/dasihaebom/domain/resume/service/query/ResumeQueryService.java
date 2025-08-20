@@ -10,4 +10,6 @@ public interface ResumeQueryService {
     Resume getMyResume(Long workerId);
 
     Resume getResumeByWorkerId(Long workerId);
+
+    boolean checkResumeExistence(Long workerId); //이력서(자소서 유무 판정)
 }
