@@ -87,7 +87,7 @@ public class IntroductionController {
     }
 
 
-    @PatchMapping("/full-text")
+    @PatchMapping("/answer/full-text")
     @Operation(summary = "자기소개서 본문 수정", description = "자기소개서의 전체 본문 내용을 수정합니다.")
     @PreAuthorize("hasAuthority('WORKER')")
     public CustomResponse<String> updateFullText(
