@@ -1,6 +1,7 @@
 package com.project.dasihaebom.domain.user.worker.service.command;
 
 import com.project.dasihaebom.domain.auth.service.command.AuthCommandService;
+import com.project.dasihaebom.domain.introduction.repository.IntroductionRepository;
 import com.project.dasihaebom.domain.location.converter.LocationConverter;
 import com.project.dasihaebom.domain.location.entity.Coordinates;
 import com.project.dasihaebom.domain.location.repository.LocationRepository;
@@ -45,6 +46,7 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
 
     // Repo
     private final WorkerRepository workerRepository;
+    private final IntroductionRepository introductionRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     // Service
@@ -132,7 +134,10 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
         }
 
         //이력서 업데이트
-        resumeCommandService.syncResume(workerId);
+        if (introductionRepository.existsByWorker_Id(workerId)) {
+            resumeCommandService.syncResume(workerId);
+        }
+
     }
 
     @Override
