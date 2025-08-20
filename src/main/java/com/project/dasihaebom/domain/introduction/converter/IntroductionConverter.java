@@ -45,6 +45,7 @@ public class IntroductionConverter {
                 .introductionId(introduction.getId())
                 .fullText(introduction.getFullText())
                 .summary(introduction.getSummary())
+                .userName(introduction.getWorker().getUsername())
                 .createdAt(introduction.getCreatedAt())
                 .build();
     }

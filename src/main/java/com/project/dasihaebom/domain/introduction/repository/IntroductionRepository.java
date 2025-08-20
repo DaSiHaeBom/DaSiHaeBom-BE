@@ -11,4 +11,7 @@ public interface IntroductionRepository extends JpaRepository<Introduction,Long>
     Optional<Introduction> findByWorkerId(Long workerId);
 
     Optional<Introduction> findTopByWorkerIdOrderByIdDesc(Long workerId);
+
+    //자소서가 존재한다 = 이력서가 존재한다
+    boolean existsByWorker_Id(Long workerId);
 }

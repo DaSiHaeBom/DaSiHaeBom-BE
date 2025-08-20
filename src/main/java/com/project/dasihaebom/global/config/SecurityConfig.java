@@ -52,8 +52,6 @@ public class SecurityConfig {
             "swagger-resources/**",
             "/swagger-ui/**",
             "/v3/api-docs/**",
-            "/api/v1/security/test/token", //개인 테스트용 계정
-            "/api/v1/security/test/corp-token", // 기업 테스트용 계정
     };
 
     @Bean

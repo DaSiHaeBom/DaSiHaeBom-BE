@@ -46,41 +46,4 @@ public class SecurityController {
 
         return CustomResponse.onSuccess("엑세스 쿠키가 재발급 되었습니다.");
     }
-
-    @Operation(summary = "스웨거 로컬 테스트용 액세스 토큰 발급 api")
-    @GetMapping("/test/token")
-    public String getTestToken() {
-        // DB에서 1번 유저를 찾아옵니다.
-        Worker worker = workerRepository.findById(1L).orElseThrow();
-
-        // UserDetails 객체를 만듭니다.
-        CustomUserDetails userDetails = new CustomUserDetails(
-                worker.getId(),
-                worker.getUsername(),
-                null,
-                worker.getRole()
-        );
-
-        // 토큰을 생성하여 바로 반환합니다.
-        return jwtUtil.createJwtAccessToken(userDetails);
-    }
-
-    @Operation(summary = "기업 회원 테스트용 토큰 발급")
-    @GetMapping("/test/corp-token")
-    public String getCorpTestToken() {
-        // DB에서 9999번 기업 회원을 조회합니다.
-        Corp corp = corpRepository.findById(9999L)
-                .orElseThrow(() -> new IllegalArgumentException("1번 corp 계정이 DB에 없습니다."));
-
-        // Corp 정보로 UserDetails 객체를 생성합니다.
-        CustomUserDetails userDetails = new CustomUserDetails(
-                corp.getId(),
-                corp.getLoginId(),
-                null,
-                corp.getRole()
-        );
-
-        // 토큰을 생성하여 바로 반환합니다.
-        return jwtUtil.createJwtAccessToken(userDetails);
-    }
 }

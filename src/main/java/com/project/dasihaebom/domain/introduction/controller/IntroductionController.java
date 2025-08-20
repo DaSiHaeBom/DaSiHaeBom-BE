@@ -86,18 +86,6 @@ public class IntroductionController {
         return CustomResponse.onSuccess(responseDTO);
     }
 
-    @PatchMapping("/summary")
-    @Operation(summary = "자기소개서 요약 수정", description = "자기소개서의 한 줄 요약 내용을 수정합니다.")
-    @PreAuthorize("hasAuthority('WORKER')")
-    public CustomResponse<String> updateSummary(
-            @RequestBody AnswerReqDto.UpdateIntroductionSummaryReqDto request,
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ) {
-        Long workerId = userDetails.getId();
-        introductionCommandService.updateIntroductionSummary(workerId, request);
-
-        return CustomResponse.onSuccess(null);
-    }
 
     @PatchMapping("/full-text")
     @Operation(summary = "자기소개서 본문 수정", description = "자기소개서의 전체 본문 내용을 수정합니다.")

@@ -1,5 +1,6 @@
 package com.project.dasihaebom.domain.license.service.command;
 
+import com.project.dasihaebom.domain.introduction.repository.IntroductionRepository;
 import com.project.dasihaebom.domain.license.converter.LicenseConverter;
 import com.project.dasihaebom.domain.license.dto.request.LicenseReqDto;
 import com.project.dasihaebom.domain.license.dto.response.LicenseResDto;
@@ -30,6 +31,7 @@ public class LicenseCommandServiceImpl implements LicenseCommandService {
     private final LicenseRepository licenseRepository;
     private final WorkerRepository workerRepository;
     private final ResumeCommandService resumeCommandService;
+    private final IntroductionRepository introductionRepository;
 
     @Override
     public LicenseResDto.LicenseCreateResDto createLicense(LicenseReqDto.LicenseCreateReqDto licenseCreateReqDto, long workerId) {
@@ -39,7 +41,10 @@ public class LicenseCommandServiceImpl implements LicenseCommandService {
         License license = LicenseConverter.toLicense(licenseCreateReqDto, worker);
 
         licenseRepository.save(license);
-        resumeCommandService.syncResume(workerId);
+
+        if (introductionRepository.existsByWorker_Id(workerId)) {
+            resumeCommandService.syncResume(workerId);
+        }
 
         return LicenseConverter.toLicenseCreateResDto(license);
     }
@@ -57,7 +62,10 @@ public class LicenseCommandServiceImpl implements LicenseCommandService {
         updateIfChanged(licenseUpdateReqDto.issuedAt(), license.getIssuedAt(), license::changeIssuedAt);
         updateIfChanged(licenseUpdateReqDto.issuer(), license.getIssuer(), license::changeIssuer);
 
-        resumeCommandService.syncResume(workerId);
+        if (introductionRepository.existsByWorker_Id(workerId)) {
+            resumeCommandService.syncResume(workerId);
+        }
+
     }
 
     @Override
@@ -71,6 +79,8 @@ public class LicenseCommandServiceImpl implements LicenseCommandService {
 
         licenseRepository.deleteById(licenseId);
 
-        resumeCommandService.syncResume(workerId);
+        if (introductionRepository.existsByWorker_Id(workerId)) {
+            resumeCommandService.syncResume(workerId);
+        }
     }
 }

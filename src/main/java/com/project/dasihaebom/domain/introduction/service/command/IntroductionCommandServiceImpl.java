@@ -105,18 +105,6 @@ public class IntroductionCommandServiceImpl implements IntroductionCommandServic
         return newIntroduction;
     }
 
-    @Override
-    public Introduction updateIntroductionSummary(Long workerId, AnswerReqDto.UpdateIntroductionSummaryReqDto request) {
-        Introduction introduction = introductionRepository.findByWorkerId(workerId)
-                .orElseThrow(() -> new IntroductionException(IntroductionErrorCode.INTRODUCTION_NOT_FOUND));
-
-        introduction.updateSummary(request.summary());
-
-        // 변경된 내용을 이력서에 동기화
-        resumeCommandService.syncResume(workerId);
-
-        return introduction;
-    }
 
     @Override
     public Introduction updateIntroductionFullText(Long workerId, AnswerReqDto.UpdateIntroductionFullTextReqDto request) {

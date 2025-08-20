@@ -23,6 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -105,5 +106,15 @@ public class ResumeController {
         headers.setContentDispositionFormData("attachment", "resume_" + resumeId + ".pdf");
 
         return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK); // 외부 api를 사용하기 때문에 json형식을 맞추기 위해 custom은 사용안함
+    }
+
+    @GetMapping("resume/existence")
+    @Operation(summary = "이력서 존재 여부 확인 API", description = "현재 로그인한 사용자의 이력서(자기소개서) 존재 여부를 확인합니다.")
+    public CustomResponse<ResumeResDto.ResumeExistenceDTO> checkResumeExistence(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long currentUserId = userDetails.getId();
+        boolean existence = resumeQueryService.checkResumeExistence(currentUserId);
+        return CustomResponse.onSuccess(ResumeConverter.toResumeExistenceDTO(existence));
     }
 }
