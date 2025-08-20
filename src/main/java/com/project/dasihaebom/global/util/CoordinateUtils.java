@@ -5,10 +5,10 @@ import java.util.List;
 public class CoordinateUtils {
 
     public static Double getLng(List<Double> coordinates) {
-        return coordinates.get(0);
+        return coordinates.get(1);
     }
 
     public static Double getLat(List<Double> coordinates) {
-        return coordinates.get(1);
+        return coordinates.get(0);
     }
 }
