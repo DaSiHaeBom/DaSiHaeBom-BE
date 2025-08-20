@@ -25,4 +25,11 @@ public class Introduction extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "worker_id")
     private Worker worker;
+
+    public void updateSummary(String summary) {
+        this.summary = summary;
+    }
+    public void updateFullText(String fullText) {
+        this.fullText = fullText;
+    }
 }

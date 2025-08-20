@@ -12,6 +12,7 @@ import com.project.dasihaebom.global.security.userdetails.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -85,4 +86,29 @@ public class IntroductionController {
         return CustomResponse.onSuccess(responseDTO);
     }
 
+    @PatchMapping("/summary")
+    @Operation(summary = "자기소개서 요약 수정", description = "자기소개서의 한 줄 요약 내용을 수정합니다.")
+    @PreAuthorize("hasAuthority('WORKER')")
+    public CustomResponse<String> updateSummary(
+            @RequestBody AnswerReqDto.UpdateIntroductionSummaryReqDto request,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long workerId = userDetails.getId();
+        introductionCommandService.updateIntroductionSummary(workerId, request);
+
+        return CustomResponse.onSuccess(null);
+    }
+
+    @PatchMapping("/full-text")
+    @Operation(summary = "자기소개서 본문 수정", description = "자기소개서의 전체 본문 내용을 수정합니다.")
+    @PreAuthorize("hasAuthority('WORKER')")
+    public CustomResponse<String> updateFullText(
+            @RequestBody AnswerReqDto.UpdateIntroductionFullTextReqDto request,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long workerId = userDetails.getId();
+        introductionCommandService.updateIntroductionFullText(workerId, request);
+
+        return CustomResponse.onSuccess(null);
+    }
 }
