@@ -38,4 +38,9 @@ public class Auth extends BaseEntity {
     public void updatePassword(String newPassword) {
         this.password = newPassword;
     }
+
+    // 더미데이터 생성용 set메서드
+    public void setWorker(Worker worker) {
+        this.worker = worker;
+    }
 }
