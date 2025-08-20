@@ -8,6 +8,7 @@ import com.project.dasihaebom.domain.license.entity.License;
 import com.project.dasihaebom.domain.location.entity.Coordinates;
 import com.project.dasihaebom.domain.location.entity.Location;
 import com.project.dasihaebom.domain.resume.entity.Resume;
+import com.project.dasihaebom.domain.user.Address;
 import com.project.dasihaebom.domain.user.LoginType;
 import com.project.dasihaebom.domain.user.Role;
 import com.project.dasihaebom.global.entity.BaseEntity;
@@ -43,8 +44,8 @@ public class Worker extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(name = "address", nullable = false)
-    private String address;
+//    @Column(name = "address", nullable = false)
+//    private String address;
 
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -56,6 +57,9 @@ public class Worker extends BaseEntity {
 
     @Embedded
     private Coordinates coordinates;
+
+    @Embedded
+    private Address address;
 
 
 
@@ -128,7 +132,7 @@ public class Worker extends BaseEntity {
     public void changeBirthDate(String birthDate){
         this.birthDate = birthDate;
     }
-    public void changeAddress(String address){
+    public void changeAddress(Address address){
         this.address = address;
     }
     public void changeCoordinates(Coordinates newCoordinates) {this.coordinates = newCoordinates;}

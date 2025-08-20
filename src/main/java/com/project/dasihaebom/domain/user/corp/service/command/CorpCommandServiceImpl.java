@@ -4,6 +4,7 @@ import com.project.dasihaebom.domain.auth.service.command.AuthCommandService;
 import com.project.dasihaebom.domain.location.converter.LocationConverter;
 import com.project.dasihaebom.domain.location.entity.Coordinates;
 import com.project.dasihaebom.domain.location.repository.LocationRepository;
+import com.project.dasihaebom.domain.user.Address;
 import com.project.dasihaebom.domain.user.corp.converter.CorpConverter;
 import com.project.dasihaebom.domain.user.corp.dto.request.CorpReqDto;
 import com.project.dasihaebom.domain.user.corp.dto.response.CorpResDto;
@@ -29,6 +30,8 @@ import java.util.concurrent.TimeUnit;
 import static com.project.dasihaebom.global.constant.redis.RedisConstants.*;
 import static com.project.dasihaebom.global.constant.scope.ScopeConstants.*;
 import static com.project.dasihaebom.global.constant.valid.MessageConstants.CORP_NUMBER_IS_NOT_REGISTERED;
+import static com.project.dasihaebom.global.util.CoordinateUtils.getLat;
+import static com.project.dasihaebom.global.util.CoordinateUtils.getLng;
 import static com.project.dasihaebom.global.util.UpdateUtils.updateIfChanged;
 
 @Slf4j
@@ -68,7 +71,7 @@ public class CorpCommandServiceImpl implements CorpCommandService {
             throw new CorpException(CorpErrorCode.CORP_VALIDATION_FAILURE);
         }
 
-        final String address = corpCreateReqDto.corpAddress();
+        final String address = corpCreateReqDto.corpBaseAddress();
         List<Double> corpCoordinates = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(address));
 
         Corp corp = CorpConverter.toCorp(corpCreateReqDto, corpCoordinates);
@@ -127,14 +130,17 @@ public class CorpCommandServiceImpl implements CorpCommandService {
 //            locationRepository.deleteByCorpId(corpId);
 
         // --- [위치 기반 조회를 위해 기존 엔티티 변경으로 인한 수정된 코드] ---
-        if (!corpUpdateReqDto.corpAddress().equals(corp.getCorpAddress())) {
-            updateIfChanged(corpUpdateReqDto.corpAddress(), corp.getCorpAddress(), corp::changeCorpAddress);
+        boolean isBaseAddressSame = corpUpdateReqDto.corpBaseAddress().equals(corp.getCorpAddress().getBaseAddress());
+        boolean isDetailAddressSame = corpUpdateReqDto.corpDetailAddress().equals(corp.getCorpAddress().getDetailAddress());
+        if (!isBaseAddressSame || !isDetailAddressSame) {
+            Address address = new Address(corpUpdateReqDto.corpBaseAddress(), corpUpdateReqDto.corpDetailAddress());
+            updateIfChanged(address, corp.getCorpAddress(), corp::changeCorpAddress);
 
-            final String addressToUpdate = corpUpdateReqDto.corpAddress();
+            final String addressToUpdate = corpUpdateReqDto.corpBaseAddress();
             final List<Double> coordinatesAsList = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(addressToUpdate));
 
             // 1. 서비스에서 Coordinates 객체로 변환 (순서 : 위도, 경도)
-            Coordinates coordinatesToUpdate = new Coordinates(coordinatesAsList.get(1), coordinatesAsList.get(0));
+            Coordinates coordinatesToUpdate = new Coordinates(getLat(coordinatesAsList), getLng(coordinatesAsList));
 
             // 2. Corp 엔티티의 새로운 메서드 호출
             corp.changeCoordinates(coordinatesToUpdate);

@@ -6,6 +6,7 @@ import com.project.dasihaebom.domain.location.converter.LocationConverter;
 import com.project.dasihaebom.domain.location.entity.Coordinates;
 import com.project.dasihaebom.domain.location.repository.LocationRepository;
 import com.project.dasihaebom.domain.resume.service.command.ResumeCommandService;
+import com.project.dasihaebom.domain.user.Address;
 import com.project.dasihaebom.domain.user.Role;
 import com.project.dasihaebom.domain.user.corp.entity.Corp;
 import com.project.dasihaebom.domain.user.corp.exception.CorpErrorCode;
@@ -35,6 +36,8 @@ import java.util.concurrent.TimeUnit;
 import static com.project.dasihaebom.global.constant.redis.RedisConstants.*;
 import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_CHANGE_PHONE_NUMBER;
 import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_SIGNUP;
+import static com.project.dasihaebom.global.util.CoordinateUtils.getLat;
+import static com.project.dasihaebom.global.util.CoordinateUtils.getLng;
 import static com.project.dasihaebom.global.util.UpdateUtils.updateIfChanged;
 
 
@@ -71,7 +74,7 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
             throw new WorkerException(WorkerErrorCode.SIGN_UP_PHONE_VALIDATION_DOES_NOT_EXIST);
         }
 
-        final String address = workerCreateReqDto.address();
+        final String address = workerCreateReqDto.baseAddress();
         List<Double> workerCoordinates = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(address));
         Worker worker = WorkerConverter.toWorker(workerCreateReqDto, workerCoordinates);
 
@@ -118,14 +121,18 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
 //            // 기존에 연결되어 있던 거리 캐시 삭제
 //            locationRepository.deleteByWorkerId(workerId);
 //        }
-        if (!workerUpdateReqDto.address().equals(worker.getAddress())) {
-            updateIfChanged(workerUpdateReqDto.address(), worker.getAddress(), worker::changeAddress);
 
-            final String addressToUpdate = workerUpdateReqDto.address();
+        boolean isBaseAddressSame = workerUpdateReqDto.baseAddress().equals(worker.getAddress().getBaseAddress());
+        boolean isDetailAddressSame = workerUpdateReqDto.baseAddress().equals(worker.getAddress().getDetailAddress());
+        if (!isBaseAddressSame || !isDetailAddressSame) {
+            Address address = new Address(workerUpdateReqDto.baseAddress(), workerUpdateReqDto.detailAddress());
+            updateIfChanged(address, worker.getAddress(), worker::changeAddress);
+
+            final String addressToUpdate = workerUpdateReqDto.baseAddress();
             final List<Double> coordinatesAsList = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(addressToUpdate));
 
             // 1. 서비스에서 Coordinates 객체로 변환 (순서: 위도, 경도)
-            Coordinates coordinatesToUpdate = new Coordinates(coordinatesAsList.get(1), coordinatesAsList.get(0));
+            Coordinates coordinatesToUpdate = new Coordinates(getLat(coordinatesAsList), getLng(coordinatesAsList));
 
             // 2. Worker 엔티티의 새로운 메서드 호출
             worker.changeCoordinates(coordinatesToUpdate);

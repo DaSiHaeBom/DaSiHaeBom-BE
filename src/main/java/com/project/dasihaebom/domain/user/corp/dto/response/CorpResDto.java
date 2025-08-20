@@ -23,7 +23,8 @@ public class CorpResDto {
             String phoneNumber,
             String corpNumber,
             String corpName,
-            String corpAddress
+            String corpBaseAddress,
+            String corpDetailAddress
     ) {
     }
 

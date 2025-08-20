@@ -69,7 +69,7 @@ public class Resume extends BaseEntity {
 
         this.username = worker.getUsername();
         this.gender = worker.getGender();
-        this.address = worker.getAddress();
+        this.address = worker.getAddress().getBaseAddress();
         this.phoneNumber = worker.getPhoneNumber();
         this.introductionFullText = introductionFullText;
         this.introductionSummary = introductionSummary;
