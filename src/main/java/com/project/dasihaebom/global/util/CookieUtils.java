@@ -14,7 +14,7 @@ public class CookieUtils {
         // JS 에서 쿠키 읽기 불가능 XSS 방지
         jwtCookie.setHttpOnly(true);
         // HTTPS 연결에서만 쿠키 전송
-        jwtCookie.setSecure(true);
+        jwtCookie.setSecure(false);
         // '/' 경로 이하 모든 API 요청에 쿠키가 포함되도록
         jwtCookie.setPath("/");
         // 쿠키 만료 시간 환경변수로 받아옴 (MS -> Sec로 변환 하려고 /1000)
