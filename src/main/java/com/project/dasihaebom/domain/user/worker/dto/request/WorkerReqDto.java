@@ -55,7 +55,7 @@ public class WorkerReqDto {
             String birthDate,
 
             @NotBlank(message = USER_BLANK_ADDRESS)
-            String address,
+            String baseAddress,
 
             @NotBlank(message = USER_BLANK_ADDRESS)
             String detailAddress

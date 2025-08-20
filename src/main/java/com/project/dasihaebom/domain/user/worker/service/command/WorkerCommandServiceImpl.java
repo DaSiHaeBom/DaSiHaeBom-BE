@@ -118,13 +118,13 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
 //            locationRepository.deleteByWorkerId(workerId);
 //        }
 
-        boolean isBaseAddressSame = workerUpdateReqDto.address().equals(worker.getAddress().getBaseAddress());
-        boolean isDetailAddressSame = workerUpdateReqDto.address().equals(worker.getAddress().getDetailAddress());
+        boolean isBaseAddressSame = workerUpdateReqDto.baseAddress().equals(worker.getAddress().getBaseAddress());
+        boolean isDetailAddressSame = workerUpdateReqDto.baseAddress().equals(worker.getAddress().getDetailAddress());
         if (!isBaseAddressSame || !isDetailAddressSame) {
-            Address address = new Address(workerUpdateReqDto.address(), workerUpdateReqDto.detailAddress());
+            Address address = new Address(workerUpdateReqDto.baseAddress(), workerUpdateReqDto.detailAddress());
             updateIfChanged(address, worker.getAddress(), worker::changeAddress);
 
-            final String addressToUpdate = workerUpdateReqDto.address();
+            final String addressToUpdate = workerUpdateReqDto.baseAddress();
             final List<Double> coordinatesAsList = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(addressToUpdate));
 
             // 1. 서비스에서 Coordinates 객체로 변환 (순서: 위도, 경도)
