@@ -34,7 +34,10 @@ public class WorkerReqDto {
             Gender gender,
 
             @NotBlank(message = USER_BLANK_ADDRESS)
-            String address
+            String address,
+
+            @NotBlank(message = USER_BLANK_ADDRESS)
+            String detailAddress
     ) {
     }
 
@@ -52,7 +55,10 @@ public class WorkerReqDto {
             String birthDate,
 
             @NotBlank(message = USER_BLANK_ADDRESS)
-            String address
+            String address,
+
+            @NotBlank(message = USER_BLANK_ADDRESS)
+            String detailAddress
     ) {
     }
 }

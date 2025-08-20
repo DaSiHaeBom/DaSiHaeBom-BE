@@ -1,6 +1,7 @@
 package com.project.dasihaebom.domain.user.worker.converter;
 
 import com.project.dasihaebom.domain.location.entity.Coordinates;
+import com.project.dasihaebom.domain.user.Address;
 import com.project.dasihaebom.domain.user.LoginType;
 import com.project.dasihaebom.domain.user.Role;
 import com.project.dasihaebom.domain.user.worker.dto.request.WorkerReqDto;
@@ -20,12 +21,15 @@ public class WorkerConverter {
         // List<Double>을 Coordinates 객체로 변환하는 로직
         Coordinates coordinates = new Coordinates(workerCoordinatesAsList.get(1), workerCoordinatesAsList.get(0)); // 순서: 위도, 경도
 
+        // 주소 객체 생성
+        Address address = new Address(workerCreateReqDto.address(), workerCreateReqDto.detailAddress());
+
         return Worker.builder()
                 .phoneNumber(workerCreateReqDto.phoneNumber())
                 .username(workerCreateReqDto.username())
                 .birthDate(workerCreateReqDto.birthDate())
                 .gender(workerCreateReqDto.gender())
-                .address(workerCreateReqDto.address())
+                .address(address)
                 .role(Role.WORKER)
                 .loginType(LoginType.LOCAL)
                 .coordinates(coordinates)
@@ -39,7 +43,8 @@ public class WorkerConverter {
                 .username(worker.getUsername())
                 .birthDate(worker.getBirthDate())
                 .gender(worker.getGender())
-                .address(worker.getAddress())
+                .baseAddress(worker.getAddress().getBaseAddress())
+                .detailAddress(worker.getAddress().getDetailAddress())
                 .build();
     }
 }

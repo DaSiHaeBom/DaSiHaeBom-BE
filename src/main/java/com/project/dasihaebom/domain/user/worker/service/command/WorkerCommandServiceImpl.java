@@ -5,6 +5,7 @@ import com.project.dasihaebom.domain.location.converter.LocationConverter;
 import com.project.dasihaebom.domain.location.entity.Coordinates;
 import com.project.dasihaebom.domain.location.repository.LocationRepository;
 import com.project.dasihaebom.domain.resume.service.command.ResumeCommandService;
+import com.project.dasihaebom.domain.user.Address;
 import com.project.dasihaebom.domain.user.Role;
 import com.project.dasihaebom.domain.user.corp.entity.Corp;
 import com.project.dasihaebom.domain.user.corp.exception.CorpErrorCode;
@@ -116,8 +117,12 @@ public class WorkerCommandServiceImpl implements WorkerCommandService {
 //            // 기존에 연결되어 있던 거리 캐시 삭제
 //            locationRepository.deleteByWorkerId(workerId);
 //        }
-        if (!workerUpdateReqDto.address().equals(worker.getAddress())) {
-            updateIfChanged(workerUpdateReqDto.address(), worker.getAddress(), worker::changeAddress);
+
+        boolean isBaseAddressSame = workerUpdateReqDto.address().equals(worker.getAddress().getBaseAddress());
+        boolean isDetailAddressSame = workerUpdateReqDto.address().equals(worker.getAddress().getDetailAddress());
+        if (!isBaseAddressSame || !isDetailAddressSame) {
+            Address address = new Address(workerUpdateReqDto.address(), workerUpdateReqDto.detailAddress());
+            updateIfChanged(address, worker.getAddress(), worker::changeAddress);
 
             final String addressToUpdate = workerUpdateReqDto.address();
             final List<Double> coordinatesAsList = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(addressToUpdate));

@@ -9,6 +9,7 @@ import com.project.dasihaebom.domain.introduction.repository.QuestionRepository;
 import com.project.dasihaebom.domain.license.entity.License;
 import com.project.dasihaebom.domain.location.entity.Coordinates;
 import com.project.dasihaebom.domain.resume.service.command.ResumeCommandService;
+import com.project.dasihaebom.domain.user.Address;
 import com.project.dasihaebom.domain.user.LoginType;
 import com.project.dasihaebom.domain.user.Role;
 import com.project.dasihaebom.domain.user.worker.entity.Gender;
@@ -128,7 +129,7 @@ public class DataInitializer implements CommandLineRunner {
                 .username(data.username())
                 .birthDate(data.birthDate())
                 .gender(data.gender())
-                .address(data.address())
+                .address(new Address(data.address, "xxx동 xxx호"))
                 .phoneNumber(String.format("010-0000-%04d", index))
                 .coordinates(createRandomSeoulCoordinates())
                 .role(Role.WORKER)
