@@ -21,6 +21,7 @@ public class ResumeResDto {
     public record ResumeSummaryDTO(
             Long resumeId,
             Long workerId,
+            String username,
             Integer age,
             String address,
             String introductionSummary,
