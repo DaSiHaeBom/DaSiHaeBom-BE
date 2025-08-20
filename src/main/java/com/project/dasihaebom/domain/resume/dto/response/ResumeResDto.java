@@ -49,4 +49,9 @@ public class ResumeResDto {
             String issuedAt, // 취득일
             String issuer    // 발행처
     ) {}
+
+    @Builder
+    public record ResumeExistenceDTO(
+            Boolean exists
+    ) {}
 }

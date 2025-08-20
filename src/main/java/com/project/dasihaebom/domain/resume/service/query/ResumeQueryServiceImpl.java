@@ -1,5 +1,6 @@
 package com.project.dasihaebom.domain.resume.service.query;
 
+import com.project.dasihaebom.domain.introduction.repository.IntroductionRepository;
 import com.project.dasihaebom.domain.resume.converter.ResumeConverter;
 import com.project.dasihaebom.domain.resume.dto.request.ResumeSearchCondition;
 import com.project.dasihaebom.domain.resume.dto.response.ResumeResDto;
@@ -26,6 +27,7 @@ public class ResumeQueryServiceImpl implements ResumeQueryService {
 
     private final ResumeRepository resumeRepository;
     private final CorpRepository corpRepository;
+    private final IntroductionRepository introductionRepository;
 
     @Override
     public ResumeResDto.ResumeCursorResponse searchResumes(ResumeSearchCondition condition, Long userCorpId) {
@@ -80,6 +82,11 @@ public class ResumeQueryServiceImpl implements ResumeQueryService {
     public Resume getResumeByWorkerId(Long workerId) {
         return resumeRepository.findByWorkerId(workerId)
                 .orElseThrow(() -> new ResumeException(ResumeErrorCode.RESUME_NOT_FOUND));
+    }
+
+    @Override
+    public boolean checkResumeExistence(Long workerId) {
+        return introductionRepository.existsByWorker_Id(workerId);
     }
 
 
