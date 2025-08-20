@@ -3,6 +3,7 @@ package com.project.dasihaebom.domain.user.corp.entity;
 import com.project.dasihaebom.domain.auth.entity.Auth;
 import com.project.dasihaebom.domain.location.entity.Location;
 import com.project.dasihaebom.domain.location.entity.Coordinates;
+import com.project.dasihaebom.domain.user.Address;
 import com.project.dasihaebom.domain.user.Role;
 import com.project.dasihaebom.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -37,8 +38,8 @@ public class Corp extends BaseEntity {
     @Column(name = "corp_name", nullable = false)
     private String corpName;
 
-    @Column(name = "corp_address", nullable = false)
-    private String corpAddress;
+//    @Column(name = "corp_address", nullable = false)
+//    private String corpAddress;
 
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -46,6 +47,9 @@ public class Corp extends BaseEntity {
 
     @Embedded
     private Coordinates coordinates;
+
+    @Embedded
+    private Address corpAddress;
 
     // --- 하위 호환성을 위한 위임(Delegate) 메서드 ---
 
@@ -92,7 +96,7 @@ public class Corp extends BaseEntity {
     public void changeCorpName(String corpName) {
         this.corpName = corpName;
     }
-    public void changeCorpAddress(String corpAddress) {
+    public void changeCorpAddress(Address corpAddress) {
         this.corpAddress = corpAddress;
     }
     public void changeCoordinates(Coordinates newCoordinates) {this.coordinates = newCoordinates;}

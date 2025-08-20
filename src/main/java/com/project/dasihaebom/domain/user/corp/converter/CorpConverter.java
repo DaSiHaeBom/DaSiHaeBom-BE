@@ -1,6 +1,7 @@
 package com.project.dasihaebom.domain.user.corp.converter;
 
 import com.project.dasihaebom.domain.location.entity.Coordinates;
+import com.project.dasihaebom.domain.user.Address;
 import com.project.dasihaebom.domain.user.Role;
 import com.project.dasihaebom.domain.user.corp.dto.request.CorpReqDto;
 import com.project.dasihaebom.domain.user.corp.dto.response.CorpResDto;
@@ -18,13 +19,15 @@ public class CorpConverter {
 
         Coordinates coordinates = new Coordinates(corpCoordinatesAsList.get(1), corpCoordinatesAsList.get(0));
 
+        Address address = new Address(corpCreateReqDto.corpBaseAddress(), corpCreateReqDto.corpDetailAddress());
+
         return Corp.builder()
                 .loginId(corpCreateReqDto.loginId())
                 .ceoName(corpCreateReqDto.ceoName())
                 .phoneNumber(corpCreateReqDto.phoneNumber())
                 .corpNumber(corpCreateReqDto.corpNumber())
                 .corpName(corpCreateReqDto.corpName())
-                .corpAddress(corpCreateReqDto.corpAddress())
+                .corpAddress(address)
                 .role(Role.CORP)
                 .coordinates(coordinates)
                 .build();
@@ -45,7 +48,8 @@ public class CorpConverter {
                 .phoneNumber(corp.getPhoneNumber())
                 .corpNumber(corp.getCorpNumber())
                 .corpName(corp.getCorpName())
-                .corpAddress(corp.getCorpAddress())
+                .corpBaseAddress(corp.getCorpAddress().getBaseAddress())
+                .corpDetailAddress(corp.getCorpAddress().getDetailAddress())
                 .build();
     }
 

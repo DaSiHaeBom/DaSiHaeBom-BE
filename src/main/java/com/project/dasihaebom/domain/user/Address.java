@@ -13,6 +13,6 @@ public class Address {
     @Column(name = "base_address", nullable = false)
     private String baseAddress;
 
-    @Column(name = "detail_address", nullable = false)
+    @Column(name = "detail_address")
     private String detailAddress;
 }

@@ -2,7 +2,6 @@ package com.project.dasihaebom.domain.user.corp.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import org.springframework.security.core.parameters.P;
 
 import static com.project.dasihaebom.global.constant.valid.MessageConstants.*;
 import static com.project.dasihaebom.global.constant.valid.PatternConstants.*;
@@ -34,7 +33,9 @@ public class CorpReqDto {
             String corpName,
 
             @NotBlank(message = USER_BLANK_ADDRESS)
-            String corpAddress
+            String corpBaseAddress,
+
+            String corpDetailAddress
     ) {
     }
 
@@ -55,7 +56,9 @@ public class CorpReqDto {
             String corpName,
 
             @NotBlank(message = USER_BLANK_ADDRESS)
-            String corpAddress
+            String corpBaseAddress,
+
+            String corpDetailAddress
     ) {
     }
 
