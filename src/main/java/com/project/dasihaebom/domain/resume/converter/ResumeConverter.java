@@ -72,6 +72,7 @@ public class ResumeConverter {
         return ResumeResDto.ResumeSummaryDTO.builder()
                 .resumeId(resume.getId())
                 .workerId(worker.getId())
+                .username(resume.getUsername())
                 .age(calculateAge(resume.getBirthDate())) // LocalDate를 나이로 계산
                 .address(resume.getAddress())
                 .introductionSummary(resume.getIntroductionSummary())
