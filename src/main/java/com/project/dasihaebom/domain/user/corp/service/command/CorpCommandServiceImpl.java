@@ -71,6 +71,12 @@ public class CorpCommandServiceImpl implements CorpCommandService {
             throw new CorpException(CorpErrorCode.CORP_VALIDATION_FAILURE);
         }
 
+        // 아이디 중복 검사 인증이 있는지 확인
+        final String loginId = corpCreateReqDto.loginId();
+        if (!Objects.equals(redisUtils.get(loginId + KEY_REGISTER_SUFFIX), loginId)) {
+            throw new CorpException(CorpErrorCode.CORP_LOGIN_ID_CHECK_FAILURE);
+        }
+
         final String address = corpCreateReqDto.corpBaseAddress();
         List<Double> corpCoordinates = LocationConverter.toCoordinateList(coordinateClient.getKakaoCoordinateInfo(address));
 
