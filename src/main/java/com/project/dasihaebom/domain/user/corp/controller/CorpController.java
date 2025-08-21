@@ -2,7 +2,6 @@ package com.project.dasihaebom.domain.user.corp.controller;
 
 import com.project.dasihaebom.domain.user.corp.dto.request.CorpReqDto;
 import com.project.dasihaebom.domain.user.corp.dto.response.CorpResDto;
-import com.project.dasihaebom.domain.user.corp.repository.CorpRepository;
 import com.project.dasihaebom.domain.user.corp.service.command.CorpCommandService;
 import com.project.dasihaebom.domain.user.corp.service.query.CorpQueryService;
 import com.project.dasihaebom.global.apiPayload.CustomResponse;
@@ -10,9 +9,15 @@ import com.project.dasihaebom.global.security.userdetails.CurrentUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import static com.project.dasihaebom.global.constant.valid.MessageConstants.USER_BLANK_LOGIN_ID;
+import static com.project.dasihaebom.global.constant.valid.MessageConstants.USER_WRONG_LOGIN_ID;
+import static com.project.dasihaebom.global.constant.valid.PatternConstants.USER_LOGIN_ID_PATTERN;
 
 @RestController
 @RequiredArgsConstructor
@@ -64,5 +69,16 @@ public class CorpController {
             @RequestBody @Valid CorpReqDto.CorpNumberValidReqDto corpNumberValidReqDto
     ) {
         return CustomResponse.onSuccess(corpCommandService.validCorpNumber(corpNumberValidReqDto));
+    }
+
+    @Operation(summary = "기업 회원 아이디 중복 검사", description = "중복이면 true, 중복이 아니면 false")
+    @GetMapping("/check-id")
+    public CustomResponse<CorpResDto.CorpCheckLoginIdResDto> checkCorpLoginId(
+            @RequestParam
+                    @NotBlank(message = USER_BLANK_LOGIN_ID)
+                    @Pattern(regexp = USER_LOGIN_ID_PATTERN, message = USER_WRONG_LOGIN_ID)
+            String loginId
+    ) {
+        return CustomResponse.onSuccess(corpQueryService.checkCorpLoginId(loginId));
     }
 }
