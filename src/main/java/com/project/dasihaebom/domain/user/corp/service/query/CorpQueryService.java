@@ -12,4 +12,6 @@ public interface CorpQueryService {
     CorpResDto.CorpProfileResDto getCorpProfile(long corpId, Role role);
 
     CorpResDto.CorpLoginIdResDto getCorpLoginId(CorpReqDto.CorpLoginIdReqDto corpLoginIdReqDto);
+
+    CorpResDto.CorpCheckLoginIdResDto checkCorpLoginId(String loginId);
 }

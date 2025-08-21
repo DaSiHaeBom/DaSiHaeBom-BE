@@ -16,8 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
-import static com.project.dasihaebom.global.constant.redis.RedisConstants.KEY_SCOPE_SUFFIX;
+import static com.project.dasihaebom.global.constant.redis.RedisConstants.*;
 import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_FIND_LOGIN_ID;
 import static com.project.dasihaebom.global.constant.scope.ScopeConstants.SCOPE_SIGNUP;
 
@@ -57,5 +58,22 @@ public class CorpQueryServiceImpl implements CorpQueryService {
         redisUtils.delete(phoneNumber + KEY_SCOPE_SUFFIX);
 
         return CorpConverter.toCorpLoginIdResDto(corp.getLoginId());
+    }
+
+    @Override
+    public CorpResDto.CorpCheckLoginIdResDto checkCorpLoginId(String loginId) {
+        // 누군가 이미 중복 검사를 받고 가입을 시도할 때 race condition 막음
+        if (redisUtils.hasKey(loginId + KEY_REGISTER_SUFFIX)) {
+            throw new CorpException(CorpErrorCode.CORP_REGISTERING_LOGIN_ID);
+        }
+        // 누군가 가입중이 아니라면 현재 DB에 있는지 확인
+        Optional<Corp> corpOpt = corpRepository.findByLoginId(loginId);
+        // 가입 여부
+        boolean isAlreadyRegistered = corpOpt.isPresent();
+        // 가입 되어 있지 않다면 가입중이라는 레디스 생성
+        if (!isAlreadyRegistered) {
+            redisUtils.save(loginId + KEY_REGISTER_SUFFIX, loginId, SCOPE_EXP_TIME, TimeUnit.MILLISECONDS);
+        }
+        return CorpConverter.toCorpCheckLoginIdResDto(loginId, isAlreadyRegistered);
     }
 }

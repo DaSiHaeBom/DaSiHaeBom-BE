@@ -21,6 +21,9 @@ public class RedisConstants {
     // SCOPE
     public static final String KEY_SCOPE_SUFFIX = ":scope";
 
+    // REGISTER
+    public static final String KEY_REGISTER_SUFFIX = ":register";
+
     // -------VALUE-------
 
     // PHONE NUMBER VALIDATION

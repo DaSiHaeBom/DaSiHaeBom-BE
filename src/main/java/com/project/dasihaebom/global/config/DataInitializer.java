@@ -193,7 +193,7 @@ public class DataInitializer implements CommandLineRunner {
                 .birthDate(data.birthDate())
                 .gender(data.gender())
                 .address(new Address(data.address, "xxx동 xxx호"))
-                .phoneNumber(String.format("010-0000-%04d", index))
+                .phoneNumber(String.format("0100000%04d", index))
                 .coordinates(createCoordinates(data.address))
                 .role(Role.WORKER)
                 .loginType(LoginType.LOCAL)

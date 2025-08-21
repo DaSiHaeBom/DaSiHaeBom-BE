@@ -61,4 +61,11 @@ public class CorpConverter {
                 .loginId(loginId)
                 .build();
     }
+
+    public static CorpResDto.CorpCheckLoginIdResDto toCorpCheckLoginIdResDto(String loginId, boolean isAlreadyRegistered) {
+        return CorpResDto.CorpCheckLoginIdResDto.builder()
+                .loginId(loginId)
+                .isAlreadyRegistered(isAlreadyRegistered)
+                .build();
+    }
 }
