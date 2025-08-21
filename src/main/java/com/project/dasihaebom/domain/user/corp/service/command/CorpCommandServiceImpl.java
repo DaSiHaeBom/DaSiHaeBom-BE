@@ -85,6 +85,7 @@ public class CorpCommandServiceImpl implements CorpCommandService {
         // 인증 정보 삭제
         redisUtils.delete(phoneNumber + KEY_SCOPE_SUFFIX);
         redisUtils.delete(corpNumber + KEY_SCOPE_SUFFIX);
+        redisUtils.delete(corp.getLoginId() + KEY_REGISTER_SUFFIX);
     }
 
     @Override

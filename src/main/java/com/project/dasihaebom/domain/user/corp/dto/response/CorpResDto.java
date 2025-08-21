@@ -1,10 +1,7 @@
 package com.project.dasihaebom.domain.user.corp.dto.response;
 
 import com.project.dasihaebom.domain.user.Role;
-import com.project.dasihaebom.global.client.corpNumber.dto.NtsCorpInfoResDto;
 import lombok.Builder;
-
-import java.util.List;
 
 public class CorpResDto {
 
@@ -31,6 +28,13 @@ public class CorpResDto {
     @Builder
     public record CorpLoginIdResDto(
             String loginId
+    ) {
+    }
+
+    @Builder
+    public record CorpCheckLoginIdResDto(
+            String loginId,
+            boolean isAlreadyRegistered
     ) {
     }
 }
