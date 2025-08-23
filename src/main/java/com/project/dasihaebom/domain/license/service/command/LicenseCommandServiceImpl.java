@@ -78,6 +78,7 @@ public class LicenseCommandServiceImpl implements LicenseCommandService {
         }
 
         licenseRepository.deleteById(licenseId);
+        licenseRepository.flush();
 
         if (introductionRepository.existsByWorker_Id(workerId)) {
             resumeCommandService.syncResume(workerId);
