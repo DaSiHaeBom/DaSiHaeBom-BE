@@ -52,6 +52,7 @@ public class SecurityConfig {
             "swagger-resources/**",
             "/swagger-ui/**",
             "/v3/api-docs/**",
+            "/api/v1/users/corps/check-id", //아이디 중복 검사
     };
 
     @Bean
