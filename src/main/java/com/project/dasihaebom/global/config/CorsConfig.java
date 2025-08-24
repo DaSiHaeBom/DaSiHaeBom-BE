@@ -25,6 +25,8 @@ public class CorsConfig implements WebMvcConfigurer {
         allowedOrigins.add("http://localhost:5174");
         allowedOrigins.add("https://www.dlrbdjs.store");
         allowedOrigins.add("https://da-si-hae-bom-fe-tau.vercel.app");
+        allowedOrigins.add("https://api.dasihaebom.store");
+        allowedOrigins.add("https://www.dasihaebom.store");
 
         configuration.setAllowedOrigins(allowedOrigins);
 
