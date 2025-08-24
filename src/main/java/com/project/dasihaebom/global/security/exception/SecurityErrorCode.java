@@ -15,6 +15,9 @@ public enum SecurityErrorCode implements BaseErrorCode {
     NOT_FOUND(HttpStatus.NOT_FOUND, "COMMON404", "요청한 자원을 찾을 수 없습니다"),
 
     REQUIRED_RE_LOGIN(HttpStatus.UNAUTHORIZED, "TOKEN401", "모든 토큰이 만료되었습니다. 다시 로그인 하세요"),
+
+    MISSING_CSRF_TOKEN(HttpStatus.FORBIDDEN, "CSRF403_1", "CSRF 토큰이 누락되었습니다."),
+    INVALID_CSRF_TOKEN(HttpStatus.FORBIDDEN, "CSRF403_2", "CSRF 토큰이 유효하지 않습니다."),
     ;
 
     private final HttpStatus httpStatus;

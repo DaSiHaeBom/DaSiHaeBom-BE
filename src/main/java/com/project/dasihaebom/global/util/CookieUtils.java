@@ -4,6 +4,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.web.csrf.CsrfToken;
+
+import static com.project.dasihaebom.global.constant.common.CommonConstants.CSRF_COOKIE_MAX_AGE;
 
 @Slf4j
 public class CookieUtils {
@@ -14,9 +17,11 @@ public class CookieUtils {
         // JS 에서 쿠키 읽기 불가능 XSS 방지
         jwtCookie.setHttpOnly(true);
         // HTTPS 연결에서만 쿠키 전송
-        jwtCookie.setSecure(false);
+        jwtCookie.setSecure(true);
         // '/' 경로 이하 모든 API 요청에 쿠키가 포함되도록
         jwtCookie.setPath("/");
+        // 우리 도메인에서만 사용
+        jwtCookie.setDomain(".dasihaebom.site");
         // 쿠키 만료 시간 환경변수로 받아옴 (MS -> Sec로 변환 하려고 /1000)
         jwtCookie.setMaxAge((int) (tokenExpMs / 1000));
         // CSRF 설정 -> 개발 중에는 None
@@ -24,6 +29,26 @@ public class CookieUtils {
         // 쿠키 추가
         response.addCookie(jwtCookie);
     }
+
+    public static void createCsrfCookies(HttpServletResponse response, String name, CsrfToken csrfToken) {
+        Cookie csrfCookie = new Cookie(name, csrfToken.getToken());
+        // csrf 쿠키는 js가 읽어야 헤더에 넣을 수 있음
+        csrfCookie.setHttpOnly(false);
+        // HTTPS 연결에서만 쿠키 전송
+        csrfCookie.setSecure(true);
+        // '/' 경로 이하 모든 API 요청에 쿠키가 포함되도록
+        csrfCookie.setPath("/");
+        // 우리 도메인에서만 사용
+        csrfCookie.setDomain(".dasihaebom.site");
+        // -1 세션이 종료하면 쿠키 삭제
+        csrfCookie.setMaxAge(CSRF_COOKIE_MAX_AGE);
+        // CSRF 설정 -> 배포 중에는 Lax
+        csrfCookie.setAttribute("SameSite", "Lax");
+        // 쿠키 추가
+        response.addCookie(csrfCookie);
+
+    }
+
 
     public static String getTokenFromCookies(HttpServletRequest request, String cookieName) {
         log.info("[ CookieUtils ] 쿠키 검색");
