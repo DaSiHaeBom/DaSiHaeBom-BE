@@ -1,5 +1,6 @@
 package com.project.dasihaebom.global.security.handler;
 
+import com.project.dasihaebom.global.security.repository.CustomCookieCsrfTokenRepository;
 import com.project.dasihaebom.global.security.utils.JwtUtil;
 import com.project.dasihaebom.global.util.RedisUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +25,8 @@ import static com.project.dasihaebom.global.util.CookieUtils.getTokenFromCookies
 public class CustomLogoutHandler implements LogoutHandler {
 
     private final JwtUtil jwtUtil;
-    private final RedisUtils<String> redisUtils;
+    private final CustomCookieCsrfTokenRepository customCookieCsrfTokenRepository;
+
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
@@ -37,6 +39,8 @@ public class CustomLogoutHandler implements LogoutHandler {
 
         createJwtCookies(response, ACCESS_COOKIE_NAME, null, 0);
         createJwtCookies(response, REFRESH_COOKIE_NAME, null, 0);
+
+        customCookieCsrfTokenRepository.invalidateCsrfToken(response);
         log.info("[ CustomLogoutHandler ] 쿠키 삭제 완료");
     }
 }

@@ -1,12 +1,14 @@
 package com.project.dasihaebom.global.config;
 
 
+import com.project.dasihaebom.global.security.exception.CsrfAccessDeniedHandler;
 import com.project.dasihaebom.global.security.exception.JwtAuthenticationEntryPoint;
 import com.project.dasihaebom.global.security.filter.CustomLoginFilter;
 import com.project.dasihaebom.global.security.exception.JwtAccessDeniedHandler;
 import com.project.dasihaebom.global.security.filter.JwtAuthorizationFilter;
 import com.project.dasihaebom.global.security.handler.CustomLogoutHandler;
 import com.project.dasihaebom.global.security.handler.CustomLogoutSuccessHandler;
+import com.project.dasihaebom.global.security.repository.CustomCookieCsrfTokenRepository;
 import com.project.dasihaebom.global.security.utils.JwtUtil;
 import com.project.dasihaebom.global.util.RedisUtils;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +21,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @Configuration // 빈 등록
 @EnableWebSecurity // 필터 체인 관리 시작 어노테이션
@@ -36,6 +40,8 @@ public class SecurityConfig {
     private final RedisUtils<String> redisUtils;
     private final CustomLogoutHandler jwtLogoutHandler;
     private final CustomLogoutSuccessHandler jwtLogoutSuccessHandler;
+    private final CsrfAccessDeniedHandler csrfAccessDeniedHandler;
+    private final CustomCookieCsrfTokenRepository customCookieCsrfTokenRepository;
 
 
     //인증이 필요하지 않은 url
@@ -49,6 +55,7 @@ public class SecurityConfig {
             "/api/v1/validations/**", // 휴대폰 인증 관련
             "/api/v1/auth/temp-password", // 임시 비밀번호 발급
             "/api/v1/security/reissue-cookie", // 쿠키 재발급
+            "/api/v1/security/csrf",    // csrf 토큰 발급
             "swagger-resources/**",
             "/swagger-ui/**",
             "/v3/api-docs/**",
@@ -58,7 +65,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         // 로그인 필터 객체 생성
-        CustomLoginFilter loginFilter = new CustomLoginFilter(authenticationManager(authenticationConfiguration), jwtUtil);
+        CustomLoginFilter loginFilter = new CustomLoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, customCookieCsrfTokenRepository);
         // 로그인 앤드 포인트
         loginFilter.setFilterProcessesUrl("/api/v1/auth/login");
 
@@ -85,9 +92,21 @@ public class SecurityConfig {
                 // HTTP BASIC 인증 비활성화 -> JWT은 사용하지 않음
                 .httpBasic(HttpBasicConfigurer::disable)
 
+                // JSESSIONID 비활성화
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
                 // TODO : CSRF 토큰 + SameSite + Origin 검증
                 // CSRF 설정 (JWT를 헤더에 넣으면 필요 없는데 쿠키는 해야함)
-                .csrf(AbstractHttpConfigurer::disable)
+                // CSRF: 쿠키<->헤더 일치(Double Submit Cookie)
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(customCookieCsrfTokenRepository)
+                        // 로그인/회원가입/문서 등 최소 범위만 예외. 이후 프론트가 헤더 붙이면 예외 줄여도 됨.
+                        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+                        .ignoringRequestMatchers(
+                                "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**",
+                                "/actuator/**"
+                        )
+                )
 
                 // logout
                 .logout(logout -> logout
@@ -101,7 +120,10 @@ public class SecurityConfig {
                         // 인증은 되었지만 권한이 없을 때 (403)
                         .accessDeniedHandler(jwtAccessDeniedHandler)
                         // 인증 자체가 안 된 경우 (401)
-                        .authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        // CSRF 예외 (403)
+                        .accessDeniedHandler(csrfAccessDeniedHandler)
+                )
         ;
 
         return http.build();

@@ -18,17 +18,25 @@ public class SwaggerConfig {
                 .description("LikeLion13th 대 상 명 API 명세서") // 설명
                 .version("1.0.0"); //버전
 
-        String jwtSchemeName = "JWT TOKEN";
+        String csrfSchemeName = "X-XSRF-TOKEN";
+        String csrfCookieName = "XSRF-TOKEN";
         // API 요청헤더에 인증정보 포함
-        SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList(csrfSchemeName).addList(csrfCookieName);
 
         // SecuritySchemes 등록
         Components components = new Components()
-                .addSecuritySchemes(jwtSchemeName, new SecurityScheme()
-                        .name(jwtSchemeName)
-                        .type(SecurityScheme.Type.HTTP) // HTTP 방식
-                        .scheme("bearer")
-                        .bearerFormat("JWT"));
+                .addSecuritySchemes(csrfSchemeName, new SecurityScheme()
+                        .name(csrfSchemeName)
+                        .type(SecurityScheme.Type.APIKEY) // csrf token은 api key 방식
+                        .in(SecurityScheme.In.HEADER) // header에 위치
+                        .description("csrf token을 헤더에 입력하세요"));
+
+        components.addSecuritySchemes(csrfCookieName,
+                new SecurityScheme()
+                        .name(csrfCookieName)
+                        .type(SecurityScheme.Type.APIKEY)
+                        .in(SecurityScheme.In.COOKIE)
+                        .description("csrf token 쿠키 입력"));
 
         return new OpenAPI()
                 .addServersItem(new Server().url("/"))
