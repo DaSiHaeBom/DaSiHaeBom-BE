@@ -6,6 +6,7 @@ import com.project.dasihaebom.global.apiPayload.CustomResponse;
 import com.project.dasihaebom.global.apiPayload.exception.CustomException;
 import com.project.dasihaebom.global.security.dto.JwtDto;
 import com.project.dasihaebom.global.security.exception.SecurityErrorCode;
+import com.project.dasihaebom.global.security.repository.CustomCookieCsrfTokenRepository;
 import com.project.dasihaebom.global.security.utils.JwtUtil;
 import com.project.dasihaebom.global.security.userdetails.CustomUserDetails;
 import jakarta.servlet.FilterChain;
@@ -23,6 +24,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CsrfToken;
 
 import java.io.IOException;
 
@@ -36,6 +38,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+    private final CustomCookieCsrfTokenRepository customCookieCsrfTokenRepository;
 
     //로그인 시도 메서드
     @Override
@@ -92,6 +95,11 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
 
         createJwtCookies(response, ACCESS_COOKIE_NAME, accessToken, accessExp);
         createJwtCookies(response, REFRESH_COOKIE_NAME, refreshToken, refreshExp);
+
+        // 로그인 시 새로운 csrf 토큰 발급
+        CsrfToken csrfToken = customCookieCsrfTokenRepository.generateToken(request);
+        customCookieCsrfTokenRepository.saveToken(csrfToken, request, response);
+
 
         //Client 에게 줄 Response 를 Build
         JwtDto jwtDto = JwtDto.builder()
