@@ -21,7 +21,7 @@ public class CookieUtils {
         // '/' 경로 이하 모든 API 요청에 쿠키가 포함되도록
         jwtCookie.setPath("/");
         // 우리 도메인에서만 사용
-        jwtCookie.setDomain(".dasihaebom.site");
+        jwtCookie.setDomain("dasihaebom.site");
         // 쿠키 만료 시간 환경변수로 받아옴 (MS -> Sec로 변환 하려고 /1000)
         jwtCookie.setMaxAge((int) (tokenExpMs / 1000));
         // CSRF 설정 -> 개발 중에는 None
@@ -39,7 +39,7 @@ public class CookieUtils {
         // '/' 경로 이하 모든 API 요청에 쿠키가 포함되도록
         csrfCookie.setPath("/");
         // 우리 도메인에서만 사용
-        csrfCookie.setDomain(".dasihaebom.site");
+        csrfCookie.setDomain("dasihaebom.site");
         // -1 세션이 종료하면 쿠키 삭제
         csrfCookie.setMaxAge(CSRF_COOKIE_MAX_AGE);
         // CSRF 설정 -> 배포 중에는 Lax
