@@ -59,12 +59,12 @@ public class ValidationServiceImpl implements ValidationService {
         // 전송 String 생성
         final String msg = createMessageWithCode(code);
 
-//         문자 전송 실패시 예외 처리
-        try {
-            phoneNumberClient.sendMessage(msg, phoneNumber);
-        } catch (Exception e) {
-            throw new ValidationException(ValidationErrorCode.MESSAGE_SEND_ERROR);
-        }
+//         문자 전송 실패시 예외 처리 // 해커톤 때 실제 번호로 가입을 안하니 블락 처리
+//        try {
+//            phoneNumberClient.sendMessage(msg, phoneNumber);
+//        } catch (Exception e) {
+//            throw new ValidationException(ValidationErrorCode.MESSAGE_SEND_ERROR);
+//        }
 
         // 성공 시
         // 레디스에 인증 정보 저장
