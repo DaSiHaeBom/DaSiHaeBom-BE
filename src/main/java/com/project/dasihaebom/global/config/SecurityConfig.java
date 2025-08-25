@@ -46,7 +46,7 @@ public class SecurityConfig {
 
     //인증이 필요하지 않은 url
     private final String[] allowUrl = {
-            "/api/v1/auth/login",   //로그인
+            "/api/v1/auth/login/*",   //로그인
             "/api/v1/users/workers",    // 개인 회원 가입
             "/api/v1/users/corps",      // 기업 회원 가입
             "/api/v1/users/corps/business-validation",  // 사업자 번호 조회
@@ -64,10 +64,17 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-        // 로그인 필터 객체 생성
-        CustomLoginFilter loginFilter = new CustomLoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, customCookieCsrfTokenRepository);
-        // 로그인 앤드 포인트
-        loginFilter.setFilterProcessesUrl("/api/v1/auth/login");
+        // 개인 로그인 필터 객체 생성
+        CustomLoginFilter workerLoginFilter = new CustomLoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, customCookieCsrfTokenRepository);
+        // 개인 로그인 앤드 포인트
+        workerLoginFilter.setFilterProcessesUrl("/api/v1/auth/login/worker");
+
+        // 기업 로그인 필터 객체 생성
+        CustomLoginFilter corpLoginFilter = new CustomLoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, customCookieCsrfTokenRepository);
+        // 기업 로그인 앤드 포인트
+        corpLoginFilter.setFilterProcessesUrl("/api/v1/auth/login/corp");
+
+
 
         http
                 // CORS CONFIG
@@ -83,8 +90,11 @@ public class SecurityConfig {
                 // JWT 인증 필터 등록
                 .addFilterBefore(new JwtAuthorizationFilter(jwtUtil, redisUtils), UsernamePasswordAuthenticationFilter.class)
 
-                // 커스텀 로그인 필터 등록 -> 기본 폼 로그인 대신 JWT 로직 실행
-                .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
+                // 개인 커스텀 로그인 필터 등록 -> 기본 폼 로그인 대신 JWT 로직 실행
+                .addFilterAt(workerLoginFilter, UsernamePasswordAuthenticationFilter.class)
+
+                // 기업 커스텀 로그인 필터 등록 -> 기본 폼 로그인 대신 JWT 로직 실행
+                .addFilterAt(corpLoginFilter, UsernamePasswordAuthenticationFilter.class)
 
                 // SPRING SECURITY 기본 로그인 폼 비활성화 -> REST API 기반 JWT 사용
                 .formLogin(AbstractHttpConfigurer::disable)

@@ -2,11 +2,13 @@ package com.project.dasihaebom.global.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.dasihaebom.domain.auth.dto.request.AuthReqDto;
+import com.project.dasihaebom.domain.user.Role;
 import com.project.dasihaebom.global.apiPayload.CustomResponse;
 import com.project.dasihaebom.global.apiPayload.exception.CustomException;
 import com.project.dasihaebom.global.security.dto.JwtDto;
 import com.project.dasihaebom.global.security.exception.SecurityErrorCode;
 import com.project.dasihaebom.global.security.repository.CustomCookieCsrfTokenRepository;
+import com.project.dasihaebom.global.security.userdetails.CurrentUser;
 import com.project.dasihaebom.global.security.utils.JwtUtil;
 import com.project.dasihaebom.global.security.userdetails.CustomUserDetails;
 import jakarta.servlet.FilterChain;
@@ -81,11 +83,19 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
             @NonNull FilterChain chain,
             @NonNull Authentication authentication) throws IOException {
 
-
-        log.info("[ Login Filter ] 로그인 성공");
-
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
 
+        String requestURI = request.getRequestURI();
+        Role userRole = customUserDetails.getRole();
+
+        if (requestURI.contains("worker") && !userRole.equals(Role.WORKER)) {
+            throw new BadCredentialsException("WORKER 계정만 로그인할 수 있습니다.");
+        }
+        if (requestURI.contains("corp") && !userRole.equals(Role.CORP)) {
+            throw new BadCredentialsException("CORP 계정만 로그인할 수 있습니다.");
+        }
+
+        log.info("[ Login Filter ] 로그인 성공");
 
         String accessToken = jwtUtil.createJwtAccessToken(customUserDetails); //access token 생성
         String refreshToken = jwtUtil.createJwtRefreshToken(customUserDetails); //refresh token 생성

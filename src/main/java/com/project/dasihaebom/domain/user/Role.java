@@ -5,4 +5,7 @@ public enum Role {
     CORP,
     ADMIN,
     ;
+
+    public boolean isWorker() { return this == WORKER; }
+    public boolean isCorp()   { return this == CORP; }
 }

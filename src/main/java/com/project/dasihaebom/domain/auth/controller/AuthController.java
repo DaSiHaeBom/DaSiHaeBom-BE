@@ -23,8 +23,16 @@ public class AuthController {
     private final AuthCommandService authCommandService;
 
     @Operation(summary = "로그인", description = "아이디와 비밀번호를 입력하면 access / refresh 쿠키 생성")
-    @PostMapping("/login")
-    public CustomResponse<?> Login(
+    @PostMapping("/login/worker")
+    public CustomResponse<?> workerLogin(
+            @RequestBody AuthReqDto.AuthLoginDto authLoginDto
+    ) {
+        return null;
+    }
+
+    @Operation(summary = "로그인", description = "아이디와 비밀번호를 입력하면 access / refresh 쿠키 생성")
+    @PostMapping("/login/corp")
+    public CustomResponse<?> corpLogin(
             @RequestBody AuthReqDto.AuthLoginDto authLoginDto
     ) {
         return null;
